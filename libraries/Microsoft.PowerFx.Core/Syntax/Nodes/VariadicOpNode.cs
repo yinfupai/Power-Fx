@@ -1,0 +1,60 @@
+//------------------------------------------------------------------------------
+// <copyright company="Microsoft Corporation">
+//     Copyright (c) Microsoft Corporation.  All rights reserved.
+// </copyright>
+//------------------------------------------------------------------------------
+
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AppMagic.Authoring.Texl.SourceInformation;
+
+namespace Microsoft.AppMagic.Authoring.Texl
+{
+    internal sealed class VariadicOpNode : VariadicBase
+    {
+        public readonly VariadicOp Op;
+        public readonly Token[] OpTokens;
+
+        // Assumes ownership of the 'children' and 'opTokens' array.
+        public VariadicOpNode(ref int idNext, VariadicOp op, TexlNode[] children, Token[] opTokens, SourceList sourceList)
+            : base(ref idNext, opTokens.VerifyValue().First(), sourceList, children)
+        {
+            Contracts.AssertNonEmpty(opTokens);
+            Contracts.AssertAllValues(opTokens);
+            Op = op;
+            OpTokens = opTokens;
+        }
+
+        public override TexlNode Clone(ref int idNext, Span ts)
+        {
+            var children = CloneChildren(ref idNext, ts);
+            var newNodes = new Dictionary<TexlNode, TexlNode>();
+            for (int i = 0; i < Children.Length; ++i)
+                newNodes.Add(Children[i], children[i]);
+
+            return new VariadicOpNode(ref idNext, Op, children, Clone(OpTokens, ts), SourceList.Clone(ts, newNodes));
+        }
+
+        public override void Accept(TexlVisitor visitor)
+        {
+            Contracts.AssertValue(visitor);
+            if (visitor.PreVisit(this))
+            {
+                AcceptChildren(visitor);
+                visitor.PostVisit(this);
+            }
+        }
+
+        public override Result Accept<Result, Context>(TexlFunctionalVisitor<Result, Context> visitor, Context context)
+        {
+            return visitor.Visit(this, context);
+        }
+
+        public override NodeKind Kind { get { return NodeKind.VariadicOp; } }
+
+        public override VariadicOpNode AsVariadicOp()
+        {
+            return this;
+        }
+    }
+}

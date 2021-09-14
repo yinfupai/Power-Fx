@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31613.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{4269F3C3-6B42-419B-B64A-3E6DC0F1574A}"
+	ProjectSection(SolutionItems) = preProject
+		libraries\Directory.Build.props = libraries\Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.PowerFx.Core", "libraries\Microsoft.PowerFx.Core\Microsoft.PowerFx.Core.csproj", "{C4AE1B00-36BB-4D5F-8CC9-E51979BE2830}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.PowerFx.Interpreter", "libraries\Microsoft.PowerFx.Interpreter\Microsoft.PowerFx.Interpreter.csproj", "{E59979B0-F267-46DC-B628-941D31C3CB7C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.PowerFx.LanguageServerProtocol", "libraries\Microsoft.PowerFx.LanguageServerProtocol\Microsoft.PowerFx.LanguageServerProtocol.csproj", "{AC286BA6-D439-4EDA-A468-2B18DB53E163}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "pfx", "..\..\powerfx\pfx.csproj", "{2EE973E5-F052-4D6C-9627-4482940BC13A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C4AE1B00-36BB-4D5F-8CC9-E51979BE2830}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4AE1B00-36BB-4D5F-8CC9-E51979BE2830}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4AE1B00-36BB-4D5F-8CC9-E51979BE2830}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4AE1B00-36BB-4D5F-8CC9-E51979BE2830}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E59979B0-F267-46DC-B628-941D31C3CB7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E59979B0-F267-46DC-B628-941D31C3CB7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E59979B0-F267-46DC-B628-941D31C3CB7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E59979B0-F267-46DC-B628-941D31C3CB7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC286BA6-D439-4EDA-A468-2B18DB53E163}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC286BA6-D439-4EDA-A468-2B18DB53E163}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC286BA6-D439-4EDA-A468-2B18DB53E163}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC286BA6-D439-4EDA-A468-2B18DB53E163}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EE973E5-F052-4D6C-9627-4482940BC13A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EE973E5-F052-4D6C-9627-4482940BC13A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EE973E5-F052-4D6C-9627-4482940BC13A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EE973E5-F052-4D6C-9627-4482940BC13A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {30372F91-B206-4351-A621-F0E2773C337B}
+	EndGlobalSection
+EndGlobal

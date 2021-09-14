@@ -1,0 +1,112 @@
+﻿//------------------------------------------------------------------------------
+// <copyright company="Microsoft Corporation">
+//     Copyright (c) Microsoft Corporation.  All rights reserved.
+// </copyright>
+//------------------------------------------------------------------------------
+
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+
+namespace Microsoft.AppMagic.Authoring.Texl
+{
+    internal abstract class StringOneArgFunction : BuiltinFunction
+    {
+        public override bool IsSelfContained => true;
+
+        public StringOneArgFunction(string name, TexlStrings.StringGetter description, FunctionCategories functionCategories)
+            : base(name, description, functionCategories, DType.String, 0, 1, 1, DType.String)
+        { }
+
+        public StringOneArgFunction(string name, TexlStrings.StringGetter description, FunctionCategories functionCategories, DType returnType)
+            : base(name, description, functionCategories, returnType, 0, 1, 1, DType.String)
+        { }
+
+        public override IEnumerable<TexlStrings.StringGetter[]> GetSignatures()
+        {
+            yield return new [] { TexlStrings.StringFuncArg1 };
+        }
+
+        public override bool IsRowScopedServerDelegatable(CallNode callNode, TexlBinding binding, OperationCapabilityMetadata metadata)
+        {
+            Contracts.AssertValue(callNode);
+            Contracts.AssertValue(binding);
+            Contracts.AssertValue(metadata);
+
+            if (FunctionDelegationCapability.Capabilities == DelegationCapability.None ||
+                binding.ErrorContainer.HasErrors(callNode) ||
+                !CheckArgsCount(callNode, binding) ||
+                !binding.IsRowScope(callNode))
+            {
+                return false;
+            }
+
+            TexlNode[] args = callNode.Args.Children.VerifyValue();
+            NodeKind argKind = args[0].VerifyValue().Kind;
+
+            switch (argKind)
+            {
+            case NodeKind.FirstName:
+                {
+                    var firstNameStrategy = GetFirstNameNodeDelegationStrategy();
+                    return firstNameStrategy.IsValidFirstNameNode(args[0].AsFirstName(), binding, null);
+                }
+            case NodeKind.Call:
+                {
+                    if (!metadata.IsDelegationSupportedByTable(FunctionDelegationCapability))
+                        return false;
+
+                    var cNodeStrategy = GetCallNodeDelegationStrategy();
+                    return cNodeStrategy.IsValidCallNode(args[0].AsCall(), binding, metadata);
+                }
+            case NodeKind.DottedName:
+                {
+                    var dottedStrategy = GetDottedNameNodeDelegationStrategy();
+                    return dottedStrategy.IsValidDottedNameNode(args[0].AsDottedName(), binding, metadata, null);
+                }
+            default:
+                break;
+            }
+
+            return false;
+        }
+    }
+
+    internal abstract class StringOneArgTableFunction : BuiltinFunction
+    {
+        public override bool IsSelfContained => true;
+
+        public StringOneArgTableFunction(string name, TexlStrings.StringGetter description, FunctionCategories functionCategories)
+            : base(name, description, functionCategories, DType.EmptyTable, 0, 1, 1, DType.EmptyTable)
+        { }
+
+        public override IEnumerable<TexlStrings.StringGetter[]> GetSignatures()
+        {
+            yield return new [] { TexlStrings.StringTFuncArg1 };
+        }
+
+        public override string GetUniqueTexlRuntimeName(bool isPrefetching = false)
+        {
+            return GetUniqueTexlRuntimeName(suffix: "_T");
+        }
+
+        public override bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        {
+            Contracts.AssertValue(args);
+            Contracts.AssertAllValues(args);
+            Contracts.AssertValue(argTypes);
+            Contracts.Assert(args.Length == argTypes.Length);
+            Contracts.Assert(args.Length == 1);
+            Contracts.AssertValue(errors);
+
+            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType);
+            Contracts.Assert(returnType.IsTable);
+
+            // Typecheck the input table
+            fValid &= CheckStringColumnType(argTypes[0], args[0], errors);
+
+            returnType = argTypes[0];
+            return fValid;
+        }
+    }
+}
