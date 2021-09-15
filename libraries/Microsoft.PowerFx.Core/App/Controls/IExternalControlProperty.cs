@@ -1,0 +1,34 @@
+﻿//------------------------------------------------------------------------------
+// <copyright company="Microsoft Corporation">
+//     Copyright (c) Microsoft Corporation.  All rights reserved.
+// </copyright>
+//------------------------------------------------------------------------------
+
+using Microsoft.AppMagic.Authoring;
+using Microsoft.AppMagic.Authoring.Texl;
+
+namespace Microsoft.PowerFx.Core.App
+{
+    internal interface IExternalControlProperty
+    {
+        bool IsImmutableOnInstance { get; }
+        bool SupportsPaging { get; }
+        bool RequiresDefaultablePropertyReferences { get; }
+        bool ShouldIncludeThisItemInFormula { get; }
+        DName Name { get; }
+        bool IsTestCaseProperty { get; }
+        bool UseForDataQuerySelects { get; }
+        PropertyRuleCategory PropertyCategory { get; }
+        bool IsScopeVariable { get; }
+        string UnloadedDefault { get; }
+        IExternalControlProperty PassThroughInput { get; }
+        DName InvariantName { get; }
+        bool IsScopedProperty { get; }
+        TexlFunction ScopeFunctionPrototype { get; }
+        DType Type { get; }
+        bool IsTable { get; }
+        bool IsEnum { get; }
+        bool Hidden { get; }
+        DType GetOpaqueType();
+    }
+}

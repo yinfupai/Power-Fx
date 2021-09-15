@@ -1,0 +1,41 @@
+﻿//------------------------------------------------------------------------------
+// <copyright company="Microsoft Corporation">
+//     Copyright (c) Microsoft Corporation.  All rights reserved.
+// </copyright>
+//------------------------------------------------------------------------------
+
+using System.Collections.Generic;
+using Microsoft.AppMagic.Authoring.Texl.SourceInformation;
+
+namespace Microsoft.AppMagic.Authoring.Texl
+{
+    internal class ParseResult
+    {
+        internal TexlNode Root { get; }
+
+        internal List<TexlError> Errors { get; }
+
+        internal bool HasError { get; }
+
+        internal List<CommentToken> Comments { get; }
+
+        internal SourceList Before { get; }
+
+        internal SourceList After { get; }
+
+        public ParseResult(TexlNode root, List<TexlError> errors, bool hasError, List<CommentToken> comments, SourceList before, SourceList after)
+        {
+            Contracts.AssertValue(root);
+            Contracts.AssertValue(comments);
+            // You can have an empty error list and still have a semi-silent error, but if you have an error in your list there must have been an error.
+            Contracts.Assert(errors != null ? hasError : true);
+
+            Root = root;
+            Errors = errors;
+            HasError = hasError;
+            Comments = comments;
+            Before = before;
+            After = after;
+        }
+    }
+}

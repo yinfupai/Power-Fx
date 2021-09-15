@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), Build.props))\Build.props" />
+  <ItemGroup>
+    <ProjectFile Include="PowerFx.Core.Tests\PowerFx.Core.Tests.csproj" />
+    <ProjectFile Include="PowerFx.Interpreter.Tests\PowerFx.Interpreter.Tests.csproj" />
+    <ProjectFile Include="PowerFx.Dataverse.Tests\PowerFx.Dataverse.Tests.csproj" />
+    <ProjectFile Include="PowerFx.JS.Tests\PowerFx.JS.Tests.csproj" />
+  </ItemGroup>
+  <Import Project="$(SourcePath)\Build.Traversal.targets" />
+</Project>

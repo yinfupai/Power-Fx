@@ -1,0 +1,76 @@
+﻿//------------------------------------------------------------------------------
+// <copyright company="Microsoft Corporation">
+//     Copyright (c) Microsoft Corporation.  All rights reserved.
+// </copyright>
+//------------------------------------------------------------------------------
+
+using Microsoft.AppMagic.Common;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Microsoft.AppMagic.Authoring.Texl
+{
+    /// <summary>
+    /// Ensures that only errors under a given severity will be posted. This is
+    /// useful if you're calling a function to check validity and don't want error
+    /// side effects, but also want to provide warnings, for instance.
+    /// </summary>
+    internal class LimitedSeverityErrorContainer : IErrorContainer
+    {
+        private IErrorContainer errors;
+        private DocumentErrorSeverity maximumSeverity;
+
+        public DocumentErrorSeverity DefaultSeverity => errors.DefaultSeverity;
+
+        public LimitedSeverityErrorContainer(IErrorContainer errors, DocumentErrorSeverity maximumSeverity)
+        {
+            this.errors = errors;
+            this.maximumSeverity = maximumSeverity;
+        }
+
+        public TexlError EnsureError(TexlNode node, StringResources.ErrorResourceKey errKey, params object[] args)
+        {
+            if (DefaultSeverity <= maximumSeverity)
+            {
+                return errors.EnsureError(node, errKey, args);
+            }
+            return null;
+        }
+
+        public TexlError EnsureError(DocumentErrorSeverity severity, TexlNode node, StringResources.ErrorResourceKey errKey, params object[] args)
+        {
+            if (severity <= this.maximumSeverity)
+            {
+                return errors.EnsureError(severity, node, errKey, args);
+            }
+            return null;
+        }
+
+        public TexlError Error(TexlNode node, StringResources.ErrorResourceKey errKey, params object[] args)
+        {
+            if (DefaultSeverity <= maximumSeverity)
+            {
+                return errors.Error(node, errKey, args);
+            }
+            return null;
+        }
+
+        public TexlError Error(DocumentErrorSeverity severity, TexlNode node, StringResources.ErrorResourceKey errKey, params object[] args)
+        {
+            if (severity <= this.maximumSeverity)
+            {
+                return errors.Error(severity, node, errKey, args);
+            }
+            return null;
+        }
+
+        public void Errors(TexlNode node, DType nodeType, KeyValuePair<string, DType> schemaDifference, DType schemaDifferenceType)
+        {
+            if (DocumentErrorSeverity.Severe <= this.maximumSeverity)
+            {
+                errors.Errors(node, nodeType, schemaDifference, schemaDifferenceType);
+            }
+        }
+    }
+}

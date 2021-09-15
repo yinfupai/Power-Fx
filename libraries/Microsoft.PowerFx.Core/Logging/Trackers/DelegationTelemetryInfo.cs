@@ -1,0 +1,91 @@
+﻿//------------------------------------------------------------------------------
+// <copyright company="Microsoft Corporation">
+//     Copyright (c) Microsoft Corporation.  All rights reserved.
+// </copyright>
+//------------------------------------------------------------------------------
+
+using Microsoft.AppMagic;
+using Microsoft.AppMagic.Authoring;
+using Microsoft.AppMagic.Authoring.Texl;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Microsoft.PowerFx.Core.Logging.Trackers
+{
+    internal sealed class DelegationTelemetryInfo
+    {
+        private readonly string _info;
+
+        private DelegationTelemetryInfo(string info)
+        {
+            Contracts.AssertValue(info);
+
+            _info = info;
+        }
+
+        public string Info => _info;
+
+        public static DelegationTelemetryInfo CreateEmptyDelegationTelemetryInfo()
+        {
+            return new DelegationTelemetryInfo(string.Empty);
+        }
+
+        public static DelegationTelemetryInfo CreateBinaryOpNoSupportedInfoTelemetryInfo(BinaryOp op)
+        {
+            return new DelegationTelemetryInfo(op.ToString());
+        }
+
+        public static DelegationTelemetryInfo CreateUnaryOpNoSupportedInfoTelemetryInfo(UnaryOp op)
+        {
+            return new DelegationTelemetryInfo(op.ToString());
+        }
+
+        public static DelegationTelemetryInfo CreateDataSourceNotDelegatableTelemetryInfo(IExternalDataSource ds)
+        {
+            Contracts.AssertValue(ds);
+
+            return new DelegationTelemetryInfo(ds.Name);
+        }
+
+        public static DelegationTelemetryInfo CreateUndelegatableFunctionTelemetryInfo(TexlFunction func)
+        {
+            Contracts.AssertValueOrNull(func);
+
+            if (func == null)
+                return CreateEmptyDelegationTelemetryInfo();
+
+            return new DelegationTelemetryInfo(func.Name);
+        }
+
+        public static DelegationTelemetryInfo CreateNoDelSupportByColumnTelemetryInfo(FirstNameInfo info)
+        {
+            Contracts.AssertValue(info);
+
+            return new DelegationTelemetryInfo(info.Name);
+        }
+
+        public static DelegationTelemetryInfo CreateNoDelSupportByColumnTelemetryInfo(string columnName)
+        {
+            Contracts.AssertNonEmpty(columnName);
+
+            return new DelegationTelemetryInfo(columnName);
+        }
+
+        public static DelegationTelemetryInfo CreateImpureNodeTelemetryInfo(TexlNode node, TexlBinding binding = null)
+        {
+            Contracts.AssertValue(node);
+            Contracts.AssertValueOrNull(binding);
+
+            switch (node.Kind)
+            {
+                case NodeKind.Call:
+                    var callNode = node.AsCall();
+                    var funcName = binding?.GetInfo(callNode)?.Function?.Name ?? string.Empty;
+                    return new DelegationTelemetryInfo(funcName);
+                default:
+                    return new DelegationTelemetryInfo(node.ToString());
+            }
+        }
+    }
+}

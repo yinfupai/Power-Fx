@@ -1,0 +1,38 @@
+﻿//------------------------------------------------------------------------------
+// <copyright file="EndsWith.cs" company="Microsoft Corporation">
+//     Copyright (c) Microsoft Corporation.  All rights reserved.
+// </copyright>
+//------------------------------------------------------------------------------
+
+using System.Collections.Generic;
+
+namespace Microsoft.AppMagic.Authoring.Texl
+{
+    // EndsWith(text:s, end:s):b
+    // Checks if the text ends with the end string.
+    internal sealed class EndsWithFunction : StringTwoArgFunction
+    {
+        public override DelegationCapability FunctionDelegationCapability { get { return DelegationCapability.EndsWith; } }
+
+        public EndsWithFunction()
+            : base("EndsWith", TexlStrings.AboutEndsWith)
+        { }
+
+        public override bool IsRowScopedServerDelegatable(CallNode callNode, TexlBinding binding, OperationCapabilityMetadata metadata)
+        {
+            Contracts.AssertValue(callNode);
+            Contracts.AssertValue(binding);
+            Contracts.AssertValue(metadata);
+
+            return IsRowScopedServerDelegatableHelper(callNode, binding, metadata);
+        }
+
+        public override IEnumerable<TexlStrings.StringGetter[]> GetSignatures()
+        {
+            yield return new[] { TexlStrings.EndsWithArg1, TexlStrings.EndsWithArg2 };
+        }
+
+        // TASK: 856362
+        // Add overload for single-column table as the input for both endsWith and startsWith.
+    }
+}
