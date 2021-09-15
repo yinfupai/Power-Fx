@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <!-- <PropertyGroup>
-    <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)BotBuilder-DotNet.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)PowerFx.ruleset</CodeAnalysisRuleSet>
     <RunSettingsFilePath>$(MSBuildThisFileDirectory)\CodeCoverage.runsettings</RunSettingsFilePath>
   </PropertyGroup> -->
 
