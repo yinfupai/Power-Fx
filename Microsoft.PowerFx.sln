@@ -14,8 +14,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.PowerFx.Interpret
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.PowerFx.LanguageServerProtocol", "libraries\Microsoft.PowerFx.LanguageServerProtocol\Microsoft.PowerFx.LanguageServerProtocol.csproj", "{AC286BA6-D439-4EDA-A468-2B18DB53E163}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "pfx", "..\..\powerfx\pfx.csproj", "{2EE973E5-F052-4D6C-9627-4482940BC13A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,10 +32,6 @@ Global
 		{AC286BA6-D439-4EDA-A468-2B18DB53E163}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC286BA6-D439-4EDA-A468-2B18DB53E163}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC286BA6-D439-4EDA-A468-2B18DB53E163}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2EE973E5-F052-4D6C-9627-4482940BC13A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2EE973E5-F052-4D6C-9627-4482940BC13A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2EE973E5-F052-4D6C-9627-4482940BC13A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2EE973E5-F052-4D6C-9627-4482940BC13A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
