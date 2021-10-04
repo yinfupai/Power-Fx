@@ -25,7 +25,6 @@
 	<ItemGroup>
 		<PackageReference Include="System.Text.Json" Version="4.7.2" />
 		<PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
-		<PackageReference Include="Microsoft.PowerPlatform.Canvas.TransportAttributes" Version="1.0.1" />
 		<PackageReference Include="System.Memory" Version="4.5.4" />
 	</ItemGroup>
 
@@ -36,5 +35,9 @@
 		<EmbeddedResource Include="$(SolutionDir)\AppMagic\dll\authoringcore\strings\**\Resources.pares" Exclude="..\..\AppMagic\dll\authoringcore\strings\qps-ploc\**" Condition="'$(Configuration)' == 'Release'">
 			<Link>strings\%(RecursiveDir)%(Filename)%(Extension)</Link>
 		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Transport.Runtime.Attributes\Transport.Runtime.Attributes.csproj" />
 	</ItemGroup>
 </Project>
