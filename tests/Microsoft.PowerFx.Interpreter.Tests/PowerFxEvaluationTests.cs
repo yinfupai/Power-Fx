@@ -25,7 +25,7 @@ namespace Microsoft.PowerFx.Interpreter.Tests
             var result = runner.RunTests();
 
             // This number should go to 0 over time
-            Assert.AreEqual(147, result.failed);
+            Assert.AreEqual(145, result.failed);
         }
 
         internal class InterpreterRunner : BaseRunner
