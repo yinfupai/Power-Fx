@@ -18,6 +18,18 @@ Blank()
 >> Sum([1, 2, 1/0, 4, 5], Value)
 #Error
 
+>> Min([1,2,3], Value)
+1
+
+>> Max([1,2,3], Value)
+3
+
+>> Min(1, 2, 3, Blank(), 2, 2)
+1
+
+>> Max(1, 2, 3, Blank(), 2, 2)
+3
+
 >> IsBlank(Average(Filter([1,2,3],Value > 10), Value))
 #Error
 
