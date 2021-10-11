@@ -179,6 +179,17 @@ namespace Microsoft.PowerFx.Functions
                     )
             },
             {
+                BuiltinFunctionsCore.DateValue,
+                StandardErrorHandling<StringValue>(
+                    expandArguments: NoArgExpansion,
+                    replaceBlankValues: DoNotReplaceBlank,
+                    checkRuntimeTypes: ExactValueTypeOrBlank<StringValue>,
+                    checkRuntimeValues: DeferRuntimeValueChecking,
+                    returnBehavior: ReturnBehavior.AlwaysEvaluateAndReturnResult,
+                    DateValue
+                    )
+            },
+            {
                 BuiltinFunctionsCore.IsBlank,
                 StandardErrorHandling<FormulaValue>(
                     expandArguments: NoArgExpansion,

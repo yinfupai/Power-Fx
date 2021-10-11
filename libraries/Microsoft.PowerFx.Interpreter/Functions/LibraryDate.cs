@@ -118,5 +118,13 @@ namespace Microsoft.PowerFx.Functions
 
             return new DateValue(irContext, new DateTime(year, month, day));
         }
+
+        public static FormulaValue DateValue(IRContext irContext, StringValue[] args)
+        {
+            var stringInput = args[0].Value;
+            var inputDateTime = Convert.ToDateTime(stringInput, System.Threading.Thread.CurrentThread.CurrentCulture);
+
+            return new DateValue(irContext, inputDateTime);
+        }
     }
 }
