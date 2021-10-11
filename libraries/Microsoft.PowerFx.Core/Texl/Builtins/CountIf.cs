@@ -5,6 +5,7 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -13,6 +14,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal sealed class CountIfFunction : FilterFunctionBase
     {
         public override bool RequiresErrorContext => true;
+        public override bool SupportsParamCoercion => false;
 
         public override DelegationCapability FunctionDelegationCapability { get { return DelegationCapability.Filter | DelegationCapability.Count; } }
         public CountIfFunction()
@@ -37,14 +39,14 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return base.GetSignatures(arity);
         }
 
-        public override bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
             Contracts.AssertValue(argTypes);
             Contracts.Assert(args.Length == argTypes.Length);
             Contracts.AssertValue(errors);
 
-            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType);
+            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType, out nodeToCoercedTypeMap);
             Contracts.Assert(returnType == DType.Number);
 
             // Ensure that all the args starting at index 1 are booleans.

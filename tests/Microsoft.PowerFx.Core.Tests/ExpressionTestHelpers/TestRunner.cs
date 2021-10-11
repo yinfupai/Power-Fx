@@ -123,11 +123,12 @@ namespace Microsoft.PowerFx.Core.Tests
         }
 
 
-        public (int total, int failed, int passed) RunTests()
+        public (int total, int failed, int passed, string output) RunTests()
         {
             int total = 0;
             int fail = 0;
             int pass = 0;
+            StringBuilder sb = new StringBuilder();
 
             foreach (var test in _tests)
             {
@@ -155,32 +156,33 @@ namespace Microsoft.PowerFx.Core.Tests
                     {
                         // Pass!
                         pass++;
-                        Console.Write(".");
+                        sb.Append(".");
                         continue;
                     }
 
                     if (actualStr == expected)
                     {
                         pass++;
-                        Console.Write(".");
+                        sb.Append(".");
                     }
                     else
                     {
-                        Console.WriteLine();
-                        Console.WriteLine($"FAIL: {engineName}, {Path.GetFileName(test.SourceFile)}:{test.SourceLine}");
-                        Console.WriteLine($"FAIL: {test.Input}");
-                        Console.WriteLine($"expected: {expected}");
-                        Console.WriteLine($"actual  : {actualStr}");
-                        Console.WriteLine();
+                        sb.AppendLine();
+                        sb.AppendLine($"FAIL: {engineName}, {Path.GetFileName(test.SourceFile)}:{test.SourceLine}");
+                        sb.AppendLine($"FAIL: {test.Input}");
+                        sb.AppendLine($"expected: {expected}");
+                        sb.AppendLine($"actual  : {actualStr}");
+                        sb.AppendLine();
                         fail++;
                         continue;
                     }
                 }
             }
 
-            Console.WriteLine();
-            Console.WriteLine($"{total} total. {pass} passed. {fail} failed");
-            return (total, fail, pass);
+            sb.AppendLine();
+            sb.AppendLine($"{total} total. {pass} passed. {fail} failed");
+            Console.WriteLine(sb.ToString());
+            return (total, fail, pass, sb.ToString());
         }
 
         internal static string TestToString(FormulaValue result)

@@ -5,6 +5,7 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -13,6 +14,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     {
         private static readonly string TableKindString = DType.EmptyTable.GetKindString();
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => true;
 
         public ColorFadeTFunction()
             : base("ColorFade", TexlStrings.AboutColorFadeT, FunctionCategories.Table, DType.EmptyTable, 0, 2, 2)
@@ -30,7 +32,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return GetUniqueTexlRuntimeName(suffix: "_T");
         }
 
-        public override bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
             Contracts.AssertAllValues(args);
@@ -39,7 +41,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.AssertValue(errors);
             Contracts.Assert(MinArity <= args.Length && args.Length <= MaxArity);
 
-            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType);
+            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType, out nodeToCoercedTypeMap);
 
             DType type0 = argTypes[0];
             DType type1 = argTypes[1];
@@ -51,14 +53,14 @@ namespace Microsoft.AppMagic.Authoring.Texl
             if (type0.IsTable)
             {
                 // Ensure we have a one-column table of colors.
-                fValid &= CheckColorColumnType(type0, args[0], errors);
+                fValid &= CheckColorColumnType(type0, args[0], errors, ref nodeToCoercedTypeMap);
                 // Borrow the return type from the 1st arg.
                 returnType = type0;
                 // Check arg1 below.
                 otherArg = args[1];
                 otherType = type1;
 
-                fValid &= CheckOtherType(otherType, otherArg, DType.Number, errors);
+                fValid &= CheckOtherType(otherType, otherArg, DType.Number, errors, ref nodeToCoercedTypeMap);
 
                 Contracts.Assert(returnType.IsTable);
                 Contracts.Assert(!fValid || returnType.IsColumn);
@@ -66,14 +68,14 @@ namespace Microsoft.AppMagic.Authoring.Texl
             else if (type1.IsTable)
             {
                 // Ensure we have a one-column table of numerics.
-                fValid &= CheckNumericColumnType(type1, args[1], errors);
+                fValid &= CheckNumericColumnType(type1, args[1], errors, ref nodeToCoercedTypeMap);
                 // Since the 1st arg is not a table, make a new table return type *[Result:c]
                 returnType = DType.CreateTable(new TypedName(DType.Color, OneColumnTableResultName));
                 // Check arg0 below.
                 otherArg = args[0];
                 otherType = type0;
 
-                fValid &= CheckOtherType(otherType, otherArg, DType.Color, errors);
+                fValid &= CheckOtherType(otherType, otherArg, DType.Color, errors, ref nodeToCoercedTypeMap);
 
                 Contracts.Assert(returnType.IsTable);
                 Contracts.Assert(!fValid || returnType.IsColumn);
@@ -91,7 +93,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return fValid;
         }
 
-        private bool CheckOtherType(DType otherType, TexlNode otherArg, DType expectedType, IErrorContainer errors)
+        private bool CheckOtherType(DType otherType, TexlNode otherArg, DType expectedType, IErrorContainer errors, ref Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.Assert(otherType.IsValid);
             Contracts.AssertValue(otherArg);
@@ -101,11 +103,17 @@ namespace Microsoft.AppMagic.Authoring.Texl
             if (otherType.IsTable)
             {
                 // Ensure we have a one-column table of numerics/color values based on expected type.
-                return expectedType == DType.Number ? CheckNumericColumnType(otherType, otherArg, errors) : CheckColorColumnType(otherType, otherArg, errors);
+                return expectedType == DType.Number ? CheckNumericColumnType(otherType, otherArg, errors, ref nodeToCoercedTypeMap) : CheckColorColumnType(otherType, otherArg, errors, ref nodeToCoercedTypeMap);
             }
 
             if (expectedType.Accepts(otherType))
                 return true;
+
+            if (otherType.CoercesTo(expectedType))
+            {
+                CollectionUtils.Add(ref nodeToCoercedTypeMap, otherArg, expectedType);
+                return true;
+            }
 
             errors.EnsureError(DocumentErrorSeverity.Severe, otherArg, TexlStrings.ErrTypeError_Ex1_Ex2_Found, TableKindString, expectedType.GetKindString(), otherType.GetKindString());
             return false;

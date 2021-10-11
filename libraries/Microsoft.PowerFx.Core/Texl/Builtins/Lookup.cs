@@ -6,6 +6,7 @@
 
 using Microsoft.PowerFx.Core.Delegation;
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -13,6 +14,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal sealed class LookUpFunction : FilterFunctionBase
     {
         public override bool RequiresErrorContext { get { return true; } }
+        public override bool SupportsParamCoercion => false;
 
         public LookUpFunction()
             : base("LookUp", TexlStrings.AboutLookUp, FunctionCategories.Table, DType.Unknown, 0x6, 2, 3, DType.EmptyTable, DType.Boolean)
@@ -26,7 +28,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             yield return new [] { TexlStrings.LookUpArg1, TexlStrings.LookUpArg2, TexlStrings.LookUpArg3 };
         }
 
-        public override bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
             Contracts.AssertValue(argTypes);
@@ -34,7 +36,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.Assert(args.Length >= 2 && args.Length <= 3);
             Contracts.AssertValue(errors);
 
-            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType);
+            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType, out nodeToCoercedTypeMap);
 
             // The return type is dictated by the last argument (projection) if one exists. Otherwise it's based on first argument (source).
             returnType = args.Length == 2 ? argTypes[0].ToRecord() : argTypes[2];

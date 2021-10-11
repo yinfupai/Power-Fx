@@ -11,6 +11,7 @@ using Microsoft.PowerFx.Core.App;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.PowerFx.Core.App.Controls;
 
 namespace Microsoft.PowerFx.Core.Logging.Trackers
 {

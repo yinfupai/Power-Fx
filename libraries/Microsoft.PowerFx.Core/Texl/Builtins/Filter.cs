@@ -6,6 +6,7 @@
 
 using Microsoft.PowerFx.Core.Delegation;
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {

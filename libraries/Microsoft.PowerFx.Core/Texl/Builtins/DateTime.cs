@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -17,6 +18,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         public override bool RequiresErrorContext => true;
         public override bool IsSelfContained => true;
         public override bool HasPreciseErrors => true;
+        public override bool SupportsParamCoercion => true;
 
         public DateFunction()
             : base("Date", TexlStrings.AboutDate, FunctionCategories.DateTime, DType.Date, 0, 3, 3, DType.Number, DType.Number, DType.Number)
@@ -34,13 +36,14 @@ namespace Microsoft.AppMagic.Authoring.Texl
         public override bool HasPreciseErrors => true;
         public override bool RequiresErrorContext => true;
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => true;
 
         public ExtractDateTimeFunctionBase(string name, TexlStrings.StringGetter description, FunctionCategories fc, DType returnType, BigInteger maskLambdas, int arityMin, int arityMax, params DType[] paramTypes)
             : base(name, description, fc, returnType, maskLambdas, arityMin, arityMax, paramTypes)
         {
             Contracts.Assert(arityMin == 1);
             Contracts.Assert(arityMax == 1);
-            Contracts.Assert(paramTypes[0] == DType.Number);
+            Contracts.Assert(paramTypes[0] == DType.DateTime);
         }
 
         public override bool IsRowScopedServerDelegatable(CallNode callNode, TexlBinding binding, OperationCapabilityMetadata metadata)
@@ -60,6 +63,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         public override bool RequiresErrorContext => true;
         public override bool IsSelfContained => true;
         public override bool HasPreciseErrors => true;
+        public override bool SupportsParamCoercion => true;
 
         public TimeFunction()
             : base("Time", TexlStrings.AboutTime, FunctionCategories.DateTime, DType.Time, 0, 3, 4, DType.Number, DType.Number, DType.Number, DType.Number)
@@ -77,7 +81,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal sealed class YearFunction : ExtractDateTimeFunctionBase
     {
         public YearFunction()
-            : base("Year", TexlStrings.AboutYear, FunctionCategories.DateTime, DType.Number, 0, 1, 1, DType.Number)
+            : base("Year", TexlStrings.AboutYear, FunctionCategories.DateTime, DType.Number, 0, 1, 1, DType.DateTime)
         { }
 
         public override DelegationCapability FunctionDelegationCapability { get { return DelegationCapability.Year | DelegationCapability.Add; } }
@@ -93,7 +97,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal sealed class MonthFunction : ExtractDateTimeFunctionBase
     {
         public MonthFunction()
-            : base("Month", TexlStrings.AboutMonth, FunctionCategories.DateTime, DType.Number, 0, 1, 1, DType.Number)
+            : base("Month", TexlStrings.AboutMonth, FunctionCategories.DateTime, DType.Number, 0, 1, 1, DType.DateTime)
         { }
 
         public override DelegationCapability FunctionDelegationCapability { get { return DelegationCapability.Month | DelegationCapability.Add; } }
@@ -109,7 +113,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal sealed class DayFunction : ExtractDateTimeFunctionBase
     {
         public DayFunction()
-            : base("Day", TexlStrings.AboutDay, FunctionCategories.DateTime, DType.Number, 0, 1, 1, DType.Number)
+            : base("Day", TexlStrings.AboutDay, FunctionCategories.DateTime, DType.Number, 0, 1, 1, DType.DateTime)
         { }
 
         public override DelegationCapability FunctionDelegationCapability { get { return DelegationCapability.Day | DelegationCapability.Add; } }
@@ -126,7 +130,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal sealed class HourFunction : ExtractDateTimeFunctionBase
     {
         public HourFunction()
-            : base("Hour", TexlStrings.AboutHour, FunctionCategories.DateTime, DType.Number, 0, 1, 1, DType.Number)
+            : base("Hour", TexlStrings.AboutHour, FunctionCategories.DateTime, DType.Number, 0, 1, 1, DType.DateTime)
         { }
 
         public override DelegationCapability FunctionDelegationCapability { get { return DelegationCapability.Hour | DelegationCapability.Add; } }
@@ -142,7 +146,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal sealed class MinuteFunction : ExtractDateTimeFunctionBase
     {
         public MinuteFunction()
-            : base("Minute", TexlStrings.AboutMinute, FunctionCategories.DateTime, DType.Number, 0, 1, 1, DType.Number)
+            : base("Minute", TexlStrings.AboutMinute, FunctionCategories.DateTime, DType.Number, 0, 1, 1, DType.DateTime)
         { }
 
         public override DelegationCapability FunctionDelegationCapability { get { return DelegationCapability.Minute | DelegationCapability.Add; } }
@@ -158,7 +162,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal sealed class SecondFunction : ExtractDateTimeFunctionBase
     {
         public SecondFunction()
-            : base("Second", TexlStrings.AboutSecond, FunctionCategories.DateTime, DType.Number, 0, 1, 1, DType.Number)
+            : base("Second", TexlStrings.AboutSecond, FunctionCategories.DateTime, DType.Number, 0, 1, 1, DType.DateTime)
         { }
 
         public override DelegationCapability FunctionDelegationCapability { get { return DelegationCapability.Second | DelegationCapability.Add; } }
@@ -176,6 +180,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         public override bool RequiresErrorContext => true;
         public override bool IsSelfContained => true;
         public override bool HasPreciseErrors => true;
+        public override bool SupportsParamCoercion => true;
 
         public WeekdayFunction()
             : base("Weekday", TexlStrings.AboutWeekday, FunctionCategories.DateTime, DType.Number, 0, 1, 2, DType.DateTime, DType.Number)
@@ -195,6 +200,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         public override bool RequiresErrorContext => true;
         public override bool IsSelfContained => true;
         public override bool HasPreciseErrors => true;
+        public override bool SupportsParamCoercion => true;
 
         public WeekNumFunction()
             : base("WeekNum", TexlStrings.AboutWeekNum, FunctionCategories.DateTime, DType.Number, 0, 1, 2, DType.DateTime, DType.Number)
@@ -212,6 +218,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal sealed class ISOWeekNumFunction : BuiltinFunction
     {
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => true;
 
         public ISOWeekNumFunction()
             : base("ISOWeekNum", TexlStrings.AboutISOWeekNum, FunctionCategories.DateTime, DType.Number, 0, 1, 1, DType.DateTime)
@@ -244,6 +251,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal sealed class DateValueFunction : DateTimeGenericFunction
     {
         public override bool HasPreciseErrors => true;
+        public override bool SupportsParamCoercion => true;
 
         public DateValueFunction()
             : base("DateValue", TexlStrings.AboutDateValue, DType.Date)
@@ -260,6 +268,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal sealed class TimeValueFunction : DateTimeGenericFunction
     {
         public override bool HasPreciseErrors => true;
+        public override bool SupportsParamCoercion => true;
 
         public TimeValueFunction()
             : base("TimeValue", TexlStrings.AboutTimeValue, DType.Time)
@@ -276,6 +285,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal sealed class DateTimeValueFunction : DateTimeGenericFunction
     {
         public override bool HasPreciseErrors => true;
+        public override bool SupportsParamCoercion => true;
 
         public DateTimeValueFunction()
             : base("DateTimeValue", TexlStrings.AboutDateTimeValue, DType.DateTime)
@@ -293,6 +303,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     {
         public override bool RequiresErrorContext => true;
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => true;
 
         internal static readonly List<string> SubDayStringList = new List<string>() { "Hours", "Minutes", "Seconds", "Milliseconds" };
 
@@ -314,7 +325,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return argumentIndex == 2;
         }
 
-        public override bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
             Contracts.AssertAllValues(args);
@@ -323,7 +334,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.AssertValue(errors);
             Contracts.Assert(MinArity <= args.Length && args.Length <= MaxArity);
 
-            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType);
+            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType, out nodeToCoercedTypeMap);
             Contracts.Assert(returnType == DType.DateTime);
 
             DType type0 = argTypes[0];
@@ -358,6 +369,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     {
         public override bool RequiresErrorContext => true;
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => true;
 
         public DateAddTFunction()
             : base("DateAdd", TexlStrings.AboutDateAddT, FunctionCategories.Table, DType.EmptyTable, 0, 2, 3)
@@ -374,7 +386,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return GetUniqueTexlRuntimeName(suffix: "_T");
         }
 
-        public override bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
             Contracts.AssertAllValues(args);
@@ -383,7 +395,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.AssertValue(errors);
             Contracts.Assert(MinArity <= args.Length && args.Length <= MaxArity);
 
-            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType);
+            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType, out nodeToCoercedTypeMap);
 
             DType type0 = argTypes[0];
             DType type1 = argTypes[1];
@@ -394,7 +406,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             {
                 // Ensure we have a one-column table of dates/dateTimes. Since dateTime is the supertype, checking
                 // for DateTime alone is sufficient.
-                fValid &= CheckDateColumnType(type0, args[0], errors);
+                fValid &= CheckDateColumnType(type0, args[0], errors, ref nodeToCoercedTypeMap);
 
                 // Borrow the return type from the 1st arg
                 returnType = type0;
@@ -409,6 +421,10 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 {
                     returnType = DType.CreateTable(new TypedName(DType.Date, OneColumnTableResultName));
                 }
+                else if (type0.CoercesTo(DType.DateTime))
+                {
+                    CollectionUtils.Add(ref nodeToCoercedTypeMap, args[0], DType.DateTime);
+                }
                 else
                 {
                     fValid = false;
@@ -419,12 +435,19 @@ namespace Microsoft.AppMagic.Authoring.Texl
             // Arg1 should be either a number or a column of numbers.
             if (type1.IsTable)
             {
-                fValid &= CheckNumericColumnType(type1, args[1], errors);
+                fValid &= CheckNumericColumnType(type1, args[1], errors, ref nodeToCoercedTypeMap);
             }
             else if (!DType.Number.Accepts(type1))
             {
-                fValid = false;
-                errors.EnsureError(DocumentErrorSeverity.Severe, args[1], TexlStrings.ErrNumberExpected);
+                if (type1.CoercesTo(DType.Number))
+                {
+                    CollectionUtils.Add(ref nodeToCoercedTypeMap, args[1], DType.Number);
+                }
+                else
+                {
+                    fValid = false;
+                    errors.EnsureError(DocumentErrorSeverity.Severe, args[1], TexlStrings.ErrNumberExpected);
+                }
             }
 
             bool hasUnits = args.Length == 3;
@@ -453,6 +476,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         public override bool RequiresErrorContext => true;
         public override bool IsSelfContained => true;
         public override bool HasPreciseErrors => true;
+        public override bool SupportsParamCoercion => true;
 
         public DateDiffFunction()
             : base("DateDiff", TexlStrings.AboutDateDiff, FunctionCategories.DateTime, DType.Number, 0, 2, 3, DType.DateTime, DType.DateTime, DType.String)
@@ -478,6 +502,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     {
         public override bool RequiresErrorContext => true;
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => true;
 
         public DateDiffTFunction()
             : base("DateDiff", TexlStrings.AboutDateDiffT, FunctionCategories.Table, DType.EmptyTable, 0, 2, 3)
@@ -494,7 +519,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return GetUniqueTexlRuntimeName(suffix: "_T");
         }
 
-        public override bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
             Contracts.AssertAllValues(args);
@@ -503,7 +528,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.AssertValue(errors);
             Contracts.Assert(MinArity <= args.Length && args.Length <= MaxArity);
 
-            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType);
+            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType, out nodeToCoercedTypeMap);
 
             DType type0 = argTypes[0];
             DType type1 = argTypes[1];
@@ -514,24 +539,38 @@ namespace Microsoft.AppMagic.Authoring.Texl
             if (type0.IsTable)
             {
                 // Ensure we have a one-column table of dates
-                fValid &= CheckDateColumnType(type0, args[0], errors);
+                fValid &= CheckDateColumnType(type0, args[0], errors, ref nodeToCoercedTypeMap);
             }
             else if (!DType.DateTime.Accepts(type0))
             {
-                fValid = false;
-                errors.EnsureError(DocumentErrorSeverity.Severe, args[0], TexlStrings.ErrDateExpected);
+                if (type0.CoercesTo(DType.DateTime))
+                {
+                    CollectionUtils.Add(ref nodeToCoercedTypeMap, args[0], DType.DateTime);
+                }
+                else
+                {
+                    fValid = false;
+                    errors.EnsureError(DocumentErrorSeverity.Severe, args[0], TexlStrings.ErrDateExpected);
+                }
             }
 
             // Arg1 should be either a a date or a column of dates.
             if (type1.IsTable)
             {
                 // Ensure we have a one-column table of dates
-                fValid &= CheckDateColumnType(type1, args[1], errors);
+                fValid &= CheckDateColumnType(type1, args[1], errors, ref nodeToCoercedTypeMap);
             }
             else if (!DType.DateTime.Accepts(type1))
             {
-                fValid = false;
-                errors.EnsureError(DocumentErrorSeverity.Severe, args[1], TexlStrings.ErrDateExpected);
+                if (type1.CoercesTo(DType.DateTime))
+                {
+                    CollectionUtils.Add(ref nodeToCoercedTypeMap, args[1], DType.DateTime);
+                }
+                else
+                {
+                    fValid = false;
+                    errors.EnsureError(DocumentErrorSeverity.Severe, args[1], TexlStrings.ErrDateExpected);
+                }
             }
 
             bool hasUnits = args.Length == 3;

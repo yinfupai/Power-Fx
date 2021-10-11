@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.AppMagic.Authoring.Texl;
 using Microsoft.AppMagic.Common.Telemetry;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 using Microsoft.PowerFx.Core.Utils;
 using Microsoft.PowerFx.Core.Types;
 using PowerApps.Language.Entities;
@@ -94,7 +95,7 @@ namespace Microsoft.AppMagic.Authoring
                 { DKind.Boolean, DKind.Error },
                 { DKind.Number, DKind.Error },
                 { DKind.String, DKind.Error },
-                { DKind.DateTime, DKind.Number },
+                { DKind.DateTime, DKind.Error },
                 { DKind.Hyperlink, DKind.String },
                 { DKind.Guid, DKind.Error },
                 { DKind.Currency, DKind.Number },
@@ -1751,10 +1752,6 @@ namespace Microsoft.AppMagic.Authoring
                     accepts =
                         type.Kind == Kind ||
                         type.Kind == DKind.Currency ||
-                        type.Kind == DKind.DateTime ||
-                        type.Kind == DKind.Date ||
-                        type.Kind == DKind.Time ||
-                        type.Kind == DKind.DateTimeNoTimeZone ||
                         type.Kind == DKind.Unknown ||
                         (type.Kind == DKind.Enum && Accepts(type.GetEnumSupertype()));
                     break;
@@ -1791,16 +1788,15 @@ namespace Microsoft.AppMagic.Authoring
                     accepts = (!exact && type.Kind == DKind.Number) || defaultReturnValue(type);
                     break;
                 case DKind.DateTime:
-                    accepts = (type.Kind == DKind.Date || type.Kind == DKind.Time || type.Kind == DKind.DateTimeNoTimeZone ||
-                               (!exact && type.Kind == DKind.Number)) || defaultReturnValue(type);
+                    accepts = (type.Kind == DKind.Date || type.Kind == DKind.Time || type.Kind == DKind.DateTimeNoTimeZone) || defaultReturnValue(type);
                     break;
                 case DKind.DateTimeNoTimeZone:
-                    accepts = (type.Kind == DKind.Date || type.Kind == DKind.Time || (!exact && type.Kind == DKind.Number)) ||
+                    accepts = (type.Kind == DKind.Date || type.Kind == DKind.Time) ||
                               defaultReturnValue(type);
                     break;
                 case DKind.Date:
                 case DKind.Time:
-                    accepts = (!exact && (type.Kind == DKind.Number || type.Kind == DKind.DateTime || type.Kind == DKind.DateTimeNoTimeZone)) ||
+                    accepts = (!exact && (type.Kind == DKind.DateTime || type.Kind == DKind.DateTimeNoTimeZone)) ||
                               defaultReturnValue(type);
                     break;
                 case DKind.Control:
@@ -2628,7 +2624,8 @@ namespace Microsoft.AppMagic.Authoring
                TypeTree == other.TypeTree &&
                EnumSuperkind == other.EnumSuperkind &&
                ValueTree == other.ValueTree &&
-               HasExpandInfo == other.HasExpandInfo;
+               HasExpandInfo == other.HasExpandInfo &&
+               NamedValueKind == other.NamedValueKind;
         }
 
         // Viewing DType.Invalid in the debugger should be allowed
@@ -2950,7 +2947,9 @@ namespace Microsoft.AppMagic.Authoring
                 case DKind.Boolean:
                     isSafe = Kind != DKind.String;
                     doesCoerce = Kind == DKind.String ||
-                                 DType.Number.Accepts(this) || (Kind == DKind.OptionSetValue && OptionSetInfo != null && OptionSetInfo.IsBooleanValued);
+                                 DType.Number.Accepts(this) ||
+                                 DType.DateTime.Accepts(this) ||
+                                 (Kind == DKind.OptionSetValue && OptionSetInfo != null && OptionSetInfo.IsBooleanValued);
                     break;
                 case DKind.DateTime:
                 case DKind.Date:
@@ -2961,14 +2960,16 @@ namespace Microsoft.AppMagic.Authoring
                     // String to DateTime isn't safe for ill-formatted strings.
                     isSafe = Kind != DKind.String;
                     doesCoerce = Kind == DKind.String ||
-                                 DType.Number.Accepts(this);
+                                 DType.Number.Accepts(this) ||
+                                 DType.DateTime.Accepts(this);
                     break;
                 case DKind.Number:
                     // Ill-formatted strings coerce to null; unsafe.
                     isSafe = Kind != DKind.String;
                     doesCoerce = Kind == DKind.String ||
                                  DType.Number.Accepts(this) ||
-                                 DType.Boolean.Accepts(this);
+                                 DType.Boolean.Accepts(this) ||
+                                 DType.DateTime.Accepts(this);
                     break;
                 case DKind.Currency:
                     // Ill-formatted strings coerce to null; unsafe.
@@ -3371,14 +3372,18 @@ namespace Microsoft.AppMagic.Authoring
                 destinationType.Kind == DKind.Control ||
                 destinationType.Kind == DKind.DataEntity ||
                 destinationType.Kind == DKind.Error)
+            {
                 return false;
+            }
 
             if (sourceType.Kind != DKind.String ||
                 destinationType.Kind == DKind.Hyperlink ||
                 destinationType.Kind == DKind.Image ||
                 destinationType.Kind == DKind.Media ||
                 destinationType.Kind == DKind.Blob)
+            {
                 return sourceType.CoercesTo(destinationType);
+            }
 
             switch (destinationType.Kind)
             {

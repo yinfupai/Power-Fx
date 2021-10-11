@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -14,7 +15,8 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal sealed class FirstLastFunction : FunctionWithTableInput
     {
         public override bool RequiresErrorContext { get { return _isFirst; } }
-        public override bool IsSelfContained => true;
+        public override bool IsSelfContained => true;        
+        public override bool SupportsParamCoercion => false;
 
         private bool _isFirst;
 
@@ -33,14 +35,14 @@ namespace Microsoft.AppMagic.Authoring.Texl
             yield return new [] { TexlStrings.FirstLastArg1 };
         }
 
-        public override bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
             Contracts.AssertValue(argTypes);
             Contracts.Assert(args.Length == argTypes.Length);
             Contracts.AssertValue(errors);
 
-            bool fArgsValid = base.CheckInvocation(args, argTypes, errors, out returnType);
+            bool fArgsValid = base.CheckInvocation(args, argTypes, errors, out returnType, out nodeToCoercedTypeMap);
 
             DType arg0Type = argTypes[0];
             if (arg0Type.IsTable)

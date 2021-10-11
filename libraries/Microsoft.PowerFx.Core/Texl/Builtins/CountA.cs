@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -14,6 +15,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal sealed class CountAFunction : FunctionWithTableInput
     {
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => false;
 
         public CountAFunction()
             : base("CountA", TexlStrings.AboutCountA, FunctionCategories.Table | FunctionCategories.MathAndStat, DType.Number, 0, 1, 1, DType.EmptyTable)
@@ -24,7 +26,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             yield return new [] { TexlStrings.CountArg1 };
         }
 
-        public override bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
             Contracts.AssertAllValues(args);
@@ -33,7 +35,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.AssertValue(errors);
             Contracts.Assert(MinArity <= args.Length && args.Length <= MaxArity);
 
-            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType);
+            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType, out nodeToCoercedTypeMap);
 
             // The argument should be a table of one column.
             DType argType = argTypes[0];

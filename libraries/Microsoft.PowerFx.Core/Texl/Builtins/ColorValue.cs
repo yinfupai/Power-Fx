@@ -14,6 +14,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     {
         public override bool RequiresErrorContext => true;
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => false;
 
         public ColorValueFunction()
             : base("ColorValue", TexlStrings.AboutColorValue, FunctionCategories.Color, DType.Color, 0, 1, 1, DType.String)

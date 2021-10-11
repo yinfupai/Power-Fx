@@ -17,7 +17,7 @@
 ""
 
 >> Left("foo", -1)
-""
+#Error
 
 >> Right("bar", 1)
 "r"
@@ -32,7 +32,7 @@
 ""
 
 >> Right("bar", -1)
-""
+#Error
 
 >> Mid("foobar", 2, 3)
 "oob"

@@ -4,10 +4,12 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Common;
 using System.Collections.Generic;
+using Microsoft.AppMagic.Authoring;
+using Microsoft.AppMagic.Authoring.Texl;
+using Microsoft.AppMagic.Common;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.App.ErrorContainers
 {
     internal interface IErrorContainer
     {
@@ -23,7 +25,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         ///
         /// Severity is defaulted to critical.
         /// </summary>
-        TexlError EnsureError(TexlNode node, StringResources.ErrorResourceKey errKey, params object[] args);
+        TexlError EnsureError(TexlNode node, ErrorResourceKey errKey, params object[] args);
 
         /// <summary>
         /// Adds an error to the container and returns the composed error value
@@ -31,19 +33,19 @@ namespace Microsoft.AppMagic.Authoring.Texl
         ///
         /// Severity is defaulted to critical.
         /// </summary>
-        TexlError Error(TexlNode node, StringResources.ErrorResourceKey errKey, params object[] args);
+        TexlError Error(TexlNode node, ErrorResourceKey errKey, params object[] args);
 
         /// <summary>
         /// Only adds and returns the error if its severity is equal to or higher
         /// than the existing errors for the node in the container.
         /// </summary>
-        TexlError EnsureError(DocumentErrorSeverity severity, TexlNode node, StringResources.ErrorResourceKey errKey, params object[] args);
+        TexlError EnsureError(DocumentErrorSeverity severity, TexlNode node, ErrorResourceKey errKey, params object[] args);
 
         /// <summary>
         /// Adds an error to the container and returns the composed error value
         /// that was inserted.
         /// </summary>
-        TexlError Error(DocumentErrorSeverity severity, TexlNode node, StringResources.ErrorResourceKey errKey, params object[] args);
+        TexlError Error(DocumentErrorSeverity severity, TexlNode node, ErrorResourceKey errKey, params object[] args);
 
         /// <summary>
         /// Used to apply errors due to differing type schemas. Use schemaDifferenceType = DType.Invalid to indicate

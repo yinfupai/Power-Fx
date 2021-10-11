@@ -173,6 +173,11 @@ namespace Microsoft.AppMagic.Authoring.Texl
         }
 
         /// <summary>
+        /// Should unqualified enums be suggested
+        /// </summary>
+        internal virtual bool SuggestUnqualifiedEnums => true;
+
+        /// <summary>
         /// Retrieves an <see cref="EnumSymbol"/> from <see cref="binding"/> (if necessary)
         /// </summary>
         /// <param name="name">
@@ -282,7 +287,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.AssertValue(function);
             Contracts.AssertValue(scopeType);
 
-            return ArgumentSuggestions.GetArgumentSuggestions(TryGetEnumSymbol, function, scopeType, argumentIndex, out requiresSuggestionEscaping);
+            return ArgumentSuggestions.GetArgumentSuggestions(TryGetEnumSymbol, SuggestUnqualifiedEnums, function, scopeType, argumentIndex, out requiresSuggestionEscaping);
         }
 
         /// <summary>

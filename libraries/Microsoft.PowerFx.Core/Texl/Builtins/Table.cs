@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -14,6 +15,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal class TableFunction : BuiltinFunction
     {
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => false;
 
         public TableFunction()
             : base("Table", TexlStrings.AboutTable, FunctionCategories.Table, DType.EmptyTable, 0, 0, int.MaxValue)
@@ -34,7 +36,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         }
 
         // Typecheck an invocation of Table.
-        public override bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
             Contracts.AssertAllValues(args);
@@ -43,7 +45,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.AssertValue(errors);
             Contracts.Assert(MinArity <= args.Length && args.Length <= MaxArity);
 
-            bool isValid = base.CheckInvocation(args, argTypes, errors, out returnType);
+            bool isValid = base.CheckInvocation(args, argTypes, errors, out returnType, out nodeToCoercedTypeMap);
             Contracts.Assert(returnType.IsTable);
 
             // Ensure that all args (if any) are records with compatible schemas.

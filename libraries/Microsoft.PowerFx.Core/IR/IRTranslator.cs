@@ -683,6 +683,9 @@ namespace Microsoft.PowerFx.Core.IR
                 case CoercionKind.TextToBoolean:
                     unaryOpKind = UnaryOpKind.TextToBoolean;
                     break;
+                case CoercionKind.DateTimeToBoolean:
+                    unaryOpKind = UnaryOpKind.DateTimeToBoolean;
+                    break;
                 case CoercionKind.BooleanOptionSetToBoolean:
                     unaryOpKind = UnaryOpKind.BooleanOptionSetToBoolean;
                     break;
@@ -697,6 +700,21 @@ namespace Microsoft.PowerFx.Core.IR
                     break;
                 case CoercionKind.NumberToTime:
                     unaryOpKind = UnaryOpKind.NumberToTime;
+                    break;
+                case CoercionKind.DateTimeToDate:
+                    unaryOpKind = UnaryOpKind.DateTimeToDate;
+                    break;
+                case CoercionKind.DateToDateTime:
+                    unaryOpKind = UnaryOpKind.DateToDateTime;
+                    break;
+                case CoercionKind.DateToTime:
+                    unaryOpKind = UnaryOpKind.DateToTime;
+                    break;
+                case CoercionKind.TimeToDate:
+                    unaryOpKind = UnaryOpKind.TimeToDate;
+                    break;
+                case CoercionKind.TimeToDateTime:
+                    unaryOpKind = UnaryOpKind.TimeToDateTime;
                     break;
                 case CoercionKind.BooleanToOptionSet:
                     unaryOpKind = UnaryOpKind.BooleanToOptionSet;
@@ -793,6 +811,18 @@ namespace Microsoft.PowerFx.Core.IR
         private static IntermediateNode GetBooleanBinaryOp(IRTranslatorContext context, TexlBinaryOpNode node, IntermediateNode left, IntermediateNode right, DType leftType, DType rightType)
         {
             var kindToUse = leftType.Accepts(rightType) ? leftType.Kind : rightType.Kind;
+            
+            if (!leftType.Accepts(rightType) && !rightType.Accepts(leftType))
+            {
+                // There is coercion involved, pick the coerced type.
+                if (context.Binding.TryGetCoercedType(node.Left, out var leftCoerced))
+                    kindToUse = leftCoerced.Kind;
+                else if (context.Binding.TryGetCoercedType(node.Right, out var rightCoerced))
+                    kindToUse = rightCoerced.Kind;
+                else
+                    throw new NotSupportedException();
+            }
+
             switch (kindToUse)
             {
                 case DKind.Number:

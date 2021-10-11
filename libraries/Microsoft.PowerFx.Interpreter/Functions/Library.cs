@@ -179,17 +179,6 @@ namespace Microsoft.PowerFx.Functions
                     )
             },
             {
-                BuiltinFunctionsCore.DateValue,
-                StandardErrorHandling<StringValue>(
-                    expandArguments: NoArgExpansion,
-                    replaceBlankValues: DoNotReplaceBlank,
-                    checkRuntimeTypes: ExactValueTypeOrBlank<StringValue>,
-                    checkRuntimeValues: DeferRuntimeValueChecking,
-                    returnBehavior: ReturnBehavior.AlwaysEvaluateAndReturnResult,
-                    DateValue
-                    )
-            },
-            {
                 BuiltinFunctionsCore.IsBlank,
                 StandardErrorHandling<FormulaValue>(
                     expandArguments: NoArgExpansion,
@@ -312,28 +301,6 @@ namespace Microsoft.PowerFx.Functions
                     )
             },
             {
-                BuiltinFunctionsCore.Max,
-                StandardErrorHandling<FormulaValue>(
-                    expandArguments: NoArgExpansion,
-                    replaceBlankValues: DoNotReplaceBlank,
-                    checkRuntimeTypes: ExactValueTypeOrBlank<NumberValue>,
-                    checkRuntimeValues: FiniteChecker,
-                    returnBehavior: ReturnBehavior.AlwaysEvaluateAndReturnResult,
-                    Max
-                    )
-            },
-            {
-                BuiltinFunctionsCore.MaxT,
-                StandardErrorHandling<FormulaValue>(
-                    expandArguments: NoArgExpansion,
-                    replaceBlankValues: DoNotReplaceBlank,
-                    checkRuntimeTypes: ExactValueTypeSequenceAllowBlanks(typeof(TableValue), typeof(LambdaFormulaValue)),
-                    checkRuntimeValues: DeferRuntimeValueChecking,
-                    returnBehavior: ReturnBehavior.ReturnBlankIfAnyArgIsBlank,
-                    MaxTable
-                    )
-            },
-            {
                 BuiltinFunctionsCore.Mid,
                 StandardErrorHandling<FormulaValue>(
                     expandArguments: MidFunctionExpandArgs,
@@ -346,28 +313,6 @@ namespace Microsoft.PowerFx.Functions
                     checkRuntimeValues: DeferRuntimeValueChecking,
                     returnBehavior: ReturnBehavior.AlwaysEvaluateAndReturnResult,
                     targetFunction: Mid
-                    )
-            },
-            {
-                BuiltinFunctionsCore.Min,
-                StandardErrorHandling<FormulaValue>(
-                    expandArguments: NoArgExpansion,
-                    replaceBlankValues: DoNotReplaceBlank,
-                    checkRuntimeTypes: ExactValueTypeOrBlank<NumberValue>,
-                    checkRuntimeValues: FiniteChecker,
-                    returnBehavior: ReturnBehavior.AlwaysEvaluateAndReturnResult,
-                    Min
-                    )
-            },
-            {
-                BuiltinFunctionsCore.MinT,
-                StandardErrorHandling<FormulaValue>(
-                    expandArguments: NoArgExpansion,
-                    replaceBlankValues: DoNotReplaceBlank,
-                    checkRuntimeTypes: ExactValueTypeSequenceAllowBlanks(typeof(TableValue), typeof(LambdaFormulaValue)),
-                    checkRuntimeValues: DeferRuntimeValueChecking,
-                    returnBehavior: ReturnBehavior.ReturnBlankIfAnyArgIsBlank,
-                    MinTable
                     )
             },
             {

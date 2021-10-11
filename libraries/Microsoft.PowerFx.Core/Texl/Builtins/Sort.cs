@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 using Microsoft.PowerFx.Core.Delegation;
 using Microsoft.PowerFx.Core.Logging.Trackers;
 using Microsoft.PowerFx.Core.Utils;
@@ -18,6 +19,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     {
         private readonly SortOrderValidator _sortOrderValidator;
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => false;
 
         public SortFunction()
             : base("Sort", TexlStrings.AboutSort, FunctionCategories.Table, DType.EmptyTable, 0x02, 2, 3, DType.EmptyTable)
@@ -32,7 +34,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             yield return new [] { TexlStrings.SortArg1, TexlStrings.SortArg2, TexlStrings.SortArg3 };
         }
 
-        public override bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
             Contracts.AssertAllValues(args);
@@ -41,7 +43,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.AssertValue(errors);
             Contracts.Assert(MinArity <= args.Length && args.Length <= MaxArity);
 
-            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType);
+            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType, out nodeToCoercedTypeMap);
             Contracts.Assert(returnType.IsTable);
 
             returnType = argTypes[0];

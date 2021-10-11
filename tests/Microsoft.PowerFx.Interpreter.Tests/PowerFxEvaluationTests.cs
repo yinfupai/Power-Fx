@@ -25,7 +25,18 @@ namespace Microsoft.PowerFx.Interpreter.Tests
             var result = runner.RunTests();
 
             // This number should go to 0 over time
-            Assert.AreEqual(144, result.failed);
+            Assert.AreEqual(166, result.failed);
+        }
+
+        // Use this for local testing of a single testcase (uncomment "TestMethod")
+        // [TestMethod]
+        public void RunSingleTestCase()
+        {
+            var runner = new TestRunner(new InterpreterRunner());
+            runner.AddFile("Testing.txt");
+            var result = runner.RunTests();
+
+            Assert.AreEqual(0, result.failed);
         }
 
         internal class InterpreterRunner : BaseRunner

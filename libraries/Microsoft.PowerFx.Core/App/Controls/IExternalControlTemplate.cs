@@ -6,8 +6,9 @@
 
 using System.Collections.Generic;
 using Microsoft.AppMagic.Authoring;
+using Microsoft.PowerFx.Core.App.Components;
 
-namespace Microsoft.PowerFx.Core.App
+namespace Microsoft.PowerFx.Core.App.Controls
 {
     internal interface IExternalControlTemplate
     {

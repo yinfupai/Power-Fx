@@ -14,6 +14,7 @@ using PowerApps.Language.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.PowerFx.Core.App.Controls;
 
 namespace Microsoft.PowerFx
 {

@@ -7,7 +7,7 @@
 using Microsoft.AppMagic.Authoring;
 using Microsoft.AppMagic.Authoring.Texl;
 
-namespace Microsoft.PowerFx.Core.App
+namespace Microsoft.PowerFx.Core.App.Controls
 {
     internal interface IExternalControlProperty
     {

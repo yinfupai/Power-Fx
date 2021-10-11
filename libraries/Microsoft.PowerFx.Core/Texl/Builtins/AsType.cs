@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AppMagic.Common;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -18,6 +19,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         public override bool IsAsync => true;
         public override bool CanReturnExpandInfo => true;
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => false;
 
         public AsTypeFunction()
             : base(AsTypeInvariantFunctionName, TexlStrings.AboutAsType, FunctionCategories.Table, DType.EmptyRecord, 0, 2, 2, DType.Error /* Polymorphic type is checked in override */, DType.EmptyTable)
@@ -28,7 +30,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             yield return new[] { TexlStrings.AsTypeArg1, TexlStrings.AsTypeArg2 };
         }
 
-        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
             Contracts.AssertAllValues(args);
@@ -37,7 +39,8 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.Assert(argTypes.Length == 2);
             Contracts.AssertValue(errors);
 
-            if (!base.CheckInvocation(binding, args, argTypes, errors, out returnType))
+
+            if (!base.CheckInvocation(binding, args, argTypes, errors, out returnType, out nodeToCoercedTypeMap))
                 return false;
 
             // Check if first argument is poly type or an activity pointer

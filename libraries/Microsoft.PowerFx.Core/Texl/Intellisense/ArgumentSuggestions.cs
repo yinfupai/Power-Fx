@@ -15,7 +15,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
 {
     internal static class ArgumentSuggestions
     {
-        internal delegate IEnumerable<KeyValuePair<string, DType>> GetArgumentSuggestionsDelegate(TryGetEnumSymbol tryGetEnumSymbol, DType scopeType, int argumentIndex, out bool requiresSuggestionEscaping);
+        internal delegate IEnumerable<KeyValuePair<string, DType>> GetArgumentSuggestionsDelegate(TryGetEnumSymbol tryGetEnumSymbol, bool suggestUnqualifiedName, DType scopeType, int argumentIndex, out bool requiresSuggestionEscaping);
         private delegate IEnumerable<KeyValuePair<string, DType>> GetArgumentSuggestionsDelegateWithoutEnum(DType scopeType, int argumentIndex, out bool requiresSuggestionEscaping);
 
         internal delegate bool TryGetEnumSymbol(string symbolName, out EnumSymbol symbol);
@@ -36,10 +36,10 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 { typeof(ValueFunction), LanguageCodeSuggestion },
             }, isThreadSafe: true);
 
-        public static IEnumerable<KeyValuePair<string, DType>> GetArgumentSuggestions(TryGetEnumSymbol tryGetEnumSymbol, TexlFunction function, DType scopeType, int argumentIndex, out bool requiresSuggestionEscaping)
+        public static IEnumerable<KeyValuePair<string, DType>> GetArgumentSuggestions(TryGetEnumSymbol tryGetEnumSymbol, bool suggestUnqualifiedEnums, TexlFunction function, DType scopeType, int argumentIndex, out bool requiresSuggestionEscaping)
         {
             if (CustomFunctionSuggestionProviders.Value.TryGetValue(function.GetType(), out var suggestor))
-                return suggestor(tryGetEnumSymbol, scopeType, argumentIndex, out requiresSuggestionEscaping);
+                return suggestor(tryGetEnumSymbol, suggestUnqualifiedEnums, scopeType, argumentIndex, out requiresSuggestionEscaping);
 
             requiresSuggestionEscaping = false;
             return Enumerable.Empty<KeyValuePair<string, DType>>();
@@ -52,7 +52,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
 
         private static GetArgumentSuggestionsDelegate DiscardEnumParam(GetArgumentSuggestionsDelegateWithoutEnum suggestor)
         {
-            return (TryGetEnumSymbol tryGetEnumSymbol, DType scopeType, int argumentIndex, out bool requiresSuggestionEscaping) =>
+            return (TryGetEnumSymbol tryGetEnumSymbol, bool suggestUnqualifedEnums, DType scopeType, int argumentIndex, out bool requiresSuggestionEscaping) =>
                 suggestor(scopeType, argumentIndex, out requiresSuggestionEscaping);
         }
 
@@ -61,6 +61,9 @@ namespace Microsoft.AppMagic.Authoring.Texl
         /// </summary>
         /// <param name="tryGetEnumSymbol">
         /// Getter for enum symbols intended for the suggestions
+        /// </param>
+        /// <param name="suggestUnescapedEnums">
+        /// Whether to suggest unescaped enums
         /// </param>
         /// <param name="scopeType">
         /// Type of the enclosing scope from where intellisense is run
@@ -74,7 +77,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         /// <returns>
         /// Enumerable of suggestions wherein the key is the suggestion text and the value is its type
         /// </returns>
-        private static IEnumerable<KeyValuePair<string, DType>> TextSuggestions(TryGetEnumSymbol tryGetEnumSymbol, DType scopeType, int argumentIndex, out bool requiresSuggestionEscaping)
+        private static IEnumerable<KeyValuePair<string, DType>> TextSuggestions(TryGetEnumSymbol tryGetEnumSymbol, bool suggestUnescapedEnums, DType scopeType, int argumentIndex, out bool requiresSuggestionEscaping)
         {
             Contracts.Assert(scopeType.IsValid);
             Contracts.Assert(0 <= argumentIndex);
@@ -148,12 +151,12 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return EnumerableUtils.Yield<KeyValuePair<string, DType>>();
         }
 
-        private static IEnumerable<KeyValuePair<string, DType>> TimeUnitSuggestions(TryGetEnumSymbol tryGetEnumSymbol, DType scopeType, int argumentIndex, out bool requiresSuggestionEscaping)
+        private static IEnumerable<KeyValuePair<string, DType>> TimeUnitSuggestions(TryGetEnumSymbol tryGetEnumSymbol, bool suggestUnqualifedEnums, DType scopeType, int argumentIndex, out bool requiresSuggestionEscaping)
         {
             Contracts.Assert(scopeType.IsValid);
             Contracts.Assert(2 == argumentIndex);
 
-            requiresSuggestionEscaping = true;
+            requiresSuggestionEscaping = false;
             var retVal = new List<KeyValuePair<string, DType>>();
 
             if (argumentIndex == 2 && tryGetEnumSymbol(EnumConstants.TimeUnitEnumString, out var enumInfo))
@@ -163,14 +166,21 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 {
                     string locName;
                     enumInfo.TryGetLocValueName(name.Name.Value, out locName).Verify();
-                    retVal.Add(new KeyValuePair<string, DType>(TexlLexer.EscapeName(locName), name.Type));
+                    if (suggestUnqualifedEnums)
+                    {
+                        retVal.Add(new KeyValuePair<string, DType>(TexlLexer.EscapeName(locName), name.Type));
+                    }
+                    else
+                    {
+                        retVal.Add(new KeyValuePair<string, DType>(TexlLexer.EscapeName(enumInfo.Name) + TexlLexer.PunctuatorDot + TexlLexer.EscapeName(locName), name.Type));
+                    }
                 }
             }
 
             return retVal;
         }
 
-        private static IEnumerable<KeyValuePair<string, DType>> LanguageCodeSuggestion(TryGetEnumSymbol tryGetEnumSymbol, DType scopeType, int argumentIndex, out bool requiresSuggestionEscaping)
+        private static IEnumerable<KeyValuePair<string, DType>> LanguageCodeSuggestion(TryGetEnumSymbol tryGetEnumSymbol, bool suggestUnqualifedEnums, DType scopeType, int argumentIndex, out bool requiresSuggestionEscaping)
         {
             Contracts.Assert(scopeType.IsValid);
             Contracts.Assert(0 <= argumentIndex);
@@ -180,7 +190,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         }
 
         // This method returns the suggestions for latter arguments of the If function based on the second argument (the true result)
-        private static IEnumerable<KeyValuePair<string, DType>> IfSuggestions(TryGetEnumSymbol tryGetEnumSymbol, DType scopeType, int argumentIndex, out bool requiresSuggestionEscaping)
+        private static IEnumerable<KeyValuePair<string, DType>> IfSuggestions(TryGetEnumSymbol tryGetEnumSymbol, bool suggestUnqualifedEnums, DType scopeType, int argumentIndex, out bool requiresSuggestionEscaping)
         {
             Contracts.Assert(scopeType.IsValid);
             Contracts.Assert(0 <= argumentIndex);

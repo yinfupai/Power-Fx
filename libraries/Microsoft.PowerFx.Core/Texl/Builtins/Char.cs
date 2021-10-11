@@ -5,6 +5,7 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -14,6 +15,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     {
         public override bool RequiresErrorContext => true;
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => true;
 
         public CharFunction()
             : base("Char", TexlStrings.AboutChar, FunctionCategories.Text, DType.String, 0, 1, 1, DType.Number)
@@ -30,6 +32,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     {
         public override bool RequiresErrorContext => true;
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => true;
 
         public CharTFunction()
             : base("Char", TexlStrings.AboutCharT, FunctionCategories.Table, DType.EmptyTable, 0, 1, 1, DType.EmptyTable)
@@ -45,7 +48,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return GetUniqueTexlRuntimeName(suffix: "_T");
         }
 
-        public override bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
             Contracts.AssertAllValues(args);
@@ -54,11 +57,11 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.AssertValue(errors);
             Contracts.Assert(MinArity <= args.Length && args.Length <= MaxArity);
 
-            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType);
+            bool fValid = base.CheckInvocation(binding, args, argTypes, errors, out returnType, out nodeToCoercedTypeMap);
             Contracts.Assert(returnType.IsTable);
 
             // Typecheck the input table
-            fValid &= CheckNumericColumnType(argTypes[0], args[0], errors);
+            fValid &= CheckNumericColumnType(argTypes[0], args[0], errors, ref nodeToCoercedTypeMap);
 
             // Synthesize a new return type
             returnType = DType.CreateTable(new TypedName(DType.String, OneColumnTableResultName));

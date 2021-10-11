@@ -13,6 +13,7 @@ using System.Threading;
 using Microsoft.AppMagic.Common;
 using Microsoft.AppMagic.Common.Telemetry;
 using Microsoft.PowerFx.Core.App;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 using Microsoft.PowerFx.Core.Delegation;
 using Microsoft.PowerFx.Core.Delegation.DelegationStrategies;
 using Microsoft.PowerFx.Core.Entities.QueryOptions;
@@ -125,6 +126,9 @@ namespace Microsoft.AppMagic.Authoring.Texl
         // Returns true if the function is disabled for data component.
         public virtual bool DisableForDataComponent { get { return false; } }
 
+        // Returns true if the function is disabled for Commmanding
+        public virtual bool DisableForCommanding => false;
+
         // Returns true if the function should be suppressed in Intellisense for component.
         public virtual bool SuppressIntellisenseForComponent => DisableForComponent;
 
@@ -193,14 +197,14 @@ namespace Microsoft.AppMagic.Authoring.Texl
         // Return the index to be used to provide type recommendations for later arguments
         public virtual int SuggestionTypeReferenceParamIndex { get { return 0; } }
 
-        // Return true if the function uses the parent scope to provide suggestions 
+        // Return true if the function uses the parent scope to provide suggestions
         public virtual bool UseParentScopeForArgumentSuggestions { get { return false; } }
 
         // Return true if the function uses the enum namespace for type suggestions
         public virtual bool UsesEnumNamespace { get { return false; } }
 
         // Return true if the function supports parameter coercion.
-        public virtual bool SupportsParamCoercion { get { return false; } }
+        public virtual bool SupportsParamCoercion { get { return true; } }
 
         /// <summary>Indicates whether table and record param types require all columns to be specified in the input argument.</summary>
         public virtual bool RequireAllParamColumns { get { return false; } }
@@ -325,29 +329,18 @@ namespace Microsoft.AppMagic.Authoring.Texl
             MaxArity = arityMax;
             ParamTypes = paramTypes;
 
+            // Locale Specific Name is a legacy piece of code only used by ServiceFunctions.
+            // For all other instances, the name is the same as the En-Us name
             if (!string.IsNullOrEmpty(localeSpecificName))
             {
                 _localeSpecificNamespace = new DPath().Append(new DName(localeSpecificName));
                 LocaleSpecificName = localeSpecificName;
-                Name = LocaleSpecificName;
             }
             else
             {
-                string localeSpecificNamespaceString;
-
-                if (!StringResources.TryGet(Namespace.Name.Value + "_Name", out localeSpecificNamespaceString))
-                    _localeSpecificNamespace = DPath.Root;
-                else
-                    _localeSpecificNamespace = new DPath().Append(new DName(localeSpecificNamespaceString));
-
-                string localeSpecificNameString;
-                if (StringResources.TryGet((Namespace == DPath.Root ? "" : (Namespace.Name.Value + "__")) + _localeInvariantName + "_Name", out localeSpecificNameString))
-                    LocaleSpecificName = localeSpecificNameString;
-                else
-                    LocaleSpecificName = string.Empty;
-
-                Name = string.IsNullOrEmpty(LocaleSpecificName) ? _localeInvariantName : LocaleSpecificName;
+                LocaleSpecificName = LocaleInvariantName;
             }
+            Name = LocaleSpecificName;
         }
 
         // Return all signatures for this function.
@@ -382,23 +375,9 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return char.ToLowerInvariant(name[0]).ToString() + name.Substring(1) + suffix + (IsAsync && !suppressAsync ? "Async" : "");
         }
 
-        public virtual bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
-        {
-            return CheckInvocation(args, argTypes, errors, out returnType);
-        }
-
         public virtual bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             return CheckInvocation(args, argTypes, errors, out returnType, out nodeToCoercedTypeMap);
-        }
-
-        // Type check an invocation of the function with the specified args (and their corresponding types).
-        // Return true if everything aligns, false otherwise.
-        // By default, the out returnType will be the one advertised via the constructor. If this.ReturnType
-        // is either Unknown or an aggregate type, this method needs to be specialized.
-        public virtual bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
-        {
-            return CheckInvocation(args, argTypes, errors, out returnType, out _);
         }
 
         // Type check an invocation of the function with the specified args (and their corresponding types).
@@ -912,17 +891,6 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return false;
         }
 
-        protected bool CheckType(TexlNode node, DType nodeType, DType expectedType, IErrorContainer errors)
-        {
-            Contracts.AssertValue(node);
-            Contracts.Assert(nodeType.IsValid);
-            Contracts.Assert(expectedType.IsValid);
-            Contracts.AssertValue(errors);
-
-            bool matchedWithCoercion;
-            return CheckType(node, nodeType, expectedType, errors, out matchedWithCoercion);
-        }
-
         protected bool CheckType(TexlNode node, DType nodeType, DType expectedType, IErrorContainer errors, out bool matchedWithCoercion)
         {
             return CheckType(node, nodeType, expectedType, errors, SupportsParamCoercion, out matchedWithCoercion);
@@ -975,25 +943,13 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return false;
         }
 
-        private bool CheckColumnType(DType type, TexlNode arg, DType expectedType, IErrorContainer errors, StringResources.ErrorResourceKey errKey)
+        private bool CheckColumnType(DType type, TexlNode arg, DType expectedType, IErrorContainer errors, ErrorResourceKey errKey, ref Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.Assert(type.IsValid);
             Contracts.AssertValue(arg);
             Contracts.Assert(expectedType.IsValid);
             Contracts.AssertValue(errors);
 
-            bool matchedWithCoercion;
-            return CheckColumnType(type, arg, expectedType, errors, errKey, out matchedWithCoercion);
-        }
-
-        private bool CheckColumnType(DType type, TexlNode arg, DType expectedType, IErrorContainer errors, StringResources.ErrorResourceKey errKey, out bool matchedWithCoercion)
-        {
-            Contracts.Assert(type.IsValid);
-            Contracts.AssertValue(arg);
-            Contracts.Assert(expectedType.IsValid);
-            Contracts.AssertValue(errors);
-
-            matchedWithCoercion = false;
             IEnumerable<TypedName> columns;
             if (!type.IsTable || (columns = type.GetNames(DPath.Root)).Count() != 1)
             {
@@ -1007,7 +963,8 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 {
                     if (SupportsParamCoercion && column.Type.CoercesTo(expectedType))
                     {
-                        matchedWithCoercion = true;
+                        expectedType = DType.CreateTable(new TypedName(expectedType, column.Name));
+                        CollectionUtils.Add(ref nodeToCoercedTypeMap, arg, expectedType);
                     }
                     else
                     {
@@ -1021,40 +978,32 @@ namespace Microsoft.AppMagic.Authoring.Texl
         }
 
         // Check that the type of a specified node is a numeric column type, and possibly emit errors
-        // accordingly. Returns true if the types align, false otherwise.
-        public bool CheckNumericColumnType(DType type, TexlNode arg, IErrorContainer errors)
-        {
-            bool matchedWithCoercion;
-            return CheckNumericColumnType(type, arg, errors, out matchedWithCoercion);
-        }
-
-        // Check that the type of a specified node is a numeric column type, and possibly emit errors
         // accordingly. Returns true if the types align, false otherwise. matchedWithCoercion is set
         // to true if the types align only with coercion.
-        public bool CheckNumericColumnType(DType type, TexlNode arg, IErrorContainer errors, out bool matchedWithCoercion)
+        public bool CheckNumericColumnType(DType type, TexlNode arg, IErrorContainer errors, ref Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
-            return CheckColumnType(type, arg, DType.Number, errors, TexlStrings.ErrInvalidSchemaNeedNumCol_Col, out matchedWithCoercion);
+            return CheckColumnType(type, arg, DType.Number, errors, TexlStrings.ErrInvalidSchemaNeedNumCol_Col, ref nodeToCoercedTypeMap);
         }
 
         // Check that the type of a specified node is a color column type, and possibly emit errors
         // accordingly. Returns true if the types align, false otherwise.
-        protected bool CheckColorColumnType(DType type, TexlNode arg, IErrorContainer errors)
+        protected bool CheckColorColumnType(DType type, TexlNode arg, IErrorContainer errors, ref Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
-            return CheckColumnType(type, arg, DType.Color, errors, TexlStrings.ErrInvalidSchemaNeedColorCol_Col);
+            return CheckColumnType(type, arg, DType.Color, errors, TexlStrings.ErrInvalidSchemaNeedColorCol_Col, ref nodeToCoercedTypeMap);
         }
 
         // Check that the type of a specified node is a string column type, and possibly emit errors
         // accordingly. Returns true if the types align, false otherwise.
-        protected bool CheckStringColumnType(DType type, TexlNode arg, IErrorContainer errors)
+        protected bool CheckStringColumnType(DType type, TexlNode arg, IErrorContainer errors, ref Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
-            return CheckColumnType(type, arg, DType.String, errors, TexlStrings.ErrInvalidSchemaNeedStringCol_Col);
+            return CheckColumnType(type, arg, DType.String, errors, TexlStrings.ErrInvalidSchemaNeedStringCol_Col, ref nodeToCoercedTypeMap);
         }
 
         // Check that the type of a specified node is a date column type, and possibly emit errors
         // accordingly. Returns true if the types align, false otherwise.
-        protected bool CheckDateColumnType(DType type, TexlNode arg, IErrorContainer errors)
+        protected bool CheckDateColumnType(DType type, TexlNode arg, IErrorContainer errors, ref Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
-            return CheckColumnType(type, arg, DType.DateTime, errors, TexlStrings.ErrInvalidSchemaNeedDateCol_Col);
+            return CheckColumnType(type, arg, DType.DateTime, errors, TexlStrings.ErrInvalidSchemaNeedDateCol_Col, ref nodeToCoercedTypeMap);
         }
 
         // Enumerate some of the function signatures for a specified arity and known parameter descriptions.
@@ -1251,7 +1200,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
 
         // Check the type of a specified node against an expected type (either desiredType or DType.Table with a desiredType column)
         // and possibly emit errors accordingly. Returns true if the types align, false otherwise.
-        protected bool CheckParamIsTypeOrSingleColumnTable(DType desiredType, TexlNode node, DType nodeType, IErrorContainer errors, out bool isTable, out bool matchedWithCoercion)
+        protected bool CheckParamIsTypeOrSingleColumnTable(DType desiredType, TexlNode node, DType nodeType, IErrorContainer errors, out bool isTable, ref Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.Assert(desiredType.IsValid);
             Contracts.AssertValue(node);
@@ -1259,7 +1208,6 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.AssertValue(errors);
 
             isTable = false;
-            matchedWithCoercion = false;
 
             if (desiredType.Accepts(nodeType))
             {
@@ -1268,7 +1216,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
 
             if (SupportsParamCoercion && nodeType.CoercesTo(desiredType))
             {
-                matchedWithCoercion = true;
+                CollectionUtils.Add(ref nodeToCoercedTypeMap, node, desiredType);
                 return true;
             }
 
@@ -1283,7 +1231,8 @@ namespace Microsoft.AppMagic.Authoring.Texl
                     {
                         if (SupportsParamCoercion && col.Type.CoercesTo(desiredType))
                         {
-                            matchedWithCoercion = true;
+                            desiredType = DType.CreateTable(new TypedName(desiredType, col.Name));
+                            CollectionUtils.Add(ref nodeToCoercedTypeMap, node, desiredType);
                         }
                         else
                         {
@@ -1303,12 +1252,6 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return false;
         }
 
-        protected bool CheckParamIsTypeOrSingleColumnTable(DType desiredType, TexlNode node, DType nodeType, IErrorContainer errors, out bool isTable)
-        {
-            bool unused = false;
-            return CheckParamIsTypeOrSingleColumnTable(desiredType, node, nodeType, errors, out isTable, out unused);
-        }
-
         protected bool CheckAllParamsAreTypeOrSingleColumnTable(DType desiredType, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
@@ -1326,19 +1269,12 @@ namespace Microsoft.AppMagic.Authoring.Texl
             for (int i = 0; i < args.Length; i++)
             {
                 bool isTable;
-                bool matchedWithCoercion;
-                fValid &= CheckParamIsTypeOrSingleColumnTable(desiredType, args[i], argTypes[i], errors, out isTable, out matchedWithCoercion);
-                if (fValid && matchedWithCoercion)
-                {
-                    CollectionUtils.Add(ref nodeToCoercedTypeMap,
-                        args[i],
-                        isTable ? DType.CreateTable(new TypedName(desiredType, argTypes[i].GetNames(DPath.Root).Single().Name)) : desiredType);
-                }
+                fValid &= CheckParamIsTypeOrSingleColumnTable(desiredType, args[i], argTypes[i], errors, out isTable, ref nodeToCoercedTypeMap);
 
                 // If there are any table args, the return type depends on the first such arg.
                 if (isTable && returnType == DType.Invalid)
                 {
-                    if (fValid && matchedWithCoercion)
+                    if (fValid && nodeToCoercedTypeMap.Any())
                         returnType = DType.CreateTable(new TypedName(desiredType, argTypes[i].GetNames(DPath.Root).Single().Name));
                     else
                         returnType = argTypes[i];

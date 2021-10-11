@@ -28,7 +28,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
 
         public override IEnumerable<string> SinkTypeErrors { get { return _nameMapIDs; } }
 
-        public TexlError(Token tok, DocumentErrorSeverity severity, StringResources.ErrorResourceKey errKey, params object[] args)
+        public TexlError(Token tok, DocumentErrorSeverity severity, ErrorResourceKey errKey, params object[] args)
             : base(null, null, DocumentErrorKind.AXL, severity, errKey, args)
         {
             Contracts.AssertValue(tok);
@@ -39,7 +39,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             _nameMapIDs = new List<string>();
         }
 
-        public TexlError(TexlNode node, DocumentErrorSeverity severity, StringResources.ErrorResourceKey errKey, params object[] args)
+        public TexlError(TexlNode node, DocumentErrorSeverity severity, ErrorResourceKey errKey, params object[] args)
             : base(null, null, DocumentErrorKind.AXL, severity, errKey, args)
         {
             Contracts.AssertValue(node);

@@ -5,12 +5,15 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
+
 namespace Microsoft.AppMagic.Authoring.Texl
 {
     // With(scope: object, fn: function)
     internal sealed class WithFunction : BuiltinFunction
     {
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => false;
 
         public WithFunction()
             : base("With", TexlStrings.AboutWith, FunctionCategories.Table, DType.Unknown, 0x2, 2, 2, DType.EmptyRecord)
@@ -29,7 +32,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return GetUniqueTexlRuntimeName(suffix: "_R");
         }
 
-        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(binding);
             Contracts.AssertValue(args);
@@ -39,11 +42,11 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.AssertValue(errors);
 
 
-            // base call yields unknown return type, so we set it accordingly below
-            bool fArgsValid = base.CheckInvocation(args, argTypes, errors, out returnType);
+            // Base call yields unknown return type, so we set it accordingly below
+            bool fArgsValid = base.CheckInvocation(args, argTypes, errors, out returnType, out nodeToCoercedTypeMap);
 
-            // return type determined by second argument (function)
-            // since CheckInvocation is called on partial functions, return type should be error when a second argument is undefined
+            // Return type determined by second argument (function)
+            // Since CheckInvocation is called on partial functions, return type should be error when a second argument is undefined
             if (argTypes.Length >= 2)
             {
                 returnType = argTypes[1];

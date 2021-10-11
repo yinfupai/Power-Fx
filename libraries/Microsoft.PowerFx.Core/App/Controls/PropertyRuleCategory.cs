@@ -5,9 +5,10 @@
 //------------------------------------------------------------------------------
 
 using System;
+using Microsoft.AppMagic;
 using Microsoft.AppMagic.Transport;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.App.Controls
 {
     /// <summary>
     /// Categories of rules and properties, e.g. data, design, behavior.

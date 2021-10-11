@@ -11,6 +11,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.PowerFx.Core.App;
+using Microsoft.PowerFx.Core.App.Components;
+using Microsoft.PowerFx.Core.App.Controls;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 using Microsoft.PowerFx.Core.Glue;
 using Microsoft.PowerFx.Core.Types;
 using PowerApps.Language.Entities;
@@ -1116,22 +1119,22 @@ namespace Microsoft.AppMagic.Authoring.Texl
         /// <summary>
         /// A node's "volatile variables" are the names whose values may at runtime have be modified at some
         /// point before the node to which these variables pertain is executed.
-        /// 
+        ///
         /// e.g. <code>Set(w, 1); Set(x, w); Set(y, x); Set(z, y);</code>
         /// The call node Set(x, w); will have an entry in volatile variables containing just "w", Set(y, x); will
         /// have [w, x], and Set(z, y); will have [w, x, y].
-        /// 
+        ///
         /// <see cref="TexlFunction.GetIdentifierOfModifiedValue"/> reports which variables may be
         /// changed by a call node, and they are recorded when the call node is analyzed and a reference to
         /// its TexlFunction is acquired. They are propagated to subsequent nodes in the variadic operator as
         /// the children of the variadic node are being accepted by the visitor.
-        /// 
+        ///
         /// When the children of the variadic expression are visited, the volatile variables are transferred to the
         /// children's children, and so on and so forth, in a manner obeying that which is being commented.
         /// As the tree is descended, the visitor may encounter a first name node that will receive itself among
         /// the volatile variables of its parent. In such a case, neither this node nor any of its ancestors up to
         /// the root of the chained node may be lifted during code generation.
-        /// 
+        ///
         /// The unliftability propagates back to the ancestors during the post visit traversal of the tree, and is
         /// ultimately read by the code generator when it visits these nodes and may attempt to lift their
         /// expressions.
@@ -2164,6 +2167,49 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 Contracts.Assert(_currentScope == _topScope);
             }
 
+            /// <summary>
+            /// Helper for Lt/leq/geq/gt type checking. Restricts type to be one of the provided set, without coercion (except for primary output props).
+            /// </summary>
+            /// <param name="node">Node for which we are checking the type</param>
+            /// <param name="alternateTypes">List of acceptable types for this operation, in order of suitability</param>
+            /// <returns></returns>
+            private bool CheckComparisonTypeOneOf(TexlNode node, params DType[] alternateTypes)
+            {
+                Contracts.AssertValue(node);
+                Contracts.AssertValue(alternateTypes);
+                Contracts.Assert(alternateTypes.Any());
+
+                DType type = _txb.GetType(node);
+                foreach (var altType in alternateTypes)
+                {
+                    if (!altType.Accepts(type))
+                        continue;
+
+                    return true;
+                }
+
+                // If the node is a control, we may be able to coerce its primary output property
+                // to the desired type, and in the process support simplified syntax such as: slider2 <= slider4
+                IExternalControlProperty primaryOutProp;
+                if (type is IExternalControlType controlType && node.AsFirstName() != null && (primaryOutProp = controlType.ControlTemplate.PrimaryOutputProperty) != null)
+                {
+                    DType outType = primaryOutProp.GetOpaqueType();
+                    var acceptedType = alternateTypes.FirstOrDefault(alt => alt.Accepts(outType));
+                    if (acceptedType != default)
+                    {
+                        // We'll coerce the control to the desired type, by pulling from the control's
+                        // primary output property. See codegen for details.
+                        _txb.SetCoercedType(node, acceptedType);
+                        return true;
+                    }
+                }
+
+                _txb.ErrorContainer.EnsureError(DocumentErrorSeverity.Severe, node, TexlStrings.ErrBadType_ExpectedTypesCSV, string.Join(", ", alternateTypes.Select(t => t.GetKindString())));
+                return false;
+
+            }
+
+
             // Returns whether the node was of the type wanted, and reports appropriate errors.
             // A list of allowed alternate types specifies what other types of values can be coerced to the wanted type.
             private bool CheckType(TexlNode node, DType typeWant, params DType[] alternateTypes)
@@ -2211,7 +2257,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                     }
                 }
 
-                StringResources.ErrorResourceKey messageKey = alternateTypes.Length == 0 ? TexlStrings.ErrBadType_ExpectedType : TexlStrings.ErrBadType_ExpectedTypesCSV;
+                ErrorResourceKey messageKey = alternateTypes.Length == 0 ? TexlStrings.ErrBadType_ExpectedType : TexlStrings.ErrBadType_ExpectedTypesCSV;
                 string messageArg = alternateTypes.Length == 0 ? typeWant.GetKindString() : string.Join(", ", (new[] { typeWant }).Concat(alternateTypes).Select(t => t.GetKindString()));
 
                 _txb.ErrorContainer.EnsureError(DocumentErrorSeverity.Severe, node, messageKey, messageArg);
@@ -2609,6 +2655,14 @@ namespace Microsoft.AppMagic.Authoring.Texl
 
                 FirstNameInfo fnInfo = FirstNameInfo.Create(node, lookupInfo);
                 var lookupType = lookupInfo.Type;
+                // Internal control references are not allowed in component input properties.
+                if (CheckComponentProperty(lookupInfo.Data as IExternalControl))
+                {
+                    _txb.ErrorContainer.Error(node, TexlStrings.ErrInternalControlInInputProperty);
+                    _txb.SetType(node, DType.Error);
+                    _txb.SetInfo(node, fnInfo ?? FirstNameInfo.Create(node, default(NameLookupInfo)));
+                    return;
+                }
                 if (lookupInfo.Kind == BindKind.ThisItem)
                 {
                     _txb._hasThisItemReference = true;
@@ -2681,7 +2735,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 UpdateBindKindUseFlags(lookupInfo.Kind);
 
                 // Update statefulness of global datasources excluding dynamic datasources.
-                if ((lookupInfo.Kind == BindKind.Data && !_txb._glue.IsDynamicDataSourceInfo(lookupInfo.Data))) 
+                if ((lookupInfo.Kind == BindKind.Data && !_txb._glue.IsDynamicDataSourceInfo(lookupInfo.Data)))
                 {
                     _txb.SetStateful(node, true);
                 }
@@ -3174,13 +3228,6 @@ namespace Microsoft.AppMagic.Authoring.Texl
                         }
                     }
 
-                    // Check for component property
-                    if (result.controlInfo != null && !CheckComponentProperty(result.controlInfo))
-                    {
-                        SetDottedNameError(node, TexlStrings.ErrNotAccessibleInCurrentContext);
-                        return;
-                    }
-
                     // If the reference is to Control.Property and the rule for that Property is a constant,
                     // we need to mark the node as constant, and save the control info so we may look up the
                     // rule later.
@@ -3369,9 +3416,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             // Check if the control can be used in current component property
             private bool CheckComponentProperty(IExternalControl control)
             {
-                Contracts.AssertValue(control);
-
-                return _txb._glue.CanControlBeUsedInComponentProperty(_txb, control);
+                return control != null && !_txb._glue.CanControlBeUsedInComponentProperty(_txb, control);
             }
 
             private DType GetEntitySchema(DType entityType, DottedNameNode node)
@@ -3439,7 +3484,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 return info != null;
             }
 
-            protected void SetDottedNameError(DottedNameNode node, StringResources.ErrorResourceKey errKey, params object[] args)
+            protected void SetDottedNameError(DottedNameNode node, ErrorResourceKey errKey, params object[] args)
             {
                 Contracts.AssertValue(node);
                 Contracts.AssertValue(errKey.Key);
@@ -3502,7 +3547,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                         }
                         break;
                     case UnaryOp.Percent:
-                        CheckType(node.Child, DType.Number, /* coerced: */ DType.String, DType.Boolean);
+                        CheckType(node.Child, DType.Number, /* coerced: */ DType.String, DType.Boolean, DType.Date, DType.Time, DType.DateTimeNoTimeZone, DType.DateTime);
                         _txb.SetType(node, DType.Number);
                         break;
                     default:
@@ -3537,8 +3582,8 @@ namespace Microsoft.AppMagic.Authoring.Texl
                     case BinaryOp.Power:
                     case BinaryOp.Mul:
                     case BinaryOp.Div:
-                        CheckType(node.Left, DType.Number, /* coerced: */ DType.String, DType.Boolean);
-                        CheckType(node.Right, DType.Number, /* coerced: */ DType.String, DType.Boolean);
+                        CheckType(node.Left, DType.Number, /* coerced: */ DType.String, DType.Boolean, DType.Date, DType.Time, DType.DateTimeNoTimeZone, DType.DateTime);
+                        CheckType(node.Right, DType.Number, /* coerced: */ DType.String, DType.Boolean, DType.Date, DType.Time, DType.DateTimeNoTimeZone, DType.DateTime);
                         _txb.SetType(node, DType.Number);
                         break;
 
@@ -3550,8 +3595,8 @@ namespace Microsoft.AppMagic.Authoring.Texl
                         break;
 
                     case BinaryOp.Concat:
-                        CheckType(node.Left, DType.String, /* coerced: */ DType.Number, DType.Boolean, DType.OptionSetValue, DType.ViewValue);
-                        CheckType(node.Right, DType.String, /* coerced: */ DType.Number, DType.Boolean, DType.OptionSetValue, DType.ViewValue);
+                        CheckType(node.Left, DType.String, /* coerced: */ DType.Number, DType.Date, DType.Time, DType.DateTimeNoTimeZone, DType.DateTime, DType.Boolean, DType.OptionSetValue, DType.ViewValue);
+                        CheckType(node.Right, DType.String, /* coerced: */ DType.Number, DType.Date, DType.Time, DType.DateTimeNoTimeZone, DType.DateTime, DType.Boolean, DType.OptionSetValue, DType.ViewValue);
                         _txb.SetType(node, DType.String);
                         break;
 
@@ -3572,9 +3617,8 @@ namespace Microsoft.AppMagic.Authoring.Texl
                     case BinaryOp.GreaterEqual:
                         // Excel's type coercion for inequality operators is inconsistent / borderline wrong, so we can't
                         // use it as a reference. For example, in Excel '2 < TRUE' produces TRUE, but so does '2 < FALSE'.
-                        // Sticking to numbers for now until evidence arises to support the need for coercion.
-                        CheckType(node.Left, DType.Number);
-                        CheckType(node.Right, DType.Number);
+                        // Sticking to a restricted set of numeric-like types for now until evidence arises to support the need for coercion.
+                        CheckComparisonArgTypes(node.Left, node.Right);
                         _txb.SetType(node, DType.Boolean);
                         break;
 
@@ -3812,6 +3856,34 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 _txb.SetIsUnliftable(node, _txb.IsUnliftable(node.Left));
             }
 
+            private void CheckComparisonArgTypes(TexlNode left, TexlNode right)
+            {
+                // Excel's type coercion for inequality operators is inconsistent / borderline wrong, so we can't
+                // use it as a reference. For example, in Excel '2 < TRUE' produces TRUE, but so does '2 < FALSE'.
+                // Sticking to a restricted set of numeric-like types for now until evidence arises to support the need for coercion.
+                CheckComparisonTypeOneOf(left, DType.Number, DType.Date, DType.Time, DType.DateTime);
+                CheckComparisonTypeOneOf(right, DType.Number, DType.Date, DType.Time, DType.DateTime);
+
+                DType typeLeft = _txb.GetType(left);
+                DType typeRight = _txb.GetType(right);
+
+                if (!typeLeft.Accepts(typeRight) && !typeRight.Accepts(typeLeft))
+                {
+                    // Handle DateTime <=> Number comparison by coercing one side to Number
+                    if (DType.Number.Accepts(typeLeft) && DType.DateTime.Accepts(typeRight))
+                    {
+                        _txb.SetCoercedType(right, DType.Number);
+                        return;
+                    }
+                    else if (DType.Number.Accepts(typeRight) && DType.DateTime.Accepts(typeLeft))
+                    {
+                        _txb.SetCoercedType(left, DType.Number);
+                        return;
+                    }
+                }
+            }
+
+
             private void CheckEqualArgTypes(TexlNode left, TexlNode right)
             {
                 Contracts.AssertValue(left);
@@ -3872,6 +3944,18 @@ namespace Microsoft.AppMagic.Authoring.Texl
 
                 if (!typeLeft.Accepts(typeRight) && !typeRight.Accepts(typeLeft))
                 {
+                    // Handle DateTime <=> Number comparison
+                    if (DType.Number.Accepts(typeLeft) && DType.DateTime.Accepts(typeRight))
+                    {
+                        _txb.SetCoercedType(right, DType.Number);
+                        return;
+                    }
+                    else if (DType.Number.Accepts(typeRight) && DType.DateTime.Accepts(typeLeft))
+                    {
+                        _txb.SetCoercedType(left, DType.Number);
+                        return;
+                    }
+
                     _txb.ErrorContainer.EnsureError(DocumentErrorSeverity.Warning, left.Parent, TexlStrings.ErrIncompatibleTypesForEquality_Left_Right,
                         typeLeft.GetKindString(),
                         typeRight.GetKindString());
@@ -4435,10 +4519,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 Dictionary<TexlNode, DType> nodeToCoercedTypeMap = null;
 
                 // Typecheck the invocation and infer the return type.
-                if (maybeFunc.SupportsParamCoercion)
-                    fArgsValid &= maybeFunc.CheckInvocation(_txb, args, argTypes, _txb.ErrorContainer, out returnType, out nodeToCoercedTypeMap);
-                else
-                    fArgsValid &= maybeFunc.CheckInvocation(_txb, args, argTypes, _txb.ErrorContainer, out returnType);
+                fArgsValid &= maybeFunc.CheckInvocation(_txb, args, argTypes, _txb.ErrorContainer, out returnType, out nodeToCoercedTypeMap);
 
                 // This is done because later on, if a CallNode has a return type of Error, you can assert HasErrors on it.
                 // This was not done for UnaryOpNodes, BinaryOpNodes, CompareNodes.
@@ -4533,12 +4614,12 @@ namespace Microsoft.AppMagic.Authoring.Texl
                     func.UpdateDataQuerySelects(node, _txb, _txb.QueryOptions);
             }
 
-            private bool IsIncorrectlySideEffectful(CallNode node, out StringResources.ErrorResourceKey errorKey, out CallNode badAncestor)
+            private bool IsIncorrectlySideEffectful(CallNode node, out ErrorResourceKey errorKey, out CallNode badAncestor)
             {
                 Contracts.AssertValue(node);
 
                 badAncestor = null;
-                errorKey = new StringResources.ErrorResourceKey();
+                errorKey = new ErrorResourceKey();
 
                 CallInfo call = _txb.GetInfo(node).VerifyValue();
                 TexlFunction func = call.Function;
@@ -4665,7 +4746,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 bool fArgsValid;
 
                 // Typecheck the invocation and infer the return type.
-                fArgsValid = func.CheckInvocation(_txb, args, argTypes, _txb.ErrorContainer, out returnType);
+                fArgsValid = func.CheckInvocation(_txb, args, argTypes, _txb.ErrorContainer, out returnType, out _);
                 if (!fArgsValid)
                     _txb.ErrorContainer.Error(DocumentErrorSeverity.Severe, node, TexlStrings.ErrInvalidArgs_Func, func.Name);
 
@@ -4813,10 +4894,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 Dictionary<TexlNode, DType> nodeToCoercedTypeMap = null;
 
                 // Typecheck the invocation and infer the return type.
-                if (func.SupportsParamCoercion)
-                    fArgsValid = func.CheckInvocation(_txb, args, argTypes, _txb.ErrorContainer, out returnType, out nodeToCoercedTypeMap);
-                else
-                    fArgsValid = func.CheckInvocation(_txb, args, argTypes, _txb.ErrorContainer, out returnType);
+                fArgsValid = func.CheckInvocation(_txb, args, argTypes, _txb.ErrorContainer, out returnType, out nodeToCoercedTypeMap);
 
                 if (!fArgsValid && !func.HasPreciseErrors)
                     _txb.ErrorContainer.Error(DocumentErrorSeverity.Severe, node, TexlStrings.ErrInvalidArgs_Func, func.Name);
@@ -4897,10 +4975,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
 
                     IErrorContainer warnings = new LimitedSeverityErrorContainer(txb.ErrorContainer, DocumentErrorSeverity.Warning);
                     // Typecheck the invocation and infer the return type.
-                    if (maybeFunc.SupportsParamCoercion)
-                        typeCheckSucceeded = maybeFunc.CheckInvocation(txb, args, argTypes, warnings, out returnType, out nodeToCoercedTypeMap);
-                    else
-                        typeCheckSucceeded = maybeFunc.CheckInvocation(txb, args, argTypes, warnings, out returnType);
+                    typeCheckSucceeded = maybeFunc.CheckInvocation(txb, args, argTypes, warnings, out returnType, out nodeToCoercedTypeMap);
 
                     if (typeCheckSucceeded)
                     {
@@ -4990,7 +5065,8 @@ namespace Microsoft.AppMagic.Authoring.Texl
                     _txb.ErrorContainer.Error(node, TexlStrings.ErrInvalidArgs_Func, someFunc.Name);
 
                 // The final CheckInvocation call will post all the necessary document errors.
-                someFunc.CheckInvocation(_txb, args, argTypes, _txb.ErrorContainer, out returnType);
+                someFunc.CheckInvocation(_txb, args, argTypes, _txb.ErrorContainer, out returnType, out _);
+
                 _txb.SetInfo(node, new CallInfo(someFunc, node));
                 _txb.SetType(node, returnType);
             }

@@ -9,6 +9,7 @@ using Microsoft.PowerFx.Core.Entities.QueryOptions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Numerics;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -17,6 +18,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     {
         public override bool AffectsDataSourceQueryOptions => true;
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => false;
 
         public ShowColumnsFunction()
             : base("ShowColumns", TexlStrings.AboutShowColumns, FunctionCategories.Table, DType.EmptyTable, 0, 2, int.MaxValue, DType.EmptyTable)
@@ -36,7 +38,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return base.GetSignatures(arity);
         }
 
-        public override bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
             Contracts.AssertValue(argTypes);
@@ -44,7 +46,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.AssertValue(errors);
             Contracts.Assert(MinArity <= args.Length && args.Length <= MaxArity);
 
-            bool isValidInvocation = base.CheckInvocation(args, argTypes, errors, out returnType);
+            bool isValidInvocation = base.CheckInvocation(args, argTypes, errors, out returnType, out nodeToCoercedTypeMap);
             Contracts.Assert(returnType.IsTable);
 
             if (!argTypes[0].IsTable)

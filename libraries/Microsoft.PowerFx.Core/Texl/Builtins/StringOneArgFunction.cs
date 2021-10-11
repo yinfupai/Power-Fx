@@ -7,12 +7,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
     internal abstract class StringOneArgFunction : BuiltinFunction
     {
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => true;
 
         public StringOneArgFunction(string name, TexlStrings.StringGetter description, FunctionCategories functionCategories)
             : base(name, description, functionCategories, DType.String, 0, 1, 1, DType.String)
@@ -75,6 +77,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal abstract class StringOneArgTableFunction : BuiltinFunction
     {
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => true;
 
         public StringOneArgTableFunction(string name, TexlStrings.StringGetter description, FunctionCategories functionCategories)
             : base(name, description, functionCategories, DType.EmptyTable, 0, 1, 1, DType.EmptyTable)
@@ -90,7 +93,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return GetUniqueTexlRuntimeName(suffix: "_T");
         }
 
-        public override bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
             Contracts.AssertAllValues(args);
@@ -99,13 +102,22 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.Assert(args.Length == 1);
             Contracts.AssertValue(errors);
 
-            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType);
+            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType, out nodeToCoercedTypeMap);
             Contracts.Assert(returnType.IsTable);
 
             // Typecheck the input table
-            fValid &= CheckStringColumnType(argTypes[0], args[0], errors);
+            fValid &= CheckStringColumnType(argTypes[0], args[0], errors, ref nodeToCoercedTypeMap);
 
-            returnType = argTypes[0];
+            if (nodeToCoercedTypeMap?.Any() ?? false)
+            {
+                // Now set the coerced type to a table with numeric column type with the same name as in the argument.
+                returnType = nodeToCoercedTypeMap[args[0]];
+            }
+            else
+            {
+                returnType = argTypes[0];
+            }
+
             return fValid;
         }
     }

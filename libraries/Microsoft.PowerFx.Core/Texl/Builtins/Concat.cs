@@ -15,6 +15,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal sealed class ConcatFunction : FunctionWithTableInput
     {
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => false;
 
         public ConcatFunction()
             : base("Concat", TexlStrings.AboutConcat, FunctionCategories.Table, DType.String, 0x02, 2, 3, DType.EmptyTable, DType.String)

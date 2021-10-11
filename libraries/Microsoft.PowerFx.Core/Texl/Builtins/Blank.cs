@@ -12,6 +12,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal sealed class BlankFunction : BuiltinFunction
     {
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => true;
 
         public BlankFunction() : base("Blank",
                   TexlStrings.AboutBlank,

@@ -4,10 +4,13 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Common;
 using System.Collections.Generic;
+using Microsoft.AppMagic;
+using Microsoft.AppMagic.Authoring;
+using Microsoft.AppMagic.Authoring.Texl;
+using Microsoft.AppMagic.Common;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.App.ErrorContainers
 {
     internal class ErrorContainer : IErrorContainer
     {
@@ -69,12 +72,12 @@ namespace Microsoft.AppMagic.Authoring.Texl
             }
         }
 
-        public TexlError EnsureError(TexlNode node, StringResources.ErrorResourceKey errKey, params object[] args)
+        public TexlError EnsureError(TexlNode node, ErrorResourceKey errKey, params object[] args)
         {
             return EnsureError(DefaultSeverity, node, errKey, args);
         }
 
-        public TexlError EnsureError(DocumentErrorSeverity severity, TexlNode node, StringResources.ErrorResourceKey errKey, params object[] args)
+        public TexlError EnsureError(DocumentErrorSeverity severity, TexlNode node, ErrorResourceKey errKey, params object[] args)
         {
             Contracts.AssertValue(node);
             Contracts.AssertValue(args);
@@ -85,12 +88,12 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return null;
         }
 
-        public TexlError Error(TexlNode node, StringResources.ErrorResourceKey errKey, params object[] args)
+        public TexlError Error(TexlNode node, ErrorResourceKey errKey, params object[] args)
         {
             return Error(DefaultSeverity, node, errKey, args);
         }
 
-        public TexlError Error(DocumentErrorSeverity severity, TexlNode node, StringResources.ErrorResourceKey errKey, params object[] args)
+        public TexlError Error(DocumentErrorSeverity severity, TexlNode node, ErrorResourceKey errKey, params object[] args)
         {
             Contracts.AssertValue(node);
             Contracts.AssertValue(args);

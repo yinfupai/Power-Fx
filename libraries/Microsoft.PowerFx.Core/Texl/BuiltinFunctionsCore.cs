@@ -116,6 +116,8 @@ namespace Microsoft.AppMagic.Authoring.Texl
         public static readonly TexlFunction Power = _library.Append(new PowerFunction());
         public static readonly TexlFunction PowerT = _library.Append(new PowerTFunction());
         public static readonly TexlFunction Pi = _library.Append(new PiFunction());
+        public static readonly TexlFunction Proper = _library.Append(new ProperFunction());
+        public static readonly TexlFunction ProperT = _library.Append(new ProperTFunction());
         public static readonly TexlFunction Radians = _library.Append(new RadiansFunction());
         public static readonly TexlFunction RadiansT = _library.Append(new RadiansTableFunction());
         public static readonly TexlFunction Rand = _library.Append(new RandFunction());
@@ -135,6 +137,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         public static readonly TexlFunction RoundUpT = _library.Append(new RoundUpTableFunction());
         public static readonly TexlFunction Second = _library.Append(new SecondFunction());
         public static readonly TexlFunction Sequence = _library.Append(new SequenceFunction());
+        public static readonly TexlFunction Shuffle = _library.Append(new ShuffleFunction());
         public static readonly TexlFunction Sin = _library.Append(new SinFunction());
         public static readonly TexlFunction Sort = _library.Append(new SortFunction());
         public static readonly TexlFunction SortByColumns = _library.Append(new SortByColumnsFunction());

@@ -17,6 +17,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         public override bool IsStateless => false;
         public override bool IsSelfContained => true;
         public override bool RequiresErrorContext => true;
+        public override bool SupportsParamCoercion => true;
 
         public RandBetweenFunction()
             : base("RandBetween",

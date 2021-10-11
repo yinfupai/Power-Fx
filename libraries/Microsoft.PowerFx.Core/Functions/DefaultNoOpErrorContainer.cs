@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using Microsoft.AppMagic.Common;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -15,22 +16,22 @@ namespace Microsoft.AppMagic.Authoring.Texl
     {
         public DocumentErrorSeverity DefaultSeverity => DocumentErrorSeverity._Min;
 
-        public TexlError EnsureError(TexlNode node, StringResources.ErrorResourceKey errKey, params object[] args)
+        public TexlError EnsureError(TexlNode node, ErrorResourceKey errKey, params object[] args)
         {
             return null;
         }
 
-        public TexlError Error(TexlNode node, StringResources.ErrorResourceKey errKey, params object[] args)
+        public TexlError Error(TexlNode node, ErrorResourceKey errKey, params object[] args)
         {
             return null;
         }
 
-        public TexlError EnsureError(DocumentErrorSeverity severity, TexlNode node, StringResources.ErrorResourceKey errKey, params object[] args)
+        public TexlError EnsureError(DocumentErrorSeverity severity, TexlNode node, ErrorResourceKey errKey, params object[] args)
         {
             return null;
         }
 
-        public TexlError Error(DocumentErrorSeverity severity, TexlNode node, StringResources.ErrorResourceKey errKey, params object[] args)
+        public TexlError Error(DocumentErrorSeverity severity, TexlNode node, ErrorResourceKey errKey, params object[] args)
         {
             return null;
         }

@@ -4,12 +4,12 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Common;
-using System;
 using System.Collections.Generic;
-using System.Text;
+using Microsoft.AppMagic.Authoring;
+using Microsoft.AppMagic.Authoring.Texl;
+using Microsoft.AppMagic.Common;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.App.ErrorContainers
 {
     /// <summary>
     /// Ensures that only errors under a given severity will be posted. This is
@@ -29,7 +29,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             this.maximumSeverity = maximumSeverity;
         }
 
-        public TexlError EnsureError(TexlNode node, StringResources.ErrorResourceKey errKey, params object[] args)
+        public TexlError EnsureError(TexlNode node, ErrorResourceKey errKey, params object[] args)
         {
             if (DefaultSeverity <= maximumSeverity)
             {
@@ -38,7 +38,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return null;
         }
 
-        public TexlError EnsureError(DocumentErrorSeverity severity, TexlNode node, StringResources.ErrorResourceKey errKey, params object[] args)
+        public TexlError EnsureError(DocumentErrorSeverity severity, TexlNode node, ErrorResourceKey errKey, params object[] args)
         {
             if (severity <= this.maximumSeverity)
             {
@@ -47,7 +47,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return null;
         }
 
-        public TexlError Error(TexlNode node, StringResources.ErrorResourceKey errKey, params object[] args)
+        public TexlError Error(TexlNode node, ErrorResourceKey errKey, params object[] args)
         {
             if (DefaultSeverity <= maximumSeverity)
             {
@@ -56,7 +56,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return null;
         }
 
-        public TexlError Error(DocumentErrorSeverity severity, TexlNode node, StringResources.ErrorResourceKey errKey, params object[] args)
+        public TexlError Error(DocumentErrorSeverity severity, TexlNode node, ErrorResourceKey errKey, params object[] args)
         {
             if (severity <= this.maximumSeverity)
             {

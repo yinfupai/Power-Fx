@@ -5,6 +5,7 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -14,6 +15,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         public override bool SkipScopeForInlineRecords => true;
         public override bool IsSelfContained => true;
         public override bool RequiresErrorContext => true;
+        public override bool SupportsParamCoercion => false;
 
         public ForAllFunction()
             : base("ForAll", TexlStrings.AboutForAll, FunctionCategories.Table, DType.Unknown, 0x2, 2, 2, DType.EmptyTable)
@@ -26,7 +28,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             yield return new [] { TexlStrings.ForAllArg1, TexlStrings.ForAllArg2 };
         }
 
-        public override bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
             Contracts.AssertAllValues(args);
@@ -34,7 +36,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.Assert(args.Length == argTypes.Length);
             Contracts.AssertValue(errors);
 
-            bool fArgsValid = base.CheckInvocation(args, argTypes, errors, out returnType);
+            bool fArgsValid = base.CheckInvocation(args, argTypes, errors, out returnType, out nodeToCoercedTypeMap);
 
             if (argTypes[1].IsRecord)
             {

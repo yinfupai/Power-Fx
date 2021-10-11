@@ -17,6 +17,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         public override bool IsStateless => false;
         public override bool IsGlobalReliant => true;
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => true;
 
         public TodayFunction()
             : base("Today", TexlStrings.AboutToday, FunctionCategories.DateTime, DType.Date, 0, 0, 0)

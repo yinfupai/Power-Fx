@@ -8,7 +8,7 @@ using Microsoft.AppMagic.Authoring;
 using Microsoft.PowerFx.Core.Types;
 using PowerApps.Language.Entities;
 
-namespace Microsoft.PowerFx.Core.App
+namespace Microsoft.PowerFx.Core.App.Controls
 {
     internal interface IExternalControl : IExternalEntity
     {

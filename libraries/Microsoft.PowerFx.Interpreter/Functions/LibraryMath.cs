@@ -43,52 +43,6 @@ namespace Microsoft.PowerFx.Functions
             }
         }
 
-        private class MinAgg : IAggregator
-        {
-            protected double _minValue = Double.MaxValue;
-            protected int _count;
-
-            public void Apply(FormulaValue value)
-            {
-                _count++;
-                if (value is BlankValue) { return; }
-                var n1 = (NumberValue)value;
-                if (n1.Value < _minValue)
-                {
-                    _minValue = n1.Value;
-                }
-
-            }
-            public virtual FormulaValue GetResult(IRContext irContext)
-            {
-                if (_count == 0) { return new BlankValue(irContext); }
-                return new NumberValue(irContext, _minValue);
-            }
-        }
-
-        private class MaxAgg : IAggregator
-        {
-            protected double _maxValue = Double.MinValue;
-            protected int _count;
-
-            public void Apply(FormulaValue value)
-            {
-                _count++;
-                if (value is BlankValue) { return; }
-                var n1 = (NumberValue)value;
-                if (n1.Value > _maxValue)
-                {
-                    _maxValue = n1.Value;
-                }
-
-            }
-            public virtual FormulaValue GetResult(IRContext irContext)
-            {
-                if (_count == 0) { return new BlankValue(irContext); }
-                return new NumberValue(irContext, _maxValue);
-            }
-        }
-
         private class AverageAgg : SumAgg
         {
             public override FormulaValue GetResult(IRContext irContext)
@@ -154,31 +108,6 @@ namespace Microsoft.PowerFx.Functions
         public static FormulaValue SumTable(EvalVisitor runner, SymbolContext symbolContext, IRContext irContext, FormulaValue[] args)
         {
             return RunAggregator(new SumAgg(), runner, symbolContext, irContext, args);
-        }
-
-        //  Max(1,2,3)     
-        internal static FormulaValue Max(IRContext irContext, FormulaValue[] args)
-        {
-            return RunAggregator(new MaxAgg(), irContext, args);
-        }
-
-        //  Max(  [1,2,3], Value * Value)     
-        public static FormulaValue MaxTable(EvalVisitor runner, SymbolContext symbolContext, IRContext irContext, FormulaValue[] args)
-        {
-            return RunAggregator(new MaxAgg(), runner, symbolContext, irContext, args);
-        }
-
-
-        //  Min(1,2,3)     
-        internal static FormulaValue Min(IRContext irContext, FormulaValue[] args)
-        {
-            return RunAggregator(new MinAgg(), irContext, args);
-        }
-
-        //  Min(  [1,2,3], Value * Value)     
-        public static FormulaValue MinTable(EvalVisitor runner, SymbolContext symbolContext, IRContext irContext, FormulaValue[] args)
-        {
-            return RunAggregator(new MinAgg(), runner, symbolContext, irContext, args);
         }
 
         // Average ignores blanks.

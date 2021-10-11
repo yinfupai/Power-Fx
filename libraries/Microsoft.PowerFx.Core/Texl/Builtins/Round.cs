@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -14,6 +15,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal abstract class ScalarRoundingFunction : BuiltinFunction
     {
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => true;
 
         public ScalarRoundingFunction(string name, TexlStrings.StringGetter description)
             : base(name, description, FunctionCategories.MathAndStat, DType.Number, 0, 2, 2, DType.Number, DType.Number)
@@ -29,6 +31,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal abstract class TableRoundingFunction : BuiltinFunction
     {
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => true;
 
         public TableRoundingFunction(string name, TexlStrings.StringGetter description)
             : base(name, description, FunctionCategories.Table, DType.EmptyTable, 0, 2, 2)
@@ -44,7 +47,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return GetUniqueTexlRuntimeName(suffix: "_T");
         }
 
-        public override bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
             Contracts.AssertAllValues(args);
@@ -53,7 +56,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.AssertValue(errors);
             Contracts.Assert(MinArity <= args.Length && args.Length <= MaxArity);
 
-            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType);
+            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType, out nodeToCoercedTypeMap);
 
             DType type0 = argTypes[0];
             DType type1 = argTypes[1];
@@ -65,7 +68,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             if (type0.IsTable)
             {
                 // Ensure we have a one-column table of numerics
-                fValid &= CheckNumericColumnType(type0, args[0], errors);
+                fValid &= CheckNumericColumnType(type0, args[0], errors, ref nodeToCoercedTypeMap);
                 // Borrow the return type from the 1st arg
                 returnType = type0;
                 // Check arg1 below.
@@ -75,7 +78,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             else if (type1.IsTable)
             {
                 // Ensure we have a one-column table of numerics
-                fValid &= CheckNumericColumnType(type1, args[1], errors);
+                fValid &= CheckNumericColumnType(type1, args[1], errors, ref nodeToCoercedTypeMap);
                 // Since the 1st arg is not a table, make a new table return type *[Result:n]
                 returnType = DType.CreateTable(new TypedName(DType.Number, OneColumnTableResultName));
                 // Check arg0 below.
@@ -99,12 +102,19 @@ namespace Microsoft.AppMagic.Authoring.Texl
             if (otherType.IsTable)
             {
                 // Ensure we have a one-column table of numerics
-                fValid &= CheckNumericColumnType(otherType, otherArg, errors);
+                fValid &= CheckNumericColumnType(otherType, otherArg, errors, ref nodeToCoercedTypeMap);
             }
             else if (!DType.Number.Accepts(otherType))
             {
-                fValid = false;
-                errors.EnsureError(DocumentErrorSeverity.Severe, otherArg, TexlStrings.ErrTypeError);
+                if (otherType.CoercesTo(DType.Number))
+                {
+                    CollectionUtils.Add(ref nodeToCoercedTypeMap, otherArg, DType.Number);
+                }
+                else
+                {
+                    fValid = false;
+                    errors.EnsureError(DocumentErrorSeverity.Severe, otherArg, TexlStrings.ErrTypeError);
+                }
             }
 
             return fValid;

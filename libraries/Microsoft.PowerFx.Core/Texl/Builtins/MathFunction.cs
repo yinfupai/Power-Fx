@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -57,22 +58,14 @@ namespace Microsoft.AppMagic.Authoring.Texl
             bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType, out nodeToCoercedTypeMap);
             Contracts.Assert(returnType.IsTable);
 
-            // Typecheck the input table
-            bool matchedWithCoercion;
-
             var arg = args[0];
             var argType = argTypes[0];
-            fValid &= CheckNumericColumnType(argType, arg, errors, out matchedWithCoercion);
+            fValid &= CheckNumericColumnType(argType, arg, errors, ref nodeToCoercedTypeMap);
 
-            if (matchedWithCoercion)
+            if (nodeToCoercedTypeMap?.Any() ?? false)
             {
                 // Now set the coerced type to a table with numeric column type with the same name as in the argument.
-                var columns = argType.GetNames(DPath.Root);
-                Contracts.Assert(columns.Count() == 1);
-
-                DType coercedColumnType = DType.CreateTable(new TypedName(DType.Number, columns.Single().Name));
-                CollectionUtils.Add(ref nodeToCoercedTypeMap, arg, coercedColumnType);
-                returnType = coercedColumnType;
+                returnType = nodeToCoercedTypeMap[arg];
             }
             else
             {

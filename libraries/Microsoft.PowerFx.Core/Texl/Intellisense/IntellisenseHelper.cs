@@ -227,7 +227,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
 
             foreach (var locNameTypePair in locNameTypePairs)
             {
-                string suggestion = anyCollisionExists ? prefix + locNameTypePair.Item1 : locNameTypePair.Item1;
+                string suggestion = anyCollisionExists || !intellisenseData.SuggestUnqualifiedEnums ? prefix + locNameTypePair.Item1 : locNameTypePair.Item1;
                 AddSuggestion(intellisenseData, suggestion, SuggestionKind.Global, SuggestionIconKind.Other, locNameTypePair.Item2, false);
             }
         }
@@ -675,7 +675,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 IntellisenseHelper.AddSuggestionsForEnum(intellisenseData, enumInfo, prefix: enumName + TexlLexer.PunctuatorDot);
             }
 
-            if (suggestions.Count + substringSuggestions.Count == countSuggBefore + countSubSuggBefore + 1)
+            if (suggestions.Count + substringSuggestions.Count == countSuggBefore + countSubSuggBefore + 1 && intellisenseData.SuggestUnqualifiedEnums)
             {
                 string enumSuggestion = suggestions.Count > countSuggBefore ? suggestions[countSuggBefore].Text : substringSuggestions[countSubSuggBefore].Text;
                 int dotIndex = enumSuggestion.LastIndexOf(TexlLexer.PunctuatorDot);

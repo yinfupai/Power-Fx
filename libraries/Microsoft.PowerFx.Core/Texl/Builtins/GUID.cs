@@ -16,6 +16,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         // Multiple invocations may produce different return values.
         public override bool IsStateless => false;
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => true;
 
         public GUIDNoArgFunction()
             : base("GUID", TexlStrings.AboutGUID, FunctionCategories.Text, DType.Guid, 0, 0, 0)
@@ -32,6 +33,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     {
         public override bool RequiresErrorContext => true;
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => false;
 
         public GUIDPureFunction()
             : base("GUID", TexlStrings.AboutGUID, FunctionCategories.Text, DType.Guid, 0, 1, 1, DType.String)

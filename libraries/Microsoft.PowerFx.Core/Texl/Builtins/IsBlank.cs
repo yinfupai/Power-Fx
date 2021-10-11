@@ -7,6 +7,7 @@
 using Microsoft.PowerFx.Core.Types;
 using System.Collections.Generic;
 using System.Numerics;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {

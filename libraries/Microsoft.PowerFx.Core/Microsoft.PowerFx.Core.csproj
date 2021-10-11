@@ -29,11 +29,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="$(SolutionDir)\AppMagic\dll\authoringcore\strings\**\Resources.pares" Condition="'$(Configuration)' == 'Debug'">
-			<Link>strings\%(RecursiveDir)%(Filename)%(Extension)</Link>
+		<EmbeddedResource Include="$(SolutionDir)\strings\**\PowerFxResources.resw" Condition="'$(Configuration)' == 'Debug'">
+			<Link>Strings\%(RecursiveDir)%(Filename)%(Extension)</Link>
 		</EmbeddedResource>
-		<EmbeddedResource Include="$(SolutionDir)\AppMagic\dll\authoringcore\strings\**\Resources.pares" Exclude="..\..\AppMagic\dll\authoringcore\strings\qps-ploc\**" Condition="'$(Configuration)' == 'Release'">
-			<Link>strings\%(RecursiveDir)%(Filename)%(Extension)</Link>
+		<EmbeddedResource Include="$(SolutionDir)\strings\**\PowerFxResources.resw" Exclude="$(SolutionDir)\strings\qps-ploc\**" Condition="'$(Configuration)' == 'Release'">
+			<Link>Strings\%(RecursiveDir)%(Filename)%(Extension)</Link>
 		</EmbeddedResource>
 	</ItemGroup>
 

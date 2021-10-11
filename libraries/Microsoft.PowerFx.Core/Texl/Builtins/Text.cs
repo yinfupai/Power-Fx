@@ -5,12 +5,13 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
-    // Text(arg:n|s)
-    // Text(arg:n|s, format:s)
-    // Text(arg:n|s, format:s, language:s)
+    // Text(arg:n|s|d)
+    // Text(arg:n|s|d, format:s)
+    // Text(arg:n|s|d, format:s, language:s)
     // Corresponding DAX functions: Format, Fixed
     internal sealed class TextFunction : BuiltinFunction
     {
@@ -51,20 +52,29 @@ namespace Microsoft.AppMagic.Authoring.Texl
 
             if (!isValidNumber || matchedWithCoercion)
             {
-                isValidString = CheckType(arg0, arg0Type, DType.String, DefaultErrorContainer, out matchedWithCoercion);
-
-                if (isValidString)
+                if (DType.DateTime.Accepts(arg0Type))
                 {
-                    if (matchedWithCoercion)
+                    // No coercion needed for datetimes here.
+                    arg0CoercedType = DType.Invalid;
+                }
+                else
+                {
+
+                    isValidString = CheckType(arg0, arg0Type, DType.String, DefaultErrorContainer, out matchedWithCoercion);
+
+                    if (isValidString)
                     {
-                        // If both the matches were with coercion, we pick string over number.
-                        // For instance Text(true) returns true in the case of EXCEL. If we picked
-                        // number coercion, then we would return 1 and it will not match EXCEL behavior.
-                        arg0CoercedType = DType.String;
-                    }
-                    else
-                    {
-                        arg0CoercedType = DType.Invalid;
+                        if (matchedWithCoercion)
+                        {
+                            // If both the matches were with coercion, we pick string over number.
+                            // For instance Text(true) returns true in the case of EXCEL. If we picked
+                            // number coercion, then we would return 1 and it will not match EXCEL behavior.
+                            arg0CoercedType = DType.String;
+                        }
+                        else
+                        {
+                            arg0CoercedType = DType.Invalid;
+                        }
                     }
                 }
             }

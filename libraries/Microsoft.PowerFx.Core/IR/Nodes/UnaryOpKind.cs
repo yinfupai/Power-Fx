@@ -44,6 +44,7 @@ namespace Microsoft.PowerFx.Core.IR
 
         NumberToBoolean,
         TextToBoolean,
+        DateTimeToBoolean,
         BooleanOptionSetToBoolean,
 
         RecordToRecord, // See field mappings
@@ -56,6 +57,13 @@ namespace Microsoft.PowerFx.Core.IR
         TextToDateTime,
         TextToDate,
         TextToTime,
+
+        DateTimeToTime,
+        DateToTime,
+        TimeToDate,
+        DateTimeToDate,
+        TimeToDateTime,
+        DateToDateTime,
 
         BooleanToOptionSet,
         AggregateToDataEntity,

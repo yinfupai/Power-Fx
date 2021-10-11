@@ -4,7 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring.DataToControls
+namespace Microsoft.PowerFx.Core.App
 {
     internal enum DataFormat
     {

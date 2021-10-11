@@ -5,6 +5,7 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -14,6 +15,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         // Multiple invocations may result in different return values.
         public override bool IsStateless => false;
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => true;
 
         public IsTodayFunction()
             : base("IsToday", TexlStrings.AboutIsToday, FunctionCategories.Information, DType.Boolean, 0, 1, 1, DType.DateTime)
@@ -24,7 +26,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return EnumerableUtils.Yield(new[] { TexlStrings.IsTodayFuncArg1 });
         }
 
-        public override bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
             Contracts.AssertAllValues(args);
@@ -33,12 +35,12 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.AssertValue(errors);
             Contracts.Assert(MinArity <= args.Length && args.Length <= MaxArity);
 
-            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType);
+            bool fValid = base.CheckInvocation(args, argTypes, errors, out returnType, out nodeToCoercedTypeMap);
 
             DType type0 = argTypes[0];
 
-            // Arg0 should be either a DateTime or Date.
-            if (!(type0.Kind == DKind.Date || type0.Kind == DKind.DateTime))
+            // Arg0 should not be a Time
+            if (type0.Kind == DKind.Time)
             {
                 fValid = false;
                 errors.EnsureError(DocumentErrorSeverity.Severe, args[0], TexlStrings.ErrDateExpected);

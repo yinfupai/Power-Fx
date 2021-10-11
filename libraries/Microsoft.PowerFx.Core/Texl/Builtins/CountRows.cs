@@ -14,6 +14,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     {
         public override bool RequiresErrorContext => true;
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => false;
 
         public override DelegationCapability FunctionDelegationCapability { get { return DelegationCapability.Count; } }
 

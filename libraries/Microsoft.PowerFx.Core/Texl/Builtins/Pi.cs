@@ -14,6 +14,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal sealed class PiFunction : BuiltinFunction
     {
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => true;
 
         public PiFunction()
             : base("Pi",

@@ -72,6 +72,11 @@ namespace Microsoft.PowerFx.Functions
                 return n;
             }
 
+            if (arg0 is DateValue dv)
+            {
+                return DateToNumber(irContext, new DateValue[] { dv });
+            }
+
             var str = ((StringValue)arg0).Value;
 
             if (string.IsNullOrEmpty(str))

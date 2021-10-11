@@ -5,10 +5,10 @@
 //------------------------------------------------------------------------------
 
 using Microsoft.AppMagic.Authoring.Texl;
+using Microsoft.AppMagic.Common;
 using Microsoft.AppMagic.Transport;
 using System;
 using System.Collections.Generic;
-using static Microsoft.AppMagic.Common.StringResources;
 
 namespace Microsoft.AppMagic.Authoring
 {

@@ -5,6 +5,7 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 using Microsoft.PowerFx.Core.Delegation.DelegationStrategies;
 
 namespace Microsoft.AppMagic.Authoring.Texl

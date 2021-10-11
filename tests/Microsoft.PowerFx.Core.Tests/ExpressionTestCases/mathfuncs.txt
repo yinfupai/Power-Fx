@@ -34,7 +34,7 @@
 0
 
 >> Mod(7,Blank())
-Blank()
+#Error
 
 >> Mod(7,1/0)
 #Error

@@ -6,6 +6,8 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -15,6 +17,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal sealed class ConcatenateFunction : BuiltinFunction
     {
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => true;
 
         public ConcatenateFunction()
             : base("Concatenate", TexlStrings.AboutConcatenate, FunctionCategories.Table | FunctionCategories.Text, DType.Unknown, 0, 2, int.MaxValue)
@@ -34,13 +37,15 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return base.GetSignatures(arity);
         }
 
-        public override bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
             Contracts.AssertValue(argTypes);
             Contracts.Assert(args.Length == argTypes.Length);
             Contracts.Assert(args.Length >= 2);
             Contracts.AssertValue(errors);
+
+            nodeToCoercedTypeMap = null;
 
             int count = args.Length;
             bool hasTableArg = false;
@@ -51,7 +56,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             for (int i = 0; i < count; i++)
             {
                 bool isTable;
-                fArgsValid &= CheckParamIsTypeOrSingleColumnTable(DType.String, args[i], argTypes[i], errors, out isTable);
+                fArgsValid &= CheckParamIsTypeOrSingleColumnTable(DType.String, args[i], argTypes[i], errors, out isTable, ref nodeToCoercedTypeMap);
                 hasTableArg |= isTable;
             }
 

@@ -9,7 +9,7 @@ using Microsoft.AppMagic.Authoring.Texl;
 using Microsoft.PowerFx.Core.Entities.QueryOptions;
 using Microsoft.PowerFx.Core.Logging.Trackers;
 
-namespace Microsoft.PowerFx.Core.App
+namespace Microsoft.PowerFx.Core.App.Controls
 {
     internal interface IExternalRule
     {

@@ -224,6 +224,16 @@ namespace Microsoft.PowerFx
                     return Library.OperatorUnaryBooleanToNumber(this, context, node.IRContext, args);
                 case UnaryOpKind.TextToBoolean:
                     return Library.OperatorUnaryTextToBoolean(this, context, node.IRContext, args);
+                case UnaryOpKind.NumberToDate:
+                case UnaryOpKind.NumberToDateTime:
+                    return Library.OperatorUnaryNumberToDate(this, context, node.IRContext, args);
+                case UnaryOpKind.DateToNumber:
+                case UnaryOpKind.DateTimeToNumber:
+                    return Library.OperatorUnaryDateToNumber(this, context, node.IRContext, args);
+                case UnaryOpKind.DateToDateTime:
+                    return Library.OperatorUnaryDateToDateTime(this, context, node.IRContext, args);
+                case UnaryOpKind.DateTimeToDate:
+                    return Library.OperatorUnaryDateTimeToDate(this, context, node.IRContext, args);
                 default:
                     return CommonErrors.UnreachableCodeError(node.IRContext);
             }

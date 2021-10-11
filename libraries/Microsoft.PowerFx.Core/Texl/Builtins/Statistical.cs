@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Microsoft.AppMagic.Common.Telemetry;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 using Microsoft.PowerFx.Core.Logging.Trackers;
 
 namespace Microsoft.AppMagic.Authoring.Texl

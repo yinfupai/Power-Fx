@@ -14,6 +14,8 @@ namespace Microsoft.AppMagic.Authoring.Texl
     // Corresponding Excel functions: Min, Max
     internal sealed class MinMaxFunction : StatisticalFunction
     {
+        public override bool SupportsParamCoercion => true;
+
         public MinMaxFunction(bool isMin)
             : base(isMin ? "Min" : "Max", isMin ? TexlStrings.AboutMin : TexlStrings.AboutMax, FunctionCategories.MathAndStat)
         { }

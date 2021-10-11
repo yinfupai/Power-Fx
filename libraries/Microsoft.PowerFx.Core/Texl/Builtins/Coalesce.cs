@@ -5,6 +5,7 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -13,6 +14,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal sealed class CoalesceFunction : BuiltinFunction
     {
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => false;
 
         public CoalesceFunction()
             : base("Coalesce", TexlStrings.AboutCoalesce, FunctionCategories.Information, DType.Unknown, 0, 1, int.MaxValue)
@@ -32,7 +34,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return base.GetSignatures(arity);
         }
 
-        public override bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
             Contracts.AssertValue(argTypes);
@@ -40,28 +42,61 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.Assert(args.Length >= 1);
             Contracts.AssertValue(errors);
 
+            nodeToCoercedTypeMap = null;
+
             int count = args.Length;
             bool fArgsValid = true;
             bool fArgsNonNull = false;
+            DType type = ReturnType;
 
-            returnType = DType.Unknown;
-
-            for (int i = 0; i < count; ++i)
+            for (int i = 0; i < count; i++)
             {
-                if (argTypes[i].Kind == DKind.ObjNull)
+                TexlNode nodeArg = args[i];
+                DType typeArg = argTypes[i]; 
+                
+                if (typeArg.Kind == DKind.ObjNull)
                     continue;
+
                 fArgsNonNull = true;
-                if (returnType.Accepts(argTypes[i]))
-                    continue;
-                else if (argTypes[i].Accepts(returnType))
-                    returnType = argTypes[i];
-                else
-                    fArgsValid &= false;
+                if (typeArg.IsError)
+                    errors.EnsureError(args[i], TexlStrings.ErrTypeError);
+
+                DType typeSuper = DType.Supertype(type, typeArg);
+
+                if (!typeSuper.IsError)
+                {
+                    type = typeSuper;
+                }
+                else if (type.Kind == DKind.Unknown)
+                {
+                    // One of the args is also of unknown type, so we can't resolve the type of IfError
+                    type = typeSuper;
+                    fArgsValid = false;
+                }
+                else if (!type.IsError)
+                {
+                    // Types don't resolve normally, coercion needed
+                    if (typeArg.CoercesTo(type))
+                        CollectionUtils.Add(ref nodeToCoercedTypeMap, nodeArg, type);
+                    else 
+                    {
+                        errors.EnsureError(DocumentErrorSeverity.Severe, nodeArg, TexlStrings.ErrBadType_ExpectedType_ProvidedType,
+                            type.GetKindString(),
+                            typeArg.GetKindString());
+                        fArgsValid = false;
+                    }
+                }
+                else if (typeArg.Kind != DKind.Unknown)
+                {
+                    type = typeArg;
+                    fArgsValid = false;
+                }
             }
 
             if (!fArgsNonNull)
-                returnType = DType.ObjNull;
+                type = DType.ObjNull;
 
+            returnType = type;
             return fArgsValid;
         }
     }

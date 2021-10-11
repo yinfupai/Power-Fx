@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -20,6 +21,10 @@ namespace Microsoft.AppMagic.Authoring.Texl
     internal sealed class SwitchFunction : BuiltinFunction
     {
         public override bool IsSelfContained => true;
+
+        // Note, switch has a very custom checkinvocation implementation
+        // We do not support coercion for the 1st param, or the match params, only the result params. 
+        public override bool SupportsParamCoercion => true;
 
         public SwitchFunction() :
             base("Switch", TexlStrings.AboutSwitch, FunctionCategories.Logical, DType.Unknown, 0, 3, int.MaxValue)
@@ -71,7 +76,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         // Type check an invocation of the function with the specified args (and their corresponding types).
         // Return true if everything aligns, false otherwise.
         // This override does not post any document errors (i.e. it performs the typechecks quietly).
-        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(binding);
             Contracts.AssertValue(args);
@@ -86,10 +91,10 @@ namespace Microsoft.AppMagic.Authoring.Texl
             // Check the switch expression type matches all case expression types in list.
             bool fArgsValid = true;
             for (int i = 1; i < count - 1; i += 2)
-                fArgsValid &= CheckType(args[i], argTypes[i], argTypes[0], errors);
+                fArgsValid &= CheckType(args[i], argTypes[i], argTypes[0], errors, coerceIfSupported: false, out bool  _);
 
             DType type = ReturnType;
-            List<KeyValuePair<TexlNode, DType>> argCoercedTypes = null;
+            nodeToCoercedTypeMap = null;
 
             // Are we on a behavior property?
             bool isBehavior = binding.IsBehavior;
@@ -115,7 +120,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 else if (!type.IsError)
                 {
                     if (typeArg.CoercesTo(type))
-                        CollectionUtils.Add(ref argCoercedTypes, new KeyValuePair<TexlNode, DType>(nodeArg, type));
+                        CollectionUtils.Add(ref nodeToCoercedTypeMap, nodeArg, type);
                     else if (!isBehavior)
                     {
                         errors.EnsureError(DocumentErrorSeverity.Severe, nodeArg, TexlStrings.ErrBadType_ExpectedType_ProvidedType,
@@ -134,13 +139,6 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 i += 2;
                 if (i == count)
                     i--;
-            }
-
-            // Coerce accumulated args, if any.
-            if (fArgsValid && argCoercedTypes != null)
-            {
-                foreach (var pair in argCoercedTypes)
-                    binding.SetCoercedType(pair.Key, pair.Value);
             }
 
             // Update the return type based on the specified invocation args.

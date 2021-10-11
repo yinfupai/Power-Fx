@@ -72,10 +72,10 @@ namespace Microsoft.AppMagic.Authoring.Texl
 
         public override Span GetCompleteSpan()
         {
-            if (this.Children.Count() == 0)
-                return new Span(this.Token.VerifyValue().Span.Min, this.Token.VerifyValue().Span.Lim);
+            if (Children.Count() == 0)
+                return new Span(Token.VerifyValue().Span.Min, Token.VerifyValue().Span.Lim);
 
-            return new Span(this.Token.VerifyValue().Span.Min, this.Children.VerifyValue().Last().VerifyValue().GetCompleteSpan().Lim);
+            return new Span(Children.VerifyValue().First().VerifyValue().GetCompleteSpan().Min, Children.VerifyValue().Last().VerifyValue().GetCompleteSpan().Lim);
         }
     }
 }

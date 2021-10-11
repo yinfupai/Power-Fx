@@ -11,11 +11,11 @@ namespace Microsoft.AppMagic.Authoring.Texl
 {
     internal class ErrorToken : Token
     {
-        private readonly StringResources.ErrorResourceKey? _detailErrorKey;
+        private readonly ErrorResourceKey? _detailErrorKey;
         private readonly object[] _resourceKeyFormatStringArgs;
 
         // May produce null, if there is no available detail for this error token.
-        public StringResources.ErrorResourceKey? DetailErrorKey { get { return _detailErrorKey; } }
+        public ErrorResourceKey? DetailErrorKey { get { return _detailErrorKey; } }
 
         // Args for ErrorResourceKey("UnexpectedCharacterToken")'s format string used in UnexpectedCharacterTokenError/LexError inside Lexer.cs.
         public object[] ResourceKeyFormatStringArgs { get { return _resourceKeyFormatStringArgs; } }
@@ -24,7 +24,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             : this(span, null)
         { }
 
-        public ErrorToken(Span span, StringResources.ErrorResourceKey? detailErrorKey)
+        public ErrorToken(Span span, ErrorResourceKey? detailErrorKey)
             : base(TokKind.Error, span)
         {
             Contracts.AssertValueOrNull(detailErrorKey);
@@ -32,7 +32,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             _detailErrorKey = detailErrorKey;
         }
 
-        public ErrorToken(Span span, StringResources.ErrorResourceKey? detailErrorKey, params object[] args)
+        public ErrorToken(Span span, ErrorResourceKey? detailErrorKey, params object[] args)
             : base(TokKind.Error, span)
         {
             Contracts.AssertValueOrNull(detailErrorKey);

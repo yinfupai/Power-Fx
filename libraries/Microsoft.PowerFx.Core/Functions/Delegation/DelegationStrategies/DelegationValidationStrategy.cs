@@ -54,7 +54,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             TrackingProvider.Instance.AddSuggestionMessage(message, node, binding);
         }
 
-        protected void SuggestDelegationHintAndAddTelemetryMessage(TexlNode node, TexlBinding binding, string telemetryMessage, StringResources.ErrorResourceKey? suggestionKey = null, params object[] args)
+        protected void SuggestDelegationHintAndAddTelemetryMessage(TexlNode node, TexlBinding binding, string telemetryMessage, ErrorResourceKey? suggestionKey = null, params object[] args)
         {
             Contracts.Assert(suggestionKey == null || suggestionKey?.Key != string.Empty);
 
@@ -63,7 +63,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         }
 
         // Helper used to provide hints when we detect non-delegable parts of the expression due to server restrictions.
-        protected void SuggestDelegationHint(TexlNode node, TexlBinding binding, StringResources.ErrorResourceKey? suggestionKey, params object[] args)
+        protected void SuggestDelegationHint(TexlNode node, TexlBinding binding, ErrorResourceKey? suggestionKey, params object[] args)
         {
             Contracts.AssertValue(node);
             Contracts.AssertValue(binding);
@@ -73,9 +73,9 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 suggestionKey = TexlStrings.SuggestRemoteExecutionHint;
 
             if (args == null || args.Length == 0)
-                binding.ErrorContainer.EnsureError(DocumentErrorSeverity.Warning, node, (StringResources.ErrorResourceKey)suggestionKey, _function.Name);
+                binding.ErrorContainer.EnsureError(DocumentErrorSeverity.Warning, node, (ErrorResourceKey)suggestionKey, _function.Name);
             else
-                binding.ErrorContainer.EnsureError(DocumentErrorSeverity.Warning, node, (StringResources.ErrorResourceKey)suggestionKey, args);
+                binding.ErrorContainer.EnsureError(DocumentErrorSeverity.Warning, node, (ErrorResourceKey)suggestionKey, args);
         }
 
         protected void SuggestDelegationHint(TexlNode node, TexlBinding binding)

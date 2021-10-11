@@ -6,7 +6,7 @@
 
 using Microsoft.AppMagic.Transport;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.App.Components
 {
     [TransportType(TransportKind.Enum)]
     public enum ComponentType

@@ -145,7 +145,7 @@ namespace Microsoft.AppMagic.Authoring.DataToControls
             LookupMetadata = lookupMetadata;
             AttachmentMetadata = attachmentMetadata;
 
-            if (dataFormat == DataToControls.DataFormat.AllowedValues)
+            if (dataFormat == PowerFx.Core.App.DataFormat.AllowedValues)
                 AllowedValues = AllowedValuesMetadata.CreateForValue(schema);
         }
 

@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -16,6 +17,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         public const string ValueInvariantFunctionName = "Value";
         public override bool RequiresErrorContext => true;
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => true;
 
         public ValueFunction()
             : base(ValueInvariantFunctionName, TexlStrings.AboutValue, FunctionCategories.Text, DType.Number, 0, 1, 2, DType.String, DType.String)
@@ -27,7 +29,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             yield return new [] { TexlStrings.ValueArg1, TexlStrings.ValueArg2 };
         }
 
-        public override bool CheckInvocation(TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(args);
             Contracts.AssertAllValues(args);
@@ -37,13 +39,21 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.AssertValue(errors);
             Contracts.Assert(MinArity <= args.Length && args.Length <= MaxArity);
 
-            bool isValid = true;
+            nodeToCoercedTypeMap = null;
 
+            bool isValid = true;
             DType argType = argTypes[0];
             if (!DType.Number.Accepts(argType) && !DType.String.Accepts(argType))
             {
-                errors.EnsureError(DocumentErrorSeverity.Severe, args[0], TexlStrings.ErrNumberOrStringExpected);
-                isValid = false;
+                if (argType.CoercesTo(DType.DateTime) && !argType.IsControl)
+                {
+                    CollectionUtils.Add(ref nodeToCoercedTypeMap, args[0], DType.DateTime);
+                }
+                else
+                {
+                    errors.EnsureError(DocumentErrorSeverity.Severe, args[0], TexlStrings.ErrNumberOrStringExpected);
+                    isValid = false;
+                }
             }
 
             if (args.Length > 1)

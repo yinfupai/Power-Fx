@@ -1,11 +1,11 @@
 ﻿using Microsoft.AppMagic.Authoring.Texl;
 using Microsoft.AppMagic.Common;
+using Microsoft.PowerFx.Core;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using ErrorResourceKey = Microsoft.AppMagic.Common.StringResources.ErrorResourceKey;
 
 namespace Microsoft.AppMagic.Authoring
 {
@@ -137,7 +137,7 @@ namespace Microsoft.AppMagic.Authoring
             // We expect errKey to be the key for an error resource object within string resources.
             // We fall back to using a basic content string within string resources, for errors
             // that haven't yet been converted to an ErrorResource in the Resources.pares file.
-            StringResources.ErrorResource errorResource;
+            ErrorResource errorResource;
             string shortMessage;
             string longMessage;
             if (!StringResources.TryGetErrorResource(errKey, out errorResource))
@@ -148,16 +148,16 @@ namespace Microsoft.AppMagic.Authoring
             }
             else
             {
-                shortMessage = errorResource.GetSingleValue(StringResources.ErrorResource.ShortMessageTag);
+                shortMessage = errorResource.GetSingleValue(ErrorResource.ShortMessageTag);
                 Contracts.AssertValue(shortMessage);
-                longMessage = errorResource.GetSingleValue(StringResources.ErrorResource.LongMessageTag);
+                longMessage = errorResource.GetSingleValue(ErrorResource.LongMessageTag);
             }
 
 
             ShortMessage = FormatMessage(shortMessage, args);
             LongMessage = FormatMessage(longMessage, args);
-            HowToFixMessages = errorResource?.GetValues(StringResources.ErrorResource.HowToFixTag) ?? GetHowToFix(errKey.Key);
-            WhyToFixMessage = errorResource?.GetSingleValue(StringResources.ErrorResource.WhyToFixTag) ?? string.Empty;
+            HowToFixMessages = errorResource?.GetValues(ErrorResource.HowToFixTag) ?? GetHowToFix(errKey.Key);
+            WhyToFixMessage = errorResource?.GetSingleValue(ErrorResource.WhyToFixTag) ?? string.Empty;
             Links = errorResource?.HelpLinks;
         }
 

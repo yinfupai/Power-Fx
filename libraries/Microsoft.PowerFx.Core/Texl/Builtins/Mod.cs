@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -70,15 +71,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             if (type0.IsTable)
             {
                 // Ensure we have a one-column table of numbers.
-                fValid &= CheckNumericColumnType(type0, arg0, errors, out matchedWithCoercion);
-                if (matchedWithCoercion)
-                {
-                    var columns = type0.GetNames(DPath.Root);
-                    Contracts.Assert(columns.Count() == 1);
-
-                    DType coercedColumnType = DType.CreateTable(new TypedName(DType.Number, columns.Single().Name));
-                    CollectionUtils.Add(ref nodeToCoercedTypeMap, arg0, coercedColumnType);
-                }
+                fValid &= CheckNumericColumnType(type0, arg0, errors, ref nodeToCoercedTypeMap);
             }
             else if (CheckType(arg0, type0, DType.Number, DefaultErrorContainer, out matchedWithCoercion))
             {
@@ -94,15 +87,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             // Arg1 should be either a number or a column of number (coercion is ok).
             if (type1.IsTable)
             {
-                fValid &= CheckNumericColumnType(type1, arg1, errors, out matchedWithCoercion);
-                if (matchedWithCoercion)
-                {
-                    var columns = type1.GetNames(DPath.Root);
-                    Contracts.Assert(columns.Count() == 1);
-
-                    DType coercedColumnType = DType.CreateTable(new TypedName(DType.Number, columns.Single().Name));
-                    CollectionUtils.Add(ref nodeToCoercedTypeMap, arg1, coercedColumnType);
-                }
+                fValid &= CheckNumericColumnType(type1, arg1, errors, ref nodeToCoercedTypeMap);
             }
             else if (CheckType(arg1, type1, DType.Number, DefaultErrorContainer, out matchedWithCoercion))
             {

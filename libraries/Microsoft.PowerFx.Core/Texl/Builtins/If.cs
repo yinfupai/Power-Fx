@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Microsoft.PowerFx.Core.App.ErrorContainers;
 
 namespace Microsoft.AppMagic.Authoring.Texl
 {
@@ -19,6 +20,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         public override int SuggestionTypeReferenceParamIndex => 1;
         public override bool UsesEnumNamespace => true;
         public override bool IsSelfContained => true;
+        public override bool SupportsParamCoercion => true;
 
         public IfFunction()
             : base("If", TexlStrings.AboutIf, FunctionCategories.Logical, DType.Unknown, 0, 2, int.MaxValue)
@@ -47,7 +49,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return index >= 1;
         }
 
-        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType)
+        public override bool CheckInvocation(TexlBinding binding, TexlNode[] args, DType[] argTypes, IErrorContainer errors, out DType returnType, out Dictionary<TexlNode, DType> nodeToCoercedTypeMap)
         {
             Contracts.AssertValue(binding);
             Contracts.AssertValue(args);
@@ -58,7 +60,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.Assert(MinArity <= args.Length && args.Length <= MaxArity);
 
             int count = args.Length;
-            List<KeyValuePair<TexlNode, DType>> argCoercedTypes = null;
+            nodeToCoercedTypeMap = null;
 
             // Check the predicates.
             bool fArgsValid = true;
@@ -67,10 +69,9 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 bool withCoercion;
                 fArgsValid &= CheckType(args[i], argTypes[i], DType.Boolean, errors, true, out withCoercion);
 
-                if (withCoercion && DType.OptionSetValue.Accepts(argTypes[i]) && argTypes[i].CoercesTo(DType.Boolean))
-                    CollectionUtils.Add(ref argCoercedTypes, new KeyValuePair<TexlNode, DType>(args[i], DType.Boolean));
-                else if (withCoercion)
-                    fArgsValid &= CheckType(args[i], argTypes[i], DType.Boolean, errors);
+                if (withCoercion)
+                   CollectionUtils.Add(ref nodeToCoercedTypeMap, args[i], DType.Boolean);
+
             }
 
             DType type = ReturnType;
@@ -99,7 +100,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 else if (!type.IsError)
                 {
                     if (typeArg.CoercesTo(type))
-                        CollectionUtils.Add(ref argCoercedTypes, new KeyValuePair<TexlNode, DType>(nodeArg, type));
+                        CollectionUtils.Add(ref nodeToCoercedTypeMap, nodeArg, type);
                     else if (!isBehavior || !IsArgTypeInconsequential(nodeArg))
                     {
                         errors.EnsureError(DocumentErrorSeverity.Severe, nodeArg, TexlStrings.ErrBadType_ExpectedType_ProvidedType,
@@ -118,13 +119,6 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 i += 2;
                 if (i == count)
                     i--;
-            }
-
-            // Coerce accumulated args, if any.
-            if (fArgsValid && argCoercedTypes != null)
-            {
-                foreach (var pair in argCoercedTypes)
-                    binding.SetCoercedType(pair.Key, pair.Value);
             }
 
             // Update the return type based on the specified invocation args.

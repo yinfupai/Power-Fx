@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.PowerFx.Core.App;
+using Microsoft.PowerFx.Core.App.Controls;
 using PowerApps.Language.Entities;
 
 namespace Microsoft.AppMagic.Authoring.Texl

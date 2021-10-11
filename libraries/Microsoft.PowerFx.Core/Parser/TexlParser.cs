@@ -1026,7 +1026,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return CreateError(tok, TexlStrings.ErrBadToken);
         }
 
-        private ErrorNode CreateError(Token tok, StringResources.ErrorResourceKey errKey, object[] args)
+        private ErrorNode CreateError(Token tok, ErrorResourceKey errKey, object[] args)
         {
             Contracts.AssertValue(tok);
             Contracts.AssertValue(args);
@@ -1035,7 +1035,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return new ErrorNode(ref _idNext, tok, err.ShortMessage,args);
         }
 
-        private ErrorNode CreateError(Token tok, StringResources.ErrorResourceKey errKey)
+        private ErrorNode CreateError(Token tok, ErrorResourceKey errKey)
         {
             Contracts.AssertValue(tok);
 
@@ -1043,7 +1043,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return new ErrorNode(ref _idNext, tok, err.ShortMessage);
         }
 
-        private TexlError PostError(Token tok, StringResources.ErrorResourceKey errKey)
+        private TexlError PostError(Token tok, ErrorResourceKey errKey)
         {
             Contracts.AssertValue(tok);
             Contracts.AssertValue(errKey.Key);
@@ -1053,7 +1053,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return err;
         }
 
-        private TexlError PostError(Token tok, StringResources.ErrorResourceKey errKey, params object[] args)
+        private TexlError PostError(Token tok, ErrorResourceKey errKey, params object[] args)
         {
             Contracts.AssertValue(tok);
             Contracts.AssertValue(errKey.Key);

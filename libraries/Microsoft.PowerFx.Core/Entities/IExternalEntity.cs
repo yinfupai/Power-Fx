@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using Microsoft.AppMagic.Authoring;
 using Microsoft.PowerFx.Core.App;
+using Microsoft.PowerFx.Core.App.Controls;
 
 namespace PowerApps.Language.Entities
 {
