@@ -184,7 +184,6 @@ namespace Microsoft.AppMagic.Authoring
             }
         }
 
-#if DEBUG
         // For debugging.
         public override string ToString()
         {
@@ -211,7 +210,6 @@ namespace Microsoft.AppMagic.Authoring
 
             sb.AppendLine();
         }
-#endif
 
         public int CompareTo(IntellisenseSuggestion other)
         {

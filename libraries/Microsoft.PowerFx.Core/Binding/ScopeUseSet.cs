@@ -71,7 +71,6 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return ScopeUseSet.GlobalScopeLevel;
         }
 
-#if DEBUG
         public override string ToString()
         {
             if (IsGlobalOnlyScope)
@@ -92,6 +91,5 @@ namespace Microsoft.AppMagic.Authoring.Texl
             sb.Append("}");
             return sb.ToString();
         }
-#endif
     }
 }
