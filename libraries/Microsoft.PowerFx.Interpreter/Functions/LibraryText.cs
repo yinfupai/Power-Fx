@@ -9,6 +9,7 @@ using Microsoft.PowerFx.Core.IR;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace Microsoft.PowerFx.Functions
@@ -216,6 +217,19 @@ namespace Microsoft.PowerFx.Functions
             var result = source.Value.Substring(start0Based, minCount);
 
             return new StringValue(irContext, result);
+        }
+
+        public static FormulaValue Split(EvalVisitor runner, SymbolContext symbolContext, IRContext irContext, FormulaValue[] args)
+        {
+            var text = args[0].ToObject().ToString();
+            var separator = args[1].ToObject().ToString();
+
+            // The separator can be zero, one, or more characters that are matched as a whole in the text string. Using a zero length or blank
+            // string results in each character being broken out individually.
+            var substrings = string.IsNullOrEmpty(separator) ? text.Select(c => new string(c, 1)) : text.Split(separator.ToCharArray());
+            var rows = substrings.Select(s => new StringValue(IRContext.NotInSource(FormulaType.String), s));
+
+            return new InMemoryTableValue(irContext, StandardSingleColumnTableFromValues(irContext, rows.ToArray(), BuiltinFunction.OneColumnTableResultName));
         }
     }
 }

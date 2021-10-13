@@ -416,6 +416,17 @@ namespace Microsoft.PowerFx.Functions
                     )
             },
             {
+                BuiltinFunctionsCore.Split,
+                StandardErrorHandling<FormulaValue>(
+                    expandArguments: NoArgExpansion,
+                    replaceBlankValues: DoNotReplaceBlank,
+                    checkRuntimeTypes: DeferRuntimeTypeChecking,
+                    checkRuntimeValues: DeferRuntimeValueChecking,
+                    returnBehavior: ReturnBehavior.AlwaysEvaluateAndReturnResult,
+                    Split
+                    )
+            },
+            {
                 BuiltinFunctionsCore.Sqrt,
                 StandardErrorHandling<NumberValue>(
                     expandArguments: NoArgExpansion,
@@ -519,6 +530,16 @@ namespace Microsoft.PowerFx.Functions
 
         public static IEnumerable<DValue<RecordValue>> StandardTableNodeRecords(IRContext irContext, FormulaValue[] args)
         {
+            return StandardTableNodeRecordsCore(irContext, args);
+        }
+
+        public static IEnumerable<DValue<RecordValue>> StandardSingleColumnTableFromValues(IRContext irContext, FormulaValue[] args, string columnName)
+        {
+            return StandardTableNodeRecordsCore(irContext, args, columnName);
+        }
+
+        private static IEnumerable<DValue<RecordValue>> StandardTableNodeRecordsCore(IRContext irContext, FormulaValue[] args, string columnName = "Value")
+        {
             var tableType = (TableType)irContext.ResultType;
             var recordType = tableType.ToRecord();
             return args.Select(arg =>
@@ -528,7 +549,7 @@ namespace Microsoft.PowerFx.Functions
                     return DValue<RecordValue>.Of(record);
                 }
                 // Handle the single-column-table case. 
-                var defaultField = new NamedValue("Value", arg);
+                var defaultField = new NamedValue(columnName, arg);
                 return DValue<RecordValue>.Of(new InMemoryRecordValue(IRContext.NotInSource(recordType), new List<NamedValue>() { defaultField }));
             });
         }
