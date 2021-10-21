@@ -5,12 +5,9 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
-using Microsoft.AppMagic;
-using Microsoft.AppMagic.Authoring;
-using Microsoft.AppMagic.Authoring.Texl;
-using PowerApps.Language.Entities;
+using Microsoft.PowerFx.Core.Types;
 
-namespace Microsoft.PowerFx.Core.App
+namespace Microsoft.PowerFx.Core.Entities
 {
     internal interface IQualifiedValuesInfo : IExternalEntity
     {

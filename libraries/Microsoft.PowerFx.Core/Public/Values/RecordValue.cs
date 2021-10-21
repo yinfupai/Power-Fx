@@ -4,16 +4,14 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.PowerFx.Core.IR;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Dynamic;
-using System.Linq;
-using System.Reflection;
-using System.Text.Json;
+using Microsoft.PowerFx.Core.IR;
+using Microsoft.PowerFx.Core.Public.Types;
 
-namespace Microsoft.PowerFx
+namespace Microsoft.PowerFx.Core.Public.Values
 {
     /// <summary>
     /// Represent a Record. Records have named fields which can be other values. 

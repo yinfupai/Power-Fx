@@ -5,9 +5,11 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using Microsoft.PowerFx.Core.Functions;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Types;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Texl.Builtins
 {
     // RandBetween()
     // Equivalent DAX/Excel function: RandBetween

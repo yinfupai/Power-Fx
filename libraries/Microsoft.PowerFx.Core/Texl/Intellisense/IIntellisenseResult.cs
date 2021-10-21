@@ -3,11 +3,11 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
-using Microsoft.PowerFx.Core.Texl.Intellisense.SignatureHelp;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Texl.Intellisense
 {
     public interface IIntellisenseResult
     {
@@ -51,6 +51,6 @@ namespace Microsoft.AppMagic.Authoring.Texl
         /// <summary>
         /// Function signature help for this result, complies to Language Server Protocol
         /// </summary>
-        public SignatureHelp SignatureHelp { get; }
+        public SignatureHelp.SignatureHelp SignatureHelp { get; }
     }
 }

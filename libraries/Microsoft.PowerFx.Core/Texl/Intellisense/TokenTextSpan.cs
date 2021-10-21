@@ -4,10 +4,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Transport;
 using System.Collections.Generic;
+using Microsoft.AppMagic.Transport;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Texl.Intellisense
 {
     [TransportType(TransportKind.ByValue)]
     public interface ITokenTextSpan

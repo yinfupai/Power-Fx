@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Microsoft.PowerFx
+﻿namespace Microsoft.PowerFx.Core.Public.Values
 {
     public interface IValueVisitor
     {
@@ -15,5 +11,6 @@ namespace Microsoft.PowerFx
         void Visit(TableValue value);
         void Visit(TimeValue value);
         void Visit(DateValue value);
+        void Visit(DateTimeValue value);
     }
 }

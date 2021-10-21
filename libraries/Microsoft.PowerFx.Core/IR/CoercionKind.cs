@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Microsoft.PowerFx.Core.IR
+﻿namespace Microsoft.PowerFx.Core.IR
 {
     internal enum CoercionKind
     {
@@ -37,7 +33,6 @@ namespace Microsoft.PowerFx.Core.IR
         DateTimeToText,
 
         NumberToBoolean,
-        DateTimeToBoolean,
         TextToBoolean,
         BooleanOptionSetToBoolean,
 

@@ -3,16 +3,12 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
-using System.Numerics;
-using System.Text.RegularExpressions;
 using System.Threading;
-using Microsoft.AppMagic.Authoring;
-using Microsoft.AppMagic.Authoring.Texl;
-using System.Globalization;
 
-namespace Microsoft.AppMagic
+namespace Microsoft.PowerFx.Core.Utils
 {
     internal static partial class CollectionUtils
     {

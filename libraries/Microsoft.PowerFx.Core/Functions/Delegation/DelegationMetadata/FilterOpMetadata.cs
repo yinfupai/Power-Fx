@@ -4,10 +4,11 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Functions.Delegation.DelegationMetadata
 {
     // Defines filter operation metadata.
     internal sealed class FilterOpMetadata : OperationCapabilityMetadata

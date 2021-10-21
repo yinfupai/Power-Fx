@@ -5,8 +5,10 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Functions.Delegation.DelegationMetadata
 {
     class ODataOpMetadata : OperationCapabilityMetadata
     {

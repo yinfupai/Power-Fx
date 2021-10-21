@@ -8,9 +8,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Texl.Intellisense
 {
 
     // Specialized IntellisenseSuggestion list that allows for some effient operations on the list.

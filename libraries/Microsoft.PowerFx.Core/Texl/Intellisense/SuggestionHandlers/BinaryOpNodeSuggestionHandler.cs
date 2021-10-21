@@ -4,7 +4,13 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring.Texl
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Parser;
+using Microsoft.PowerFx.Core.Syntax;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Utils;
+
+namespace Microsoft.PowerFx.Core.Texl.Intellisense
 {
     internal partial class Intellisense
     {
@@ -14,7 +20,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 : base(NodeKind.BinaryOp)
             { }
 
-            internal override bool TryAddSuggestionsForNodeKind(IntellisenseData intellisenseData)
+            internal override bool TryAddSuggestionsForNodeKind(IntellisenseData.IntellisenseData intellisenseData)
             {
                 Contracts.AssertValue(intellisenseData);
 
@@ -33,7 +39,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 return true;
             }
 
-            internal static void AddSuggestionsForBinaryOperatorKeyWords(IntellisenseData intellisenseData)
+            internal static void AddSuggestionsForBinaryOperatorKeyWords(IntellisenseData.IntellisenseData intellisenseData)
             {
                 Contracts.AssertValue(intellisenseData);
 

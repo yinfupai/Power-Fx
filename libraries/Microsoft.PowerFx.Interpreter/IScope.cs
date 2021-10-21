@@ -4,15 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring.Texl;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.IO;
-using System.Text;
-using System.Linq;
-using Microsoft.AppMagic.Authoring;
+using Microsoft.PowerFx.Core.Public.Values;
 
 namespace Microsoft.PowerFx
 {

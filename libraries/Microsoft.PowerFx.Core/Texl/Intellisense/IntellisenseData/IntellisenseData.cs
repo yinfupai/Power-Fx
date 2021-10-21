@@ -6,9 +6,17 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.PowerFx;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Functions;
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Lexer.Tokens;
+using Microsoft.PowerFx.Core.Syntax;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Types.Enums;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Texl.Intellisense.IntellisenseData
 {
     // The IntellisenseData class contains the pre-parsed data for Intellisense to provide suggestions
     internal class IntellisenseData : IIntellisenseData
@@ -331,7 +339,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
 
         /// <summary>
         /// This collection is appended to the resultant suggestion list when
-        /// <see cref="FirstNameNodeSuggestionHandler"/> is used.  It may be overridden to provide
+        /// <see cref="Intellisense.FirstNameNodeSuggestionHandler"/> is used.  It may be overridden to provide
         /// additional first name node suggestions.  It is called when the cursor is
         /// </summary>
         /// <returns>
@@ -378,7 +386,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         /// Function whose eligibility is called into question.
         /// </param>
         /// <returns>
-        /// Returns true if <see cref="FunctionRecordNameSuggestionHandler"/> should make suggestions
+        /// Returns true if <see cref="Intellisense.FunctionRecordNameSuggestionHandler"/> should make suggestions
         /// for the provided function and false otherwise.
         /// </returns>
         internal virtual bool IsFunctionElligibleForRecordSuggestions(TexlFunction function) => true;
@@ -409,10 +417,10 @@ namespace Microsoft.AppMagic.Authoring.Texl
         internal virtual bool TryAddFunctionRecordSuggestions(TexlFunction function, CallNode callNode, Identifier columnName) => false;
 
         /// <summary>
-        /// This method is called by <see cref="ErrorNodeSuggestionHandlerBase"/> if function was
+        /// This method is called by <see cref="Intellisense.ErrorNodeSuggestionHandlerBase"/> if function was
         /// discovered as a parent node to the current error node.  It may be overridden to add additional
         /// suggestions pertaining to <see cref="function"/> and <see cref="argIndex"/>.  If it returns true,
-        /// <see cref="ErrorNodeSuggestionHandlerBase"/> will return immediately and no more suggestions
+        /// <see cref="Intellisense.ErrorNodeSuggestionHandlerBase"/> will return immediately and no more suggestions
         /// will be added.
         /// </summary>
         /// <param name="function">
@@ -427,20 +435,20 @@ namespace Microsoft.AppMagic.Authoring.Texl
         internal virtual bool TryAddCustomFunctionSuggestionsForErrorNode(TexlFunction function, int argIndex) => false;
 
         /// <summary>
-        /// This method is called by <see cref="ErrorNodeSuggestionHandlerBase"/> before top level
+        /// This method is called by <see cref="Intellisense.ErrorNodeSuggestionHandlerBase"/> before top level
         /// suggestions are added.  See <see cref="IntellisenseHelper.AddSuggestionsForTopLevel"/> for
         /// details.
         /// </summary>
         internal virtual bool AddSuggestionsBeforeTopLevelErrorNodeSuggestions() => false;
 
         /// <summary>
-        /// This method is called by <see cref="ErrorNodeSuggestionHandlerBase"/> if no top level
+        /// This method is called by <see cref="Intellisense.ErrorNodeSuggestionHandlerBase"/> if no top level
         /// suggestions are added.  It may be overridden to supply alternative top level suggestions.
         /// </summary>
         internal virtual void AddAlternativeTopLevelSuggestionsForErrorNode() { }
 
         /// <summary>
-        /// This method is called by <see cref="ErrorNodeSuggestionHandlerBase"/> after it has added all
+        /// This method is called by <see cref="Intellisense.ErrorNodeSuggestionHandlerBase"/> after it has added all
         /// its suggestions to <see cref="Suggestions"/>
         /// </summary>
         internal virtual void AddSuggestionsAfterTopLevelErrorNodeSuggestions() { }

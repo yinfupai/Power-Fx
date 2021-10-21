@@ -4,9 +4,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring.Texl;
 using Microsoft.PowerFx.Core.IR;
 using System;
+using Microsoft.PowerFx.Core.Public.Values;
+using System.Globalization;
 
 namespace Microsoft.PowerFx.Functions
 {
@@ -21,12 +22,23 @@ namespace Microsoft.PowerFx.Functions
         }
 
         // https://docs.microsoft.com/en-us/powerapps/maker/canvas-apps/functions/function-now-today-istoday
-        public static FormulaValue IsToday(IRContext irContext, DateValue[] args)
+        public static FormulaValue IsToday(IRContext irContext, FormulaValue[] args)
         {
-            var arg = args[0];
+            DateTime arg0;
+            switch (args[0])
+            {
+                case DateTimeValue dtv:
+                    arg0 = dtv.Value;
+                    break;
+                case DateValue dv:
+                    arg0 = dv.Value;
+                    break;
+                default:
+                    return CommonErrors.RuntimeTypeMismatch(irContext);
+            }
 
             var now = DateTime.Today;
-            bool same = (arg.Value.Year == now.Year) && (arg.Value.Month == now.Month) && (arg.Value.Day == now.Day);
+            bool same = (arg0.Year == now.Year) && (arg0.Month == now.Month) && (arg0.Day == now.Day);
             return new BooleanValue(irContext, same);
         }
 
@@ -34,38 +46,122 @@ namespace Microsoft.PowerFx.Functions
         // https://docs.microsoft.com/en-us/powerapps/maker/canvas-apps/functions/function-dateadd-datediff
         public static FormulaValue DateAdd(IRContext irContext, FormulaValue[] args)
         {
-            var datetime = (DateValue)args[0];
+            DateTime datetime;
+            switch (args[0])
+            {
+                case DateTimeValue dtv:
+                    datetime = dtv.Value;
+                    break;
+                case DateValue dv:
+                    datetime = dv.Value;
+                    break;
+                default:
+                    return CommonErrors.RuntimeTypeMismatch(irContext);
+            }
+
             var delta = (NumberValue)args[1];
             var units = (StringValue)args[2];
 
+            DateTime newDate;
             switch (units.Value.ToLower())
             {
+                case "milliseconds":
+                    newDate = datetime.AddMilliseconds(delta.Value);
+                    break;
+                case "seconds":
+                    newDate = datetime.AddSeconds(delta.Value);
+                    break;
+                case "minutes":
+                    newDate = datetime.AddMinutes(delta.Value);
+                    break;
+                case "hours":
+                    newDate = datetime.AddHours(delta.Value);
+                    break;
                 case "days":
-                    var newDate = datetime.Value.AddDays(delta.Value);
-                    return new DateValue(irContext, newDate);
+                    newDate = datetime.AddDays(delta.Value);
+                    break;
+                case "months":
+                    newDate = datetime.AddMonths((int)delta.Value);
+                    break;
+                case "quarters":
+                    newDate = datetime.AddMonths((int)delta.Value * 3);
+                    break;
+                case "years":
+                    newDate = datetime.AddYears((int)delta.Value);
+                    break;
                 default:
                     // TODO: Task 10723372: Implement Unit Functionality in DateAdd, DateDiff Functions
-                    throw new NotImplementedException("DateAdd Only supports Days for the unit field");
+                    return CommonErrors.NotYetImplementedError(irContext, "DateAdd Only supports Days for the unit field");
             }
+
+            if (args[0] is DateTimeValue)
+                return new DateTimeValue(irContext, newDate);
+            else
+                return new DateValue(irContext, newDate.Date);
         }
 
         public static FormulaValue DateDiff(IRContext irContext, FormulaValue[] args)
         {
-            var start = (DateValue)args[0];
-            var end = (DateValue)args[1];
+            DateTime start;
+            switch (args[0])
+            {
+                case DateTimeValue dtv:
+                    start = dtv.Value;
+                    break;
+                case DateValue dv:
+                    start = dv.Value;
+                    break;
+                default:
+                    return CommonErrors.RuntimeTypeMismatch(irContext);
+            }
+
+            DateTime end;
+            switch (args[1])
+            {
+                case DateTimeValue dtv:
+                    end = dtv.Value;
+                    break;
+                case DateValue dv:
+                    end = dv.Value;
+                    break;
+                default:
+                    return CommonErrors.RuntimeTypeMismatch(irContext);
+            }
+
             var units = (StringValue)args[2];
 
-            TimeSpan diff = end.Value - start.Value;
+            TimeSpan diff = end - start;
 
             // The function DateDiff only returns a whole number of the units being subtracted, and the precision is given in the unit specified.
             switch (units.Value.ToLower())
             {
+                case "milliseconds":
+                    double milliseconds = Math.floor(diff.TotalMilliseconds);
+                    return new NumberValue(irContext, milliseconds);
+                case "seconds":
+                    double seconds = Math.floor(diff.TotalSeconds);
+                    return new NumberValue(irContext, seconds);
+                case "minutes":
+                    double minutes = Math.floor(diff.TotalMinutes);
+                    return new NumberValue(irContext, minutes);
+                case "hours":
+                    double hours = Math.floor(diff.TotalHours);
+                    return new NumberValue(irContext, hours);
                 case "days":
                     double days = Math.floor(diff.TotalDays);
                     return new NumberValue(irContext, days);
+                case "months":
+                    double months = (end.Year - start.Year) * 12 + end.Month - start.Month;
+                    return new NumberValue(irContext, months);
+                case "quarters":
+                    double quarters = (end.Year - start.Year) * 4 + Math.floor(end.Month / 3.0) - Math.floor(start.Month / 3.0);
+                    return new NumberValue(irContext, quarters);
+                case "years":
+                    double years = end.Year - start.Year;
+                    return new NumberValue(irContext, years);
                 default:
                     // TODO: Task 10723372: Implement Unit Functionality in DateAdd, DateDiff Functions
-                    throw new NotImplementedException("DateDiff Only supports Days for the unit field");
+                    return CommonErrors.NotYetImplementedError(irContext, "DateDiff Only supports Days for the unit field");
             }
         }
 
@@ -78,8 +174,20 @@ namespace Microsoft.PowerFx.Functions
                 return new NumberValue(irContext, 1900);
             }
 
-            var arg0 = (DateValue)args[0];
-            var x = arg0.Value.Year;
+            DateTime arg0;
+            switch (args[0])
+            {
+                case DateTimeValue dtv:
+                    arg0 = dtv.Value;
+                    break;
+                case DateValue dv:
+                    arg0 = dv.Value;
+                    break;
+                default:
+                    return CommonErrors.RuntimeTypeMismatch(irContext);
+            }
+
+            var x = arg0.Year;
             return new NumberValue(irContext, x);
         }
 
@@ -90,8 +198,20 @@ namespace Microsoft.PowerFx.Functions
                 return new NumberValue(irContext, 0);
             }
 
-            var arg0 = (DateValue)args[0];
-            var x = arg0.Value.Day;
+            DateTime arg0;
+            switch (args[0])
+            {
+                case DateTimeValue dtv:
+                    arg0 = dtv.Value;
+                    break;
+                case DateValue dv:
+                    arg0 = dv.Value;
+                    break;
+                default:
+                    return CommonErrors.RuntimeTypeMismatch(irContext);
+            }
+
+            var x = arg0.Day;
             return new NumberValue(irContext, x);
         }
 
@@ -102,8 +222,92 @@ namespace Microsoft.PowerFx.Functions
                 return new NumberValue(irContext, 1);
             }
 
-            var arg0 = (DateValue)args[0];
-            var x = arg0.Value.Month;
+            DateTime arg0;
+            switch (args[0])
+            {
+                case DateTimeValue dtv:
+                    arg0 = dtv.Value;
+                    break;
+                case DateValue dv:
+                    arg0 = dv.Value;
+                    break;
+                default:
+                    return CommonErrors.RuntimeTypeMismatch(irContext);
+            }
+
+            var x = arg0.Month;
+            return new NumberValue(irContext, x);
+        }
+
+        public static FormulaValue Hour(IRContext irContext, FormulaValue[] args)
+        {
+            if (args[0] is BlankValue)
+            {
+                return new NumberValue(irContext, 0);
+            }
+
+            TimeSpan arg0;
+            switch (args[0])
+            {
+                case DateTimeValue dtv:
+                    arg0 = dtv.Value.TimeOfDay;
+                    break;
+                case TimeValue dv:
+                    arg0 = dv.Value;
+                    break;
+                default:
+                    return CommonErrors.RuntimeTypeMismatch(irContext);
+            }
+
+            var x = arg0.Hours;
+            return new NumberValue(irContext, x);
+        }
+
+        public static FormulaValue Minute(IRContext irContext, FormulaValue[] args)
+        {
+            if (args[0] is BlankValue)
+            {
+                return new NumberValue(irContext, 0);
+            }
+
+            TimeSpan arg0;
+            switch (args[0])
+            {
+                case DateTimeValue dtv:
+                    arg0 = dtv.Value.TimeOfDay;
+                    break;
+                case TimeValue dv:
+                    arg0 = dv.Value;
+                    break;
+                default:
+                    return CommonErrors.RuntimeTypeMismatch(irContext);
+            }
+
+            var x = arg0.Minutes;
+            return new NumberValue(irContext, x);
+        }
+
+        public static FormulaValue Second(IRContext irContext, FormulaValue[] args)
+        {
+            if (args[0] is BlankValue)
+            {
+                return new NumberValue(irContext, 0);
+            }
+
+            TimeSpan arg0;
+            switch (args[0])
+            {
+                case DateTimeValue dtv:
+                    arg0 = dtv.Value.TimeOfDay;
+                    break;
+                case TimeValue dv:
+                    arg0 = dv.Value;
+                    break;
+                default:
+                    return CommonErrors.RuntimeTypeMismatch(irContext);
+            }
+
+            var x = arg0.Seconds;
             return new NumberValue(irContext, x);
         }
 
@@ -117,6 +321,38 @@ namespace Microsoft.PowerFx.Functions
             var day = (int)args[2].Value;
 
             return new DateValue(irContext, new DateTime(year, month, day));
+        }
+
+        private static FormulaValue Now(EvalVisitor runner, SymbolContext symbolContext, IRContext irContext, FormulaValue[] args)
+        {
+            return new DateTimeValue(irContext, DateTime.Now);
+        }
+
+        public static FormulaValue DateParse(EvalVisitor runner, SymbolContext symbolContext, IRContext irContext, StringValue[] args)
+        {
+            var str = args[0].Value;
+            if (DateTime.TryParse(str, runner.CultureInfo, DateTimeStyles.None, out DateTime result))
+                return new DateValue(irContext, result.Date);
+            else
+                return CommonErrors.InvalidDateTimeError(irContext);
+        }
+
+        public static FormulaValue DateTimeParse(EvalVisitor runner, SymbolContext symbolContext, IRContext irContext, StringValue[] args)
+        {
+            var str = args[0].Value;
+            if (DateTime.TryParse(str, runner.CultureInfo, DateTimeStyles.None, out DateTime result))
+                return new DateTimeValue(irContext, result);
+            else
+                return CommonErrors.InvalidDateTimeError(irContext);
+        }
+
+        public static FormulaValue TimeParse(EvalVisitor runner, SymbolContext symbolContext, IRContext irContext, StringValue[] args)
+        {
+            var str = args[0].Value;
+            if (TimeSpan.TryParse(str, runner.CultureInfo, out TimeSpan result))
+                return new TimeValue(irContext, result);
+            else
+                return CommonErrors.InvalidDateTimeError(irContext);
         }
     }
 }

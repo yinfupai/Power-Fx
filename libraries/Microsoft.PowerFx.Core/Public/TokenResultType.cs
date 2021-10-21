@@ -4,7 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.PowerFx.Core
+namespace Microsoft.PowerFx.Core.Public
 {
     /// <summary>
     /// Token result type (this matches formula bar token type defined in PowerAppsTheme.ts)

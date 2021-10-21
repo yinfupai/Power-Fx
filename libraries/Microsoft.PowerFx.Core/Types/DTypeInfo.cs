@@ -4,12 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Microsoft.AppMagic.Authoring.Importers.ServiceConfig
+namespace Microsoft.PowerFx.Core.Types
 {
     internal sealed class DTypeInfo
     {

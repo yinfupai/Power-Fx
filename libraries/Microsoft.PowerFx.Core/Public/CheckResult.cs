@@ -4,16 +4,16 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring;
-using Microsoft.AppMagic.Authoring.Texl;
-using Microsoft.PowerFx.Core;
-using Microsoft.PowerFx.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AppMagic;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Errors;
+using Microsoft.PowerFx.Core.Public.Types;
+using Microsoft.PowerFx.Core.Syntax;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.PowerFx
+namespace Microsoft.PowerFx.Core.Public
 {
     /// <summary>
     /// Result of checking an expression. 

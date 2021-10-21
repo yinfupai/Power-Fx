@@ -2,9 +2,8 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-using Microsoft.AppMagic.Transport;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Texl.Intellisense
 {
     public sealed class FormatResult
     {

@@ -4,6 +4,8 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
+using Microsoft.PowerFx.Core.Public;
+
 namespace Microsoft.PowerFx.Core
 {
     public interface IPowerFxScopeFactory

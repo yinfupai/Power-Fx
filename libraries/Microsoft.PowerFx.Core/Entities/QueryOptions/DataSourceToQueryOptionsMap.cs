@@ -1,9 +1,7 @@
-﻿using Microsoft.AppMagic;
-using Microsoft.AppMagic.Authoring;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
 
 namespace Microsoft.PowerFx.Core.Entities.QueryOptions
 {

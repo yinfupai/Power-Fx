@@ -4,14 +4,12 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring;
-using System.Collections.Generic;
-using System.Text.Json;
-using System.Linq;
 using System;
 using System.Diagnostics;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.PowerFx
+namespace Microsoft.PowerFx.Core.Public.Types
 {
     /// <summary>
     /// Base class for type of a Formula. 

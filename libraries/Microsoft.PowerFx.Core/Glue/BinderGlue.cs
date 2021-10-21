@@ -1,8 +1,6 @@
-﻿using Microsoft.AppMagic.Authoring;
-using Microsoft.AppMagic.Authoring.Texl;
-using Microsoft.PowerFx.Core.App;
-using Microsoft.PowerFx.Core.App.Controls;
-using Microsoft.PowerFx.Core.Entities.QueryOptions;
+﻿using Microsoft.PowerFx.Core.App.Controls;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Functions;
 
 namespace Microsoft.PowerFx.Core.Glue
 {

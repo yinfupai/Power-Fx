@@ -4,13 +4,16 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring;
-using Microsoft.AppMagic.Authoring.Texl;
 using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Reflection;
-using static Microsoft.AppMagic.Authoring.Texl.TexlStrings;
+using Microsoft.PowerFx.Core.Functions;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Public.Types;
+using Microsoft.PowerFx.Core.Public.Values;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
+using static Microsoft.PowerFx.Core.Localization.TexlStrings;
 
 namespace Microsoft.PowerFx
 {

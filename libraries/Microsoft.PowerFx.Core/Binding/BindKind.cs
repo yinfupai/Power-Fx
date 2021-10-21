@@ -4,7 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Binding
 {
     internal enum BindKind
     {
@@ -49,6 +49,9 @@ namespace Microsoft.AppMagic.Authoring.Texl
 
         // Scope variable(app variable or component variable).
         ScopeVariable,
+
+        // Scope Collection (component scoped collection).
+        ScopeCollection,
 
         // Global condition
         Condition,

@@ -4,7 +4,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring.Texl
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Types;
+
+namespace Microsoft.PowerFx.Core.Texl.Builtins
 {
     // StdevP(arg1:n, arg2:n, ..., argN:n)
     // Corresponding Excel function: STDEV.P

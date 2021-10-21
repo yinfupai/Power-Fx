@@ -1,4 +1,7 @@
-namespace Microsoft.AppMagic.Authoring.Texl
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
+
+namespace Microsoft.PowerFx.Core.Binding.BindInfo
 {
     /// <summary>
     /// Lookup info for a local rule scope.

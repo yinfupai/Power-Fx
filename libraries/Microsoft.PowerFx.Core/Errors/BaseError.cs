@@ -1,13 +1,11 @@
-﻿using Microsoft.AppMagic.Authoring.Texl;
-using Microsoft.AppMagic.Common;
-using Microsoft.PowerFx.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Text;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Errors
 {
 
 
@@ -230,7 +228,7 @@ namespace Microsoft.AppMagic.Authoring
         {
             Contracts.AssertValue(sb);
 
-            sb.Append(Texl.TexlStrings.InfoMessage);
+            sb.Append(TexlStrings.InfoMessage);
             sb.Append(ShortMessage);
         }
 

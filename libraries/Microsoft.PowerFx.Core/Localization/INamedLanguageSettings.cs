@@ -4,7 +4,7 @@
 //  </copyright>
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Localization
 {
     /// <summary>
     ///     A language settings abstraction tied to a specific culture name

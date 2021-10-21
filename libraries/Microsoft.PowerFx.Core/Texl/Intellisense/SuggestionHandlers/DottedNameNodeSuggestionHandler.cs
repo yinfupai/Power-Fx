@@ -6,9 +6,16 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.PowerFx;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Binding.BindInfo;
+using Microsoft.PowerFx.Core.Functions;
+using Microsoft.PowerFx.Core.Syntax;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Types.Enums;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Texl.Intellisense
 {
     internal partial class Intellisense
     {
@@ -18,7 +25,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 : base(NodeKind.DottedName)
             { }
 
-            internal override bool TryAddSuggestionsForNodeKind(IntellisenseData intellisenseData)
+            internal override bool TryAddSuggestionsForNodeKind(IntellisenseData.IntellisenseData intellisenseData)
             {
                 Contracts.AssertValue(intellisenseData);
 
@@ -70,7 +77,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 return true;
             }
 
-            private void AddSuggestionsForLeftNodeScope(IntellisenseData intellisenseData, TexlNode leftNode, bool isOneColumnTable, DType leftType)
+            private void AddSuggestionsForLeftNodeScope(IntellisenseData.IntellisenseData intellisenseData, TexlNode leftNode, bool isOneColumnTable, DType leftType)
             {
                 Contracts.AssertValue(intellisenseData);
                 Contracts.AssertValue(leftNode);
@@ -99,7 +106,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 intellisenseData.OnAddedSuggestionsForLeftNodeScope(leftNode);
             }
 
-            internal void AddSuggestionsForNamespace(IntellisenseData intellisenseData, IEnumerable<TexlFunction> namespaceFunctions)
+            internal void AddSuggestionsForNamespace(IntellisenseData.IntellisenseData intellisenseData, IEnumerable<TexlFunction> namespaceFunctions)
             {
                 Contracts.AssertValue(intellisenseData);
                 Contracts.AssertValue(namespaceFunctions);
@@ -132,7 +139,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 return false;
             }
 
-            private static bool TryGetEnumInfo(IntellisenseData data, TexlNode node, TexlBinding binding, out EnumSymbol enumSymbol)
+            private static bool TryGetEnumInfo(IntellisenseData.IntellisenseData data, TexlNode node, TexlBinding binding, out EnumSymbol enumSymbol)
             {
                 Contracts.AssertValue(node);
                 Contracts.AssertValue(binding);
@@ -177,7 +184,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
 
             // This method has logic to create Types for the TypedNames for a given type
             // if that type is Table.
-            internal static void AddSuggestionsForDottedName(IntellisenseData intellisenseData, DType type)
+            internal static void AddSuggestionsForDottedName(IntellisenseData.IntellisenseData intellisenseData, DType type)
             {
                 Contracts.AssertValue(intellisenseData);
                 Contracts.AssertValid(type);

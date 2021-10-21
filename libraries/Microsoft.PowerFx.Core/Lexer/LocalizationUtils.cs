@@ -4,14 +4,12 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using Microsoft.AppMagic.Authoring;
-using Microsoft.AppMagic.Authoring.Texl;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Common
+namespace Microsoft.PowerFx.Core.Lexer
 {
     public sealed class LocalizationUtils
     {

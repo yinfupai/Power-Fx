@@ -7,7 +7,7 @@
 using System;
 using Microsoft.AppMagic.Transport;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Functions.Publish
 {
     [TransportType(TransportKind.Enum)]
     [Flags]

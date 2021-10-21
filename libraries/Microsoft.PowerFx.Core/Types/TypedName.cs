@@ -6,15 +6,11 @@
 #pragma warning disable 420
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Types
 {
-    using Conditional = System.Diagnostics.ConditionalAttribute;
-
     // Represents a (simple) name together with an DType.
     // TASK: 67008 - Make this public, or expose a public shim in Document.
     internal struct TypedName : IEquatable<TypedName>, ICheckable

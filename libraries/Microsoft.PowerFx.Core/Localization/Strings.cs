@@ -4,10 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Common;
-using ErrorResourceKey = Microsoft.AppMagic.Common.ErrorResourceKey;
-
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Localization
 {
     internal static class TexlStrings
     {

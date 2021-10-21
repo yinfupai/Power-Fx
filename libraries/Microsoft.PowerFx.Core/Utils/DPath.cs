@@ -5,14 +5,12 @@
 //------------------------------------------------------------------------------
 #pragma warning disable 420
 
-using Microsoft.AppMagic.Authoring.Texl;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading;
+using Microsoft.PowerFx.Core.Lexer;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Utils
 {
     using Conditional = System.Diagnostics.ConditionalAttribute;
 

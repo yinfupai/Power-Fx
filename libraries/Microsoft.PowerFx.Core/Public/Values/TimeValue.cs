@@ -4,11 +4,12 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.PowerFx.Core.IR;
 using System;
 using System.Diagnostics.Contracts;
+using Microsoft.PowerFx.Core.IR;
+using Microsoft.PowerFx.Core.Public.Types;
 
-namespace Microsoft.PowerFx
+namespace Microsoft.PowerFx.Core.Public.Values
 {
     public class TimeValue : PrimitiveValue<TimeSpan>
     {

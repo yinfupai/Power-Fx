@@ -4,7 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Types
 {
     // These represent the kinds of values that the document model deals with.
     // These values are persisted. DType.Invalid will get an invalid DKind (0).

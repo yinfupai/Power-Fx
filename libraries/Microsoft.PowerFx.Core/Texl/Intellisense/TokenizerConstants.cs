@@ -4,7 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Texl.Intellisense
 {
     internal static class TokenizerConstants {
         public const string BinaryOp = "BinaryOp";

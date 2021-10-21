@@ -4,11 +4,11 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Common;
-using Microsoft.PowerFx.Core.Delegation;
 using Microsoft.PowerFx.Core.Entities.Delegation;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.UtilityDataStructures;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Functions.Delegation
 {
     /// <summary>
     /// Metadata information about data entity types.

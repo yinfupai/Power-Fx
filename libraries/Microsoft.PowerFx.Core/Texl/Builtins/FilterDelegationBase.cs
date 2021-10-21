@@ -4,11 +4,17 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.PowerFx.Core.Delegation;
-using System.Collections.Generic;
 using System.Numerics;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Functions.Delegation;
+using Microsoft.PowerFx.Core.Functions.Delegation.DelegationMetadata;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Syntax;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Texl.Builtins
 {
     // Abstract base class for all functions "with scope", i.e. that take lambda parameters and participate in filter query server delegation. For example, Filter, LookUp.
     internal abstract class FilterFunctionBase : FunctionWithTableInput

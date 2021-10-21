@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.PowerFx.Core.Tests;
 using System.Threading.Tasks;
+using Microsoft.PowerFx.Core.Public.Values;
 
 namespace Microsoft.PowerFx.Interpreter.Tests
 {
@@ -25,7 +26,7 @@ namespace Microsoft.PowerFx.Interpreter.Tests
             var result = runner.RunTests();
 
             // This number should go to 0 over time
-            Assert.AreEqual(166, result.failed);
+            Assert.AreEqual(88, result.failed);
         }
 
         // Use this for local testing of a single testcase (uncomment "TestMethod")

@@ -4,7 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.PowerFx.Core
+namespace Microsoft.PowerFx.Core.Public
 {
     /*
      * Indicates the error on a record in a connected data source

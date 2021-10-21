@@ -4,8 +4,15 @@
 //  </copyright>
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring.Texl
-{
+using Microsoft.PowerFx.Core.Binding.BindInfo;
+using Microsoft.PowerFx.Core.Functions;
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Syntax;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
+
+namespace Microsoft.PowerFx.Core.Texl.Intellisense{
     internal partial class Intellisense
     {
         internal sealed class FunctionRecordNameSuggestionHandler : ISuggestionHandler
@@ -14,7 +21,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             /// Adds suggestions as appropriate to the internal Suggestions and SubstringSuggestions lists of intellisenseData.
             /// Returns true if intellisenseData is handled and no more suggestions are to be found and false otherwise.
             /// </summary>
-            public bool Run(IntellisenseData intellisenseData)
+            public bool Run(IntellisenseData.IntellisenseData intellisenseData)
             {
                 Contracts.AssertValue(intellisenseData);
 
@@ -77,7 +84,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 return intellisenseData.TryAddFunctionRecordSuggestions(func, callNode, columnName);
             }
 
-            private DType GetAggregateType(TexlFunction func, CallNode callNode, IntellisenseData intellisenseData)
+            private DType GetAggregateType(TexlFunction func, CallNode callNode, IntellisenseData.IntellisenseData intellisenseData)
             {
                 Contracts.AssertValue(func);
                 Contracts.AssertValue(callNode);

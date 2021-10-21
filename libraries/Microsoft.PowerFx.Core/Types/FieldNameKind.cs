@@ -4,7 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Types
 {
     /// <summary>
     /// You can refer to a field name both by a "logical" name and a "display" name. Sometimes

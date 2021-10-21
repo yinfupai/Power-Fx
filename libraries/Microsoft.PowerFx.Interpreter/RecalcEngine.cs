@@ -4,14 +4,24 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring;
-using Microsoft.AppMagic.Authoring.Texl;
 using Microsoft.PowerFx.Core.IR;
 using Microsoft.PowerFx.Core.IR.Symbols;
-using Microsoft.PowerPlatform.Language;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Functions;
+using Microsoft.PowerFx.Core.Glue;
+using Microsoft.PowerFx.Core.IR.Nodes;
+using Microsoft.PowerFx.Core.Parser;
+using Microsoft.PowerFx.Core.Public;
+using Microsoft.PowerFx.Core.Public.Types;
+using Microsoft.PowerFx.Core.Public.Values;
+using Microsoft.PowerFx.Core.Syntax;
+using Microsoft.PowerFx.Core.Texl.Intellisense;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Types.Enums;
+using System.Globalization;
 
 namespace Microsoft.PowerFx
 {
@@ -24,6 +34,13 @@ namespace Microsoft.PowerFx
         private Dictionary<string, TexlFunction> _extraFunctions = new Dictionary<string, TexlFunction>(StringComparer.OrdinalIgnoreCase);
 
         internal Dictionary<string, RecalcFormulaInfo> Formulas { get; } = new Dictionary<string, RecalcFormulaInfo>();
+
+        private readonly CultureInfo _cultureInfo;
+
+        public RecalcEngine(CultureInfo cultureInfo = null)
+        {
+            _cultureInfo = cultureInfo ?? CultureInfo.CurrentCulture;
+        }
 
         /// <summary>
         /// Add a custom function. 
@@ -182,7 +199,7 @@ namespace Microsoft.PowerFx
 
             (IntermediateNode irnode, ScopeSymbol ruleScopeSymbol) = IRTranslator.Translate(binding);
 
-            var ev2 = new EvalVisitor();
+            var ev2 = new EvalVisitor(_cultureInfo);
             FormulaValue newValue = irnode.Accept(ev2, SymbolContext.New().WithGlobals(parameters));
 
             return newValue;

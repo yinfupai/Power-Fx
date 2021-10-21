@@ -4,8 +4,6 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.PowerFx.Core;
-using Microsoft.PowerFx.Core.IR;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,8 +12,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using Microsoft.PowerFx.Core.IR;
+using Microsoft.PowerFx.Core.Public.Types;
 
-namespace Microsoft.PowerFx
+namespace Microsoft.PowerFx.Core.Public.Values
 {
     /// <summary>
     /// Represent a value in the formula expression. 
@@ -77,18 +77,26 @@ namespace Microsoft.PowerFx
             return new BooleanValue(IRContext.NotInSource(FormulaType.Boolean), value);
         }
 
-        public static DateValue New(DateTime value)
+        public static DateValue NewDateOnly(DateTime value)
         {
-            return new DateValue(IRContext.NotInSource(FormulaType.DateTime), value);
+            if(value.TimeOfDay != TimeSpan.Zero)
+            {
+                throw new ArgumentException("Invalid DateValue, the provided DateTime contains a non-zero TimeOfDay");
+            }
+            if(value.Kind == DateTimeKind.Utc)
+            {
+                throw new ArgumentException("Invalid DateValue, the provided DateTime must be local");
+            }
+            return new DateValue(IRContext.NotInSource(FormulaType.Date), value);
         }
 
-        public static DateValue New(DateTimeOffset value, FormulaType type = null)
+        public static DateTimeValue New(DateTime value)
         {
-            if(type == null)
+            if (value.Kind == DateTimeKind.Utc)
             {
-                type = FormulaType.DateTime;
+                throw new ArgumentException("Invalid DateTimeValue, the provided DateTime must be local");
             }
-            return new DateValue(IRContext.NotInSource(type), value);
+            return new DateTimeValue(IRContext.NotInSource(FormulaType.DateTime), value);
         }
 
         public static TimeValue New(TimeSpan value)
@@ -150,7 +158,7 @@ namespace Microsoft.PowerFx
             if (obj is float singleValue) { return New(singleValue); }
 
             if (obj is DateTime dateValue) { return New(dateValue); }
-            if (obj is DateTimeOffset dateOffsetValue) { return New(dateOffsetValue); }
+            if (obj is DateTimeOffset dateOffsetValue) { return New(dateOffsetValue.DateTime); }
             if (obj is TimeSpan timeValue) { return New(timeValue); }
 
 

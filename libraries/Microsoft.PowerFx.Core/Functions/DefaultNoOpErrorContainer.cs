@@ -5,10 +5,13 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
-using Microsoft.AppMagic.Common;
 using Microsoft.PowerFx.Core.App.ErrorContainers;
+using Microsoft.PowerFx.Core.Errors;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Types;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Functions
 {
     // Default "no-op" error container that does not post document errors.
     // See the TexlFunction.DefaultErrorContainer property and its uses for more info.

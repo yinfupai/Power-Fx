@@ -5,9 +5,11 @@
 //------------------------------------------------------------------------------
 
 using System.Linq;
-using Microsoft.AppMagic.Authoring.Texl.SourceInformation;
+using Microsoft.PowerFx.Core.Lexer.Tokens;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Syntax.SourceInformation;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Syntax.Nodes
 {
     internal abstract class NameNode : TexlNode
     {

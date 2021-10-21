@@ -4,7 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Common.Telemetry
+using Microsoft.PowerFx.Core.Utils;
+
+namespace Microsoft.PowerFx.Core.Logging
 {
     public interface ITrackEventArgs
     {

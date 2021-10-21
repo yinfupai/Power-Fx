@@ -9,7 +9,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Microsoft.AppMagic
+namespace Microsoft.PowerFx.Core.Utils
 {
     using StringBuilderCache = StringBuilderCache<CharacterUtils>;
 

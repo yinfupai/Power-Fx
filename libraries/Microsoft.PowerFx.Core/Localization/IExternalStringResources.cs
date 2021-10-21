@@ -1,9 +1,4 @@
-﻿using Microsoft.AppMagic.Common;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Microsoft.PowerFx.Core.Localization
+﻿namespace Microsoft.PowerFx.Core.Localization
 {
     
     /// <summary>

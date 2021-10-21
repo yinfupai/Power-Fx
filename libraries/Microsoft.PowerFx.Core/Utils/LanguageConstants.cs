@@ -4,10 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Common;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.PowerFx.Core.Localization;
 
 namespace Microsoft.PowerFx.Core.Utils
 {

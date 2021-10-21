@@ -4,7 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Texl.Intellisense
 {
     // Keep in sync with src/AppMagic/js/AppMagic.WebAuthoring/Constants/Texl.ts
     public enum TokenType

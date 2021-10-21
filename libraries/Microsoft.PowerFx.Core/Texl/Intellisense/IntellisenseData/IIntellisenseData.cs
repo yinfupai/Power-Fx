@@ -4,7 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring.Texl
+using Microsoft.PowerFx.Core.Functions;
+
+namespace Microsoft.PowerFx.Core.Texl.Intellisense.IntellisenseData
 {
     /// <summary>
     /// A transient runtime representation of data necessary to complete <see cref="Intellisense.Suggest"/>.

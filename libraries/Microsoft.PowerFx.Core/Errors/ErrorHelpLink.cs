@@ -1,10 +1,7 @@
 ﻿using Microsoft.AppMagic.Transport;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Errors
 {
 
     [TransportType(TransportKind.ByValue)]

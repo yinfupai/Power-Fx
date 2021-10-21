@@ -4,7 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring
+using Microsoft.PowerFx.Core.Utils;
+
+namespace Microsoft.PowerFx.Core.Texl.Intellisense
 {
     public class IntellisenseContext: IIntellisenseContext
     {

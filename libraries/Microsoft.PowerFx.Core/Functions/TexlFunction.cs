@@ -9,17 +9,26 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
-using System.Threading;
-using Microsoft.AppMagic.Common;
-using Microsoft.AppMagic.Common.Telemetry;
-using Microsoft.PowerFx.Core.App;
 using Microsoft.PowerFx.Core.App.ErrorContainers;
-using Microsoft.PowerFx.Core.Delegation;
-using Microsoft.PowerFx.Core.Delegation.DelegationStrategies;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Entities;
 using Microsoft.PowerFx.Core.Entities.QueryOptions;
+using Microsoft.PowerFx.Core.Errors;
+using Microsoft.PowerFx.Core.Functions.Delegation;
+using Microsoft.PowerFx.Core.Functions.Delegation.DelegationStrategies;
+using Microsoft.PowerFx.Core.Functions.DLP;
+using Microsoft.PowerFx.Core.Functions.FunctionArgValidators;
+using Microsoft.PowerFx.Core.Functions.Publish;
+using Microsoft.PowerFx.Core.Functions.TransportSchemas;
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Localization;
 using Microsoft.PowerFx.Core.Logging.Trackers;
+using Microsoft.PowerFx.Core.Syntax;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Functions
 {
     internal abstract class TexlFunction : IFunction
     {
@@ -65,7 +74,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
 
         private SignatureConstraint _signatureConstraint;
 
-        private Actions.FunctionInfo _cachedFunctionInfo;
+        private FunctionInfo _cachedFunctionInfo;
 
         private string _cachedLocaleName;
 
@@ -1293,18 +1302,18 @@ namespace Microsoft.AppMagic.Authoring.Texl
 
         #endregion
 
-        internal Actions.FunctionInfo Info(string locale)
+        internal FunctionInfo Info(string locale)
         {
             // If the locale has changed, we want to reset the function info to one of the new locale
             if (CurrentLocaleInfo.CurrentUILanguageName == _cachedLocaleName && _cachedFunctionInfo != null)
                 return _cachedFunctionInfo;
 
             _cachedLocaleName = CurrentLocaleInfo.CurrentUILanguageName;
-            return _cachedFunctionInfo = new Actions.FunctionInfo()
+            return _cachedFunctionInfo = new FunctionInfo()
             {
                 Label = Name,
                 Detail = Description,
-                Signatures = GetSignatures().Select(signature => new Actions.FunctionSignature()
+                Signatures = GetSignatures().Select(signature => new FunctionSignature()
                 {
                     Label = Name + (signature == null ?
                         "()" :
@@ -1314,7 +1323,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                         string description;
                         TryGetParamDescription(getter(locale), out description);
 
-                        return new Actions.ParameterInfo()
+                        return new ParameterInfo()
                         {
                             Label = getter(null),
                             Documentation = description

@@ -9,9 +9,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Threading;
+using Microsoft.PowerFx.Core.Lexer.Tokens;
+using Microsoft.PowerFx.Core.Localization;
 using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Lexer
 {
     // Used as a temporary storage for LexerImpl class.
     // LexerImpl is private, so we cannot define 'using' for it here - TexlLexer instead.

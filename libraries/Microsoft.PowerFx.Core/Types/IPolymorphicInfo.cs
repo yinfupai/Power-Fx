@@ -5,8 +5,9 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.Entities;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Types
 {
     /// <summary>
     /// Information about polymorphic entity type, generates/stores ExpandInfo for each of its target casts.

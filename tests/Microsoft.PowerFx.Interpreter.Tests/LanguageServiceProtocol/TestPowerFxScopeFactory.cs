@@ -5,6 +5,7 @@
 //------------------------------------------------------------------------------
 
 using Microsoft.PowerFx.Core;
+using Microsoft.PowerFx.Core.Public;
 
 namespace Microsoft.PowerFx.Tests.LanguageServiceProtocol
 {

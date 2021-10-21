@@ -4,13 +4,11 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
+using Microsoft.PowerFx.Core.Types;
 
-namespace Microsoft.PowerFx
+namespace Microsoft.PowerFx.Core.Public.Types
 {
     public class RecordType : AggregateType
     {

@@ -5,8 +5,11 @@
 //------------------------------------------------------------------------------
 
 using System.Numerics;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Functions
 {
     // Abstract base class for all Texl builtin functions.
     internal abstract class BuiltinFunction : TexlFunction

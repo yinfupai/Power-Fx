@@ -6,7 +6,7 @@
 
 using System;
 
-namespace PowerApps.Language.Entities
+namespace Microsoft.PowerFx.Core.Entities
 {
     public interface IExternalViewInfo : IDisplayMapped<Guid>
     {

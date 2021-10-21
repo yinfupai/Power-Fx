@@ -7,8 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Syntax.Visitors
 {
     /// <summary>
     /// A base visitor for returning results that can be easily aggregated (lists, booleans, sums)

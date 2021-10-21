@@ -5,7 +5,9 @@
 //------------------------------------------------------------------------------
 
 
-namespace Microsoft.AppMagic.Authoring
+using Microsoft.PowerFx.Core.Functions.Delegation;
+
+namespace Microsoft.PowerFx.Core.Entities.Delegation
 {
     internal interface IExternalDataEntityMetadataProvider
     {

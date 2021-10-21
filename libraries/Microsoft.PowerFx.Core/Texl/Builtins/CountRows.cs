@@ -4,10 +4,17 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.PowerFx;
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Entities;
+using Microsoft.PowerFx.Core.Errors;
+using Microsoft.PowerFx.Core.Functions.Delegation;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Texl.Builtins
 {
     // CountRows(source:*)
     internal sealed class CountRowsFunction : FunctionWithTableInput
@@ -69,12 +76,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 }
             }
 
-            if (TryGetValidDataSourceForDelegation(callNode, binding, DelegationCapability.CountDistinct, out dataSource) && OldFeatureGates.CountDistinctDelegationSupport)
-            {
-                preferredFunctionDelegationCapability = DelegationCapability.CountDistinct;
-                return true;
-            }
-
+            TryGetValidDataSourceForDelegation(callNode, binding, DelegationCapability.CountDistinct, out dataSource);
             if (dataSource != null && dataSource.IsDelegatable)
                 binding.ErrorContainer.EnsureError(DocumentErrorSeverity.Warning, callNode, TexlStrings.OpNotSupportedByServiceSuggestionMessage_OpNotSupportedByService, Name);
 

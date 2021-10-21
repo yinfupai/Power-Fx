@@ -8,10 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.AppMagic.Common;
+using Microsoft.PowerFx.Core.Functions;
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Texl.Intellisense.IntellisenseData;
 using Microsoft.PowerFx.Core.Texl.Intellisense.SignatureHelp;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Texl.Intellisense
 {
     internal class IntellisenseResult : IIntellisenseResult
     {
@@ -170,7 +173,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         /// Derives signature help information for Language Server Protocol compliance from extant signature
         /// info.
         /// </summary>
-        public SignatureHelp SignatureHelp => new SignatureHelp()
+        public SignatureHelp.SignatureHelp SignatureHelp => new SignatureHelp.SignatureHelp()
         {
             Signatures = _functionSignatures.ToArray(),
             ActiveSignature = CurrentFunctionOverloadIndex > 0 ? (uint)CurrentFunctionOverloadIndex : 0,

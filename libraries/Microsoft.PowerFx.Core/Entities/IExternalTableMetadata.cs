@@ -4,10 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring;
-using Microsoft.AppMagic.Authoring.DataToControls;
-
-namespace Microsoft.PowerFx.Core.App
+namespace Microsoft.PowerFx.Core.Entities
 {
     internal interface IExternalTableMetadata
     {

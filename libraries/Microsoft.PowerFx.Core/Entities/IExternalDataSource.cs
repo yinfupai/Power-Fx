@@ -4,11 +4,11 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.PowerFx.Core.App;
-using Microsoft.PowerFx.Core.Delegation;
-using PowerApps.Language.Entities;
+using Microsoft.PowerFx.Core.Entities.Delegation;
+using Microsoft.PowerFx.Core.Functions.Delegation;
+using Microsoft.PowerFx.Core.Types;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Entities
 {
     internal interface IExternalDataSource : IExternalEntity
     {

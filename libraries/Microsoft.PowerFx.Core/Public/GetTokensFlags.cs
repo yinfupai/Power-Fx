@@ -4,7 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.PowerFx.Core
+namespace Microsoft.PowerFx.Core.Public
 {
     /// <summary>
     /// Get tokens flags

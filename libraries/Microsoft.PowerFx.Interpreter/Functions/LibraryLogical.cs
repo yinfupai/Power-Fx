@@ -4,8 +4,8 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring.Texl;
 using Microsoft.PowerFx.Core.IR;
+using Microsoft.PowerFx.Core.Public.Values;
 
 namespace Microsoft.PowerFx.Functions
 {

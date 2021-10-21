@@ -4,11 +4,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.PowerFx.Core.IR;
 using System.Diagnostics.Contracts;
-using System.Text.Json;
+using Microsoft.PowerFx.Core.IR;
 
-namespace Microsoft.PowerFx
+namespace Microsoft.PowerFx.Core.Public.Values
 { 
     /// <summary>
     /// Helper for non-aggregate values that are represented as a single .net object.

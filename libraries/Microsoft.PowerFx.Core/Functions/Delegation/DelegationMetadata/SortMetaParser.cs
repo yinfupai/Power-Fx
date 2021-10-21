@@ -4,13 +4,12 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.PowerFx.Core.Delegation;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Functions.Delegation.DelegationMetadata
 {
     internal sealed partial class DelegationMetadata : IDelegationMetadata
     {

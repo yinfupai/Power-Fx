@@ -4,13 +4,11 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Linq;
-using System.Text.RegularExpressions;
-using Microsoft.AppMagic.Authoring.Texl;
+using Microsoft.PowerFx.Core.Entities;
 using Microsoft.PowerFx.Core.Entities.QueryOptions;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Types
 {
     internal static class DTypeExtensionsCore
     {

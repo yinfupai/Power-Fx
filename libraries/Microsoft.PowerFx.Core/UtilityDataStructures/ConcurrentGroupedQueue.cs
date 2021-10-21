@@ -4,12 +4,12 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Common
+namespace Microsoft.PowerFx.Core.UtilityDataStructures
 {
     public interface IBlockableItem
     {

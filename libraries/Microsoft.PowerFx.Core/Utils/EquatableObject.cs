@@ -7,7 +7,7 @@
 using System;
 using System.Text;
 
-namespace Microsoft.AppMagic
+namespace Microsoft.PowerFx.Core.Utils
 {
     internal struct EquatableObject : IEquatable<EquatableObject>, ICheckable
     {

@@ -3,10 +3,12 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-using System;
-using System.Collections.Generic;
 
-namespace Microsoft.AppMagic.Authoring
+using System.Collections.Generic;
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Utils;
+
+namespace Microsoft.PowerFx.Core.Localization
 {
     /// <summary>
     /// Language Settings class encapsulates essential details related to a specific
@@ -101,10 +103,10 @@ namespace Microsoft.AppMagic.Authoring
                 string dec;
                 string comma;
                 string list;
-                Texl.TexlLexer.ChoosePunctuators(this, out dec, out comma, out list);
-                AddPunctuator(dec, Texl.TexlLexer.PunctuatorDecimalSeparatorInvariant);
-                AddPunctuator(comma, Texl.TexlLexer.PunctuatorCommaInvariant);
-                AddPunctuator(list, Texl.TexlLexer.PunctuatorSemicolonInvariant);
+                TexlLexer.ChoosePunctuators(this, out dec, out comma, out list);
+                AddPunctuator(dec, TexlLexer.PunctuatorDecimalSeparatorInvariant);
+                AddPunctuator(comma, TexlLexer.PunctuatorCommaInvariant);
+                AddPunctuator(list, TexlLexer.PunctuatorSemicolonInvariant);
             }
         }
     }

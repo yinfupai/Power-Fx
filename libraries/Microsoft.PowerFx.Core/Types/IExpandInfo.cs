@@ -4,7 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring
+using Microsoft.PowerFx.Core.Entities;
+
+namespace Microsoft.PowerFx.Core.Types
 {
     /// <summary>
     /// Information about expand entity type.

@@ -4,11 +4,6 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Microsoft.PowerFx.Core.IR.Symbols
 {
     /// <summary>

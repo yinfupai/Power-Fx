@@ -4,11 +4,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring.Texl;
-using Microsoft.PowerFx.Core.Logging;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Functions;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
 
 namespace Microsoft.PowerFx.Core.Logging.Trackers
 {

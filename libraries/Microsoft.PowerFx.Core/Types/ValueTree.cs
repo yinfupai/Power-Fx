@@ -7,8 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Types
 {
     // Implements a red-black tree mapping from string-valued keys to equatable objects.
     // It is an assertable offense for an aggregate to have invalid children.

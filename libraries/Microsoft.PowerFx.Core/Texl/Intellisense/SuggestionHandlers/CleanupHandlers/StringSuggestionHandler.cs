@@ -5,9 +5,10 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
-{
+namespace Microsoft.PowerFx.Core.Texl.Intellisense{
     internal sealed class StringSuggestionHandler : ISpecialCaseHandler
     {
         private readonly int _tokenStartIndex;
@@ -21,7 +22,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             _requireTokenStartWithQuote = requireTokenStartWithQuote;
         }
 
-        public bool Run(IIntellisenseContext context, IntellisenseData intellisenseData, List<IntellisenseSuggestion> suggestions)
+        public bool Run(IIntellisenseContext context, IntellisenseData.IntellisenseData intellisenseData, List<IntellisenseSuggestion> suggestions)
         {
             Contracts.AssertValue(context);
             Contracts.AssertValue(context.InputText);

@@ -4,12 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring.Texl;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Microsoft.PowerFx.Core.IR
+namespace Microsoft.PowerFx.Core.IR.Nodes
 {
     /*
     * Error nodes show up in the IR Tree where we could not bind the parse tree correctly.

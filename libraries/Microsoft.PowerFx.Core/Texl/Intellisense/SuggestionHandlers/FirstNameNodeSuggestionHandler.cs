@@ -6,9 +6,14 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Lexer.Tokens;
+using Microsoft.PowerFx.Core.Syntax;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
-{
+namespace Microsoft.PowerFx.Core.Texl.Intellisense{
     internal partial class Intellisense
     {
         internal sealed class FirstNameNodeSuggestionHandler : NodeKindSuggestionHandler
@@ -17,7 +22,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 : base(NodeKind.FirstName)
             { }
 
-            internal override bool TryAddSuggestionsForNodeKind(IntellisenseData intellisenseData)
+            internal override bool TryAddSuggestionsForNodeKind(IntellisenseData.IntellisenseData intellisenseData)
             {
                 Contracts.AssertValue(intellisenseData);
 
@@ -83,7 +88,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
 
             // Suggest the Globals that can appear in the context of '[@____]'
             // Suggesting controls, datasources, appVariables, and enums.
-            private static void AddSuggestionsForScopedGlobals(IntellisenseData intellisenseData)
+            private static void AddSuggestionsForScopedGlobals(IntellisenseData.IntellisenseData intellisenseData)
             {
                 Contracts.AssertValue(intellisenseData);
 
@@ -116,7 +121,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 return bracketOpenCount == 1;
             }
 
-            private static void AddSuggestionsForScopeFields(IntellisenseData intellisenseData, DType scope)
+            private static void AddSuggestionsForScopeFields(IntellisenseData.IntellisenseData intellisenseData, DType scope)
             {
                 Contracts.AssertValue(intellisenseData);
                 Contracts.Assert(scope.IsValid);

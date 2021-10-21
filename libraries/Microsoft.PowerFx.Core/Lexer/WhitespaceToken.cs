@@ -1,4 +1,8 @@
-namespace Microsoft.AppMagic.Authoring.Texl
+using Microsoft.PowerFx.Core.Lexer.Tokens;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Utils;
+
+namespace Microsoft.PowerFx.Core.Lexer
 {
     /// <summary>
     /// A token for a series of whitespace characters.

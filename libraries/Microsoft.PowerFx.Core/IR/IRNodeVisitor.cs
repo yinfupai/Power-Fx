@@ -4,6 +4,8 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
+using Microsoft.PowerFx.Core.IR.Nodes;
+
 namespace Microsoft.PowerFx.Core.IR
 {
     internal abstract class IRNodeVisitor<TResult, TContext>

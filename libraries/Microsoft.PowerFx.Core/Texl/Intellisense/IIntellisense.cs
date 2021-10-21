@@ -4,7 +4,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring.Texl
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Syntax;
+
+namespace Microsoft.PowerFx.Core.Texl.Intellisense
 {
     internal interface IIntellisense
     {

@@ -4,7 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Texl.Intellisense
 {
     // The kind of a suggestion.
     public enum SuggestionKind

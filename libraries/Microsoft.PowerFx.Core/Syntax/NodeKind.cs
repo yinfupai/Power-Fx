@@ -4,7 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Syntax
 {
     // Node kinds. Primarily used by Intellisense.
     internal enum NodeKind

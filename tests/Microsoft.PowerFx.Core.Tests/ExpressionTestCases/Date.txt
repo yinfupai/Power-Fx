@@ -77,6 +77,42 @@ Blank()
 >> DateDiff(Date(2013,1,15) , Date(2012,1,30), TimeUnit.Days)
 -351
 
+>> DateDiff(Date(2011,1,15) , Date(2011,1,30), "milliseconds")
+1296000000
+
+>> DateDiff(Date(2011,1,15) , Date(2011,1,30), "seconds")
+1296000
+
+>> DateDiff(Date(2011,1,15) , Date(2011,1,30), "minutes")
+21600
+
+>> DateDiff(Date(2011,1,15) , Date(2011,1,30), "hours")
+360
+
+>> DateDiff(Date(2011,1,15) , Date(2011,1,30), "quarters")
+0
+
+>> DateDiff(Date(2011,1,15) , Date(2011,7,30), "quarters")
+2
+
+>> DateDiff(Date(2011,1,15) , Date(2011,1,30), TimeUnit.Milliseconds)
+1296000000
+
+>> DateDiff(Date(2011,1,15) , Date(2011,1,30), TimeUnit.Seconds)
+1296000
+
+>> DateDiff(Date(2011,1,15) , Date(2011,1,30), TimeUnit.Minutes)
+21600
+
+>> DateDiff(Date(2011,1,15) , Date(2011,1,30), TimeUnit.Hours)
+360
+
+>> DateDiff(Date(2011,1,15) , Date(2011,1,30), TimeUnit.Quarters)
+0
+
+>> DateDiff(Date(2011,1,15) , Date(2011,7,30), TimeUnit.Quarters)
+2
+
 >> DateDiff(Date(2021,1,1), Date(2000,1,1), TimeUnit.Years)
 -21
 
@@ -129,6 +165,12 @@ Blank()
 
 >> Day(DateAdd(Date(2001,1,1), 4, TimeUnit.Days))
 5
+
+>> Text(DateAdd(Date(2011,1,15), 100000000, "milliseconds"))
+"1/16/2011"
+
+>> Text(DateAdd(Date(2011,1,15), 100000000, TimeUnit.Milliseconds))
+"1/16/2011"
 
 >> Day(Date(-1, 2, 3))
 #Error

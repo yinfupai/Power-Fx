@@ -7,7 +7,7 @@
 using Microsoft.PowerFx.Core.App;
 using Microsoft.PowerFx.Core.Entities.Delegation;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Entities
 {
     internal interface IExternalCdsDataSource : IExternalTabularDataSource
     {

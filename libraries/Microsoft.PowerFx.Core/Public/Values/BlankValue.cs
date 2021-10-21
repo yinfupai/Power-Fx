@@ -4,13 +4,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring.Texl;
-using Microsoft.PowerFx.Core.IR;
-using System;
 using System.Diagnostics;
-using System.Text.Json;
+using Microsoft.PowerFx.Core.IR;
 
-namespace Microsoft.PowerFx
+namespace Microsoft.PowerFx.Core.Public.Values
 {
     [DebuggerDisplay("Blank() ({Type})")]
     public class BlankValue : FormulaValue

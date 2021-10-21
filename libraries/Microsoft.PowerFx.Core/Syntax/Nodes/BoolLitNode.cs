@@ -4,9 +4,14 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring.Texl.SourceInformation;
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Lexer.Tokens;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Syntax.SourceInformation;
+using Microsoft.PowerFx.Core.Syntax.Visitors;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Syntax.Nodes
 {
     internal sealed class BoolLitNode : TexlNode
     {

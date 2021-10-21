@@ -5,7 +5,7 @@
 //------------------------------------------------------------------------------
 
 using Microsoft.PowerFx.Core.IR;
-using System;
+using Microsoft.PowerFx.Core.Public.Values;
 
 namespace Microsoft.PowerFx.Functions
 {

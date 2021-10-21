@@ -5,10 +5,9 @@
 //------------------------------------------------------------------------------
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
-namespace Microsoft.AppMagic
+namespace Microsoft.PowerFx.Core.Utils
 {
     internal static class Sorting
     {

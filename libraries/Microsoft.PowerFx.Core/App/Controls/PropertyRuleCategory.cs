@@ -5,8 +5,8 @@
 //------------------------------------------------------------------------------
 
 using System;
-using Microsoft.AppMagic;
 using Microsoft.AppMagic.Transport;
+using Microsoft.PowerFx.Core.Utils;
 
 namespace Microsoft.PowerFx.Core.App.Controls
 {

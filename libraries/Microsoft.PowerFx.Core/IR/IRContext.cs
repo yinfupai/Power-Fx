@@ -4,7 +4,8 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring.Texl;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Public.Types;
 
 namespace Microsoft.PowerFx.Core.IR
 {

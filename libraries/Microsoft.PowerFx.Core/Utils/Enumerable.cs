@@ -8,10 +8,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
-namespace Microsoft.AppMagic
+namespace Microsoft.PowerFx.Core.Utils
 {
     // System.Linq.Enumerator<T>.Empty() will allocate a new array iterator
     // to iterate a size 0 array each time. This is stateless and so does one

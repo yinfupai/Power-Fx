@@ -5,11 +5,10 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
-using Microsoft.AppMagic;
-using Microsoft.AppMagic.Authoring;
-using Microsoft.AppMagic.Common;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.PowerFx
+namespace Microsoft.PowerFx.Core.Types.Enums
 {
     /// <summary>
     /// Entity info that respresents an enum, such as "Align" or "Font".

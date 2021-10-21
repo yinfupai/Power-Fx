@@ -4,9 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring.Texl;
+using Microsoft.PowerFx.Core.Texl.Intellisense;
 
-namespace Microsoft.PowerFx.Core
+namespace Microsoft.PowerFx.Core.Public
 {
     /// <summary>
     /// Provide intellisense (Design-time) support. 

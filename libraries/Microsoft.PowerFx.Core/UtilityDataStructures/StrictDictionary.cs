@@ -6,8 +6,9 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.UtilityDataStructures
 {
     /// <summary>
     ///  A dictionary which disallows null values. Throws a contract error if one

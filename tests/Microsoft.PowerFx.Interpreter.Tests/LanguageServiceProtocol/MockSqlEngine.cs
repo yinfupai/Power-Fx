@@ -4,8 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring.Texl;
 using Microsoft.PowerFx.Core;
+using Microsoft.PowerFx.Core.Public;
+using Microsoft.PowerFx.Core.Texl.Intellisense;
 
 namespace Microsoft.PowerFx.Tests.LanguageServiceProtocol.Tests
 {

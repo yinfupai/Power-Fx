@@ -4,7 +4,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring.Texl
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+
+namespace Microsoft.PowerFx.Core.Syntax.Visitors
 {
     internal sealed class ChainTrackerVisitor : IdentityTexlVisitor
     {

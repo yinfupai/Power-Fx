@@ -4,7 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.PowerFx
+using Microsoft.PowerFx.Core.Public.Types;
+
+namespace Microsoft.PowerFx.Core.Public
 {
     /// <summary>
     /// Encapsulate a formula and the parameters it has available. 

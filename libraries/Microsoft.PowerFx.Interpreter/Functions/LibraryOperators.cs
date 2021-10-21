@@ -7,6 +7,7 @@
 using Microsoft.PowerFx.Core.IR;
 using System;
 using System.Linq;
+using Microsoft.PowerFx.Core.Public.Values;
 
 namespace Microsoft.PowerFx.Functions
 {
@@ -94,24 +95,6 @@ namespace Microsoft.PowerFx.Functions
             targetFunction: NotEqual
         );
 
-        public static FunctionPtr OperatorUnaryNegate = StandardErrorHandling<NumberValue>(
-            expandArguments: NoArgExpansion,
-            replaceBlankValues: ReplaceBlankWithZero,
-            checkRuntimeTypes: ExactValueType<NumberValue>,
-            checkRuntimeValues: FiniteChecker,
-            returnBehavior: ReturnBehavior.AlwaysEvaluateAndReturnResult,
-            targetFunction: NumericNegate
-        );
-
-        public static FunctionPtr OperatorUnaryPercent = StandardErrorHandling<NumberValue>(
-            expandArguments: NoArgExpansion,
-            replaceBlankValues: ReplaceBlankWithZero,
-            checkRuntimeTypes: ExactValueType<NumberValue>,
-            checkRuntimeValues: FiniteChecker,
-            returnBehavior: ReturnBehavior.AlwaysEvaluateAndReturnResult,
-            targetFunction: NumericPercent
-        );
-
         public static FunctionPtr OperatorTextIn = StandardErrorHandling(
             expandArguments: NoArgExpansion,
             replaceBlankValues: DoNotReplaceBlank,
@@ -189,18 +172,6 @@ namespace Microsoft.PowerFx.Functions
         {
             var result = args[0].Value <= args[1].Value;
             return new BooleanValue(irContext, result);
-        }
-
-        private static NumberValue NumericNegate(IRContext irContext, NumberValue[] args)
-        {
-            var result = -args[0].Value;
-            return new NumberValue(irContext, result);
-        }
-
-        private static NumberValue NumericPercent(IRContext irContext, NumberValue[] args)
-        {
-            var result = args[0].Value / 100.0;
-            return new NumberValue(irContext, result);
         }
 
         private static BooleanValue AreEqual(IRContext irContext, FormulaValue[] args)

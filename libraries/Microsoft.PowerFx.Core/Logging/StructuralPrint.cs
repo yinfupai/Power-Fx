@@ -4,14 +4,18 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring.Texl.SourceInformation;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Lexer.Tokens;
+using Microsoft.PowerFx.Core.Parser;
+using Microsoft.PowerFx.Core.Syntax;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Syntax.Visitors;
+using Microsoft.PowerFx.Core.UtilityDataStructures;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Logging
 {
     // A visitor that provides PII-free unformatted prints of powerapps formulas.
     internal sealed class StructuralPrint : TexlFunctionalVisitor<LazyList<string>, Precedence>

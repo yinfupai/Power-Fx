@@ -4,21 +4,33 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic;
-using Microsoft.AppMagic.Authoring;
-using Microsoft.AppMagic.Authoring.Texl;
 using Microsoft.PowerFx.Core.IR.Symbols;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
-using TexlRecordNode = Microsoft.AppMagic.Authoring.Texl.RecordNode;
-using TexlTableNode = Microsoft.AppMagic.Authoring.Texl.TableNode;
-using TexlUnaryOpNode = Microsoft.AppMagic.Authoring.Texl.UnaryOpNode;
-using TexlBinaryOpNode = Microsoft.AppMagic.Authoring.Texl.BinaryOpNode;
-using TexlCallNode = Microsoft.AppMagic.Authoring.Texl.CallNode;
-using TexlErrorNode = Microsoft.AppMagic.Authoring.Texl.ErrorNode;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Binding.BindInfo;
+using Microsoft.PowerFx.Core.Functions;
+using Microsoft.PowerFx.Core.IR.Nodes;
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Public.Types;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Syntax.Visitors;
+using Microsoft.PowerFx.Core.Texl;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
+using BinaryOpNode = Microsoft.PowerFx.Core.IR.Nodes.BinaryOpNode;
+using CallNode = Microsoft.PowerFx.Core.IR.Nodes.CallNode;
+using ErrorNode = Microsoft.PowerFx.Core.IR.Nodes.ErrorNode;
+using RecordNode = Microsoft.PowerFx.Core.IR.Nodes.RecordNode;
+using TableNode = Microsoft.PowerFx.Core.IR.Nodes.TableNode;
+using TexlRecordNode = Microsoft.PowerFx.Core.Syntax.Nodes.RecordNode;
+using TexlTableNode = Microsoft.PowerFx.Core.Syntax.Nodes.TableNode;
+using TexlUnaryOpNode = Microsoft.PowerFx.Core.Syntax.Nodes.UnaryOpNode;
+using TexlBinaryOpNode = Microsoft.PowerFx.Core.Syntax.Nodes.BinaryOpNode;
+using TexlCallNode = Microsoft.PowerFx.Core.Syntax.Nodes.CallNode;
+using TexlErrorNode = Microsoft.PowerFx.Core.Syntax.Nodes.ErrorNode;
+using UnaryOpNode = Microsoft.PowerFx.Core.IR.Nodes.UnaryOpNode;
 
 namespace Microsoft.PowerFx.Core.IR
 {
@@ -682,9 +694,6 @@ namespace Microsoft.PowerFx.Core.IR
                     break;
                 case CoercionKind.TextToBoolean:
                     unaryOpKind = UnaryOpKind.TextToBoolean;
-                    break;
-                case CoercionKind.DateTimeToBoolean:
-                    unaryOpKind = UnaryOpKind.DateTimeToBoolean;
                     break;
                 case CoercionKind.BooleanOptionSetToBoolean:
                     unaryOpKind = UnaryOpKind.BooleanOptionSetToBoolean;

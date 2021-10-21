@@ -4,18 +4,23 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.PowerFx.Core.IR;
 using System;
 using System.Diagnostics.Contracts;
-using System.Text.Json;
+using Microsoft.PowerFx.Core.IR;
+using Microsoft.PowerFx.Core.Public.Types;
 
-namespace Microsoft.PowerFx
+namespace Microsoft.PowerFx.Core.Public.Values
 {
-    public class DateValue : PrimitiveValue<DateTimeOffset>
+    /// <summary>
+    /// Represents a Date only, without a time component, in the local time zone
+    /// </summary>
+    public class DateValue : PrimitiveValue<DateTime>
     {
-        internal DateValue(IRContext irContext, DateTimeOffset value) : base(irContext, value)
+        internal DateValue(IRContext irContext, DateTime value) : base(irContext, value)
         {
-            Contract.Assert(IRContext.ResultType == FormulaType.Date || IRContext.ResultType == FormulaType.DateTime || IRContext.ResultType == FormulaType.DateTimeNoTimeZone);
+            Contract.Assert(IRContext.ResultType == FormulaType.Date);
+            Contract.Assert(value.TimeOfDay == TimeSpan.Zero);
+            Contract.Assert(value.Kind != DateTimeKind.Utc);
         }
 
         public override void Visit(IValueVisitor visitor)

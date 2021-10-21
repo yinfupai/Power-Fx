@@ -3,9 +3,10 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
+
 using System.Collections.Generic;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Localization
 {
     internal interface ILanguageSettings : INamedLanguageSettings
     {

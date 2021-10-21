@@ -4,18 +4,18 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.AppMagic.Common;
-using Microsoft.AppMagic.Common.Telemetry;
 using Microsoft.PowerFx.Core.Binding;
-using Microsoft.PowerFx.Core.Delegation;
-using Microsoft.PowerFx.Core.Delegation.DelegationStrategies;
+using Microsoft.PowerFx.Core.Binding.BindInfo;
+using Microsoft.PowerFx.Core.Errors;
+using Microsoft.PowerFx.Core.Localization;
 using Microsoft.PowerFx.Core.Logging.Trackers;
+using Microsoft.PowerFx.Core.Syntax;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Texl.Builtins;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Functions.Delegation.DelegationStrategies
 {
     internal interface ICallNodeDelegatableNodeValidationStrategy
     {
@@ -232,8 +232,8 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.AssertValue(info);
 
             IDelegationMetadata metadata = null;
-            if (info.Data is DelegationMetadata)
-                return (info.Data as DelegationMetadata);
+            if (info.Data is DelegationMetadata.DelegationMetadata)
+                return (info.Data as DelegationMetadata.DelegationMetadata);
 
             if (info.Data is IExpandInfo)
             {

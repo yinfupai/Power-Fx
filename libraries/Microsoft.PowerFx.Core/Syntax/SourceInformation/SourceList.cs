@@ -6,8 +6,12 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.PowerFx.Core.Lexer.Tokens;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl.SourceInformation
+namespace Microsoft.PowerFx.Core.Syntax.SourceInformation
 {
     /// <summary>
     /// A complete list of the source for a given TexlNode, given by a

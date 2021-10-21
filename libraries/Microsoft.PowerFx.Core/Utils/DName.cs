@@ -5,11 +5,8 @@
 //------------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Utils
 {
     // DName refers to a string that is valid as the name of a table/column.
     // That is any string that:

@@ -7,7 +7,7 @@
 using System;
 using System.Text;
 
-namespace Microsoft.AppMagic
+namespace Microsoft.PowerFx.Core.Utils
 {
     /// <summary>
     /// It provides a cached reusable <see cref="StringBuilder"/> instance per thread.

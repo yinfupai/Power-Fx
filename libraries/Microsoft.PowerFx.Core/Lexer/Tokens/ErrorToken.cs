@@ -5,9 +5,10 @@
 //------------------------------------------------------------------------------
 
 using System.Linq;
-using Microsoft.AppMagic.Common;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Lexer.Tokens
 {
     internal class ErrorToken : Token
     {

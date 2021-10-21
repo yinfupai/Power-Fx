@@ -5,12 +5,19 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using Microsoft.AppMagic.Common.Telemetry;
-using Microsoft.PowerFx;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Entities;
+using Microsoft.PowerFx.Core.Errors;
+using Microsoft.PowerFx.Core.Functions;
+using Microsoft.PowerFx.Core.Functions.Delegation;
+using Microsoft.PowerFx.Core.Localization;
 using Microsoft.PowerFx.Core.Logging.Trackers;
+using Microsoft.PowerFx.Core.Syntax;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Texl.Builtins
 {
     // Abstract base class for all statistical functions with similar signatures that take
     // a table as the first argument, and a value function as the second argument.
@@ -42,7 +49,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.AssertValue(callNode);
             Contracts.AssertValue(binding);
 
-            if (!OldFeatureGates.AggregateFunctionSupport || FunctionDelegationCapability.Capabilities == DelegationCapability.None)
+            if (FunctionDelegationCapability.Capabilities == DelegationCapability.None)
                 return false;
 
             if (!CheckArgsCount(callNode, binding))
@@ -61,7 +68,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             if (binding.GetType(args[0]).HasExpandInfo
             || (!binding.IsFullRecordRowScopeAccess(args[1]) && args[1].Kind != NodeKind.FirstName)
             || !binding.IsRowScope(args[1])
-            || (!OldFeatureGates.AggregateDateTimeSupport && binding.GetType(args[1]) != DType.Number)
+            || binding.GetType(args[1]) != DType.Number
             || ExpressionContainsView(callNode, binding))
             {
                 SuggestDelegationHint(callNode, binding);

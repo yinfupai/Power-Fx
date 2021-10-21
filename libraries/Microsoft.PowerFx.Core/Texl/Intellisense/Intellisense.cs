@@ -7,10 +7,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Binding.BindInfo;
+using Microsoft.PowerFx.Core.Functions;
+using Microsoft.PowerFx.Core.Lexer.Tokens;
+using Microsoft.PowerFx.Core.Syntax;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Texl.Intellisense.IntellisenseData;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Texl.Intellisense
 {
-    internal delegate bool IsValidSuggestion(IntellisenseData intellisenseData, IntellisenseSuggestion suggestion);
+    internal delegate bool IsValidSuggestion(IntellisenseData.IntellisenseData intellisenseData, IntellisenseSuggestion suggestion);
 
     internal partial class Intellisense : IIntellisense
     {
@@ -34,7 +43,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
 
             try
             {
-                IntellisenseData intellisenseData;
+                IntellisenseData.IntellisenseData intellisenseData;
                 if (!TryInitializeIntellisenseContext(context, binding, formula, out intellisenseData))
                 {
                     return new IntellisenseResult(new DefaultIntellisenseData(), new List<IntellisenseSuggestion>());
@@ -183,7 +192,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                     suggestion.SortPriority++;
         }
 
-        private bool TryInitializeIntellisenseContext(IIntellisenseContext context, TexlBinding binding, Formula formula, out IntellisenseData data)
+        private bool TryInitializeIntellisenseContext(IIntellisenseContext context, TexlBinding binding, Formula formula, out IntellisenseData.IntellisenseData data)
         {
             Contracts.AssertValue(context);
 
@@ -198,9 +207,9 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return true;
         }
 
-        protected internal virtual IntellisenseData CreateData(IIntellisenseContext context, DType expectedType, TexlBinding binding, TexlFunction curFunc, TexlNode curNode, int argIndex, int argCount, IsValidSuggestion isValidSuggestionFunc, IList<DType> missingTypes, List<CommentToken> comments)
+        protected internal virtual IntellisenseData.IntellisenseData CreateData(IIntellisenseContext context, DType expectedType, TexlBinding binding, TexlFunction curFunc, TexlNode curNode, int argIndex, int argCount, IsValidSuggestion isValidSuggestionFunc, IList<DType> missingTypes, List<CommentToken> comments)
         {
-            return new IntellisenseData(context, expectedType, binding, curFunc, curNode, argIndex, argCount, isValidSuggestionFunc, missingTypes, comments);
+            return new IntellisenseData.IntellisenseData(context, expectedType, binding, curFunc, curNode, argIndex, argCount, isValidSuggestionFunc, missingTypes, comments);
         }
 
         private void GetFunctionAndTypeInformation(IIntellisenseContext context, TexlNode curNode, TexlBinding binding, out TexlFunction curFunc, out int argIndex, out int argCount, out DType expectedType, out IsValidSuggestion isValidSuggestionFunc)
@@ -227,7 +236,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 isValidSuggestionFunc = Helper.DefaultIsValidSuggestionFunc;
         }
 
-        private IIntellisenseResult Finalize(IIntellisenseContext context, IntellisenseData intellisenseData)
+        private IIntellisenseResult Finalize(IIntellisenseContext context, IntellisenseData.IntellisenseData intellisenseData)
         {
             Contracts.AssertValue(context);
             Contracts.AssertValue(intellisenseData);
@@ -253,7 +262,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
 
     internal static class Helper
     {
-        internal static bool DefaultIsValidSuggestionFunc(IntellisenseData intellisenseData, IntellisenseSuggestion suggestion)
+        internal static bool DefaultIsValidSuggestionFunc(IntellisenseData.IntellisenseData intellisenseData, IntellisenseSuggestion suggestion)
         {
             //return intellisenseData.ExpectedType.Accepts(suggestion.Type);
             return true;

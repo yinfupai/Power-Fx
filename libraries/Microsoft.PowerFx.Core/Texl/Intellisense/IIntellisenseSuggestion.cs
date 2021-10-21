@@ -4,13 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using Microsoft.AppMagic.Authoring.Texl;
 
-
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Texl.Intellisense
 {
     public interface IIntellisenseSuggestion
     {

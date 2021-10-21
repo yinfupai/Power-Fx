@@ -5,13 +5,9 @@
 //------------------------------------------------------------------------------
 
 
-using Microsoft.AppMagic;
-using Microsoft.AppMagic.Authoring.Texl;
-using Microsoft.PowerFx.Core;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
+using Microsoft.PowerFx.Core.Public.Values;
+using Microsoft.PowerFx.Core.Utils;
 
 namespace Microsoft.PowerFx.Functions
 {
@@ -61,11 +57,6 @@ namespace Microsoft.PowerFx.Functions
             return args[idx];
         }
 
-        private static bool isTypeNumber(FormulaValue value)
-        {
-            return value is NumberValue;
-        }
-
         private static bool isBlankValue(FormulaValue value)
         {
             // Jscript impl: checks against Null. 
@@ -75,86 +66,5 @@ namespace Microsoft.PowerFx.Functions
         {
             return !double.IsInfinity(value);
         }
-
-        public static DateTime asDateTime(FormulaValue[] args, int idx)
-        {
-            var arg = args[idx];
-            return ((DateValue)arg).Value.DateTime;
-        }
-
-        public static int asIntegerTruncate(FormulaValue value)
-        {
-            var num = asNumber(value);
-            return (int)num;
-        }
-
-        public static double asNumber(FormulaValue[] args, int idx)
-        {
-            return asNumber(args[idx]);
-        }
-
-        public static double asNumber(FormulaValue[] args, int idx, double defaultValue)
-        {
-            if (idx >= args.Length)
-            {
-                return defaultValue;
-            }
-            return asNumber(args[idx]);
-        }
-
-        // throw on error
-        public static double asNumber(FormulaValue value)
-        {
-            if (value is NumberValue n)
-            {
-                return n.Value;
-            }
-            if (value is BlankValue)
-            {
-                return 0;
-            }
-
-            // Binder should have caught 
-            throw new InvalidOperationException($"value should be a number");
-        }
-
-        public static string asString(FormulaValue value)
-        {
-            if (value is StringValue str)
-            {
-                return str.Value;
-            }
-            throw new InvalidOperationException($"value should be a string");
-        }
-
-        private static bool tryEquals(FormulaValue numberValue, double val)
-        {
-            if (numberValue is NumberValue n)
-            {
-                return n.Value == val;
-            }
-            return false;
-        }
-
-        private static Exception createInternalTypeMismatchNumberError(IErrorContext errorContext, string func, string arg)
-        {
-            return new InvalidOperationException($"createInternalTypeMismatchNumberError {func} {arg}");
-        }
-
-        private static Exception createInvalidNullArgumentError(IErrorContext errorContext, string arg1, int n)
-        {
-            return new InvalidOperationException($"createInvalidNullArgumentError {arg1} at {n}");
-        }
-
-        private static Exception createIcreateInternalTypeMismatchNumberErrornvalidNullArgumentError(IErrorContext errorContext, string arg1, int n)
-        {
-            return new InvalidOperationException($"createInvalidNullArgumentError {arg1} at {n}");
-        }
-
-        private static Exception createOutOfRangeArgumentError(IErrorContext errorContext, string arg1, int a, int b)
-        {
-            return new InvalidOperationException($"createOutOfRangeArgumentError {arg1} at {a}, {b}");
-        }
-
     }
 }

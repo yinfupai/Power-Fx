@@ -6,7 +6,7 @@
 
 using Microsoft.AppMagic.Transport;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Errors
 {
     [TransportType(TransportKind.Enum)]
     public enum DocumentErrorSeverity

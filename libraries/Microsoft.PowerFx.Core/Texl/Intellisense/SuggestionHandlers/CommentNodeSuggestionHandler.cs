@@ -5,14 +5,15 @@
 //------------------------------------------------------------------------------
 
 using System.Linq;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Texl.Intellisense
 {
     internal partial class Intellisense
     {
         internal sealed class CommentNodeSuggestionHandler : ISuggestionHandler
         {
-            public bool Run(IntellisenseData intellisenseData)
+            public bool Run(IntellisenseData.IntellisenseData intellisenseData)
             {
                 Contracts.AssertValue(intellisenseData);
 

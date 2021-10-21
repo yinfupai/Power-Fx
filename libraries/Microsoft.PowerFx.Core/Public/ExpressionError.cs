@@ -4,10 +4,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring;
-using Microsoft.AppMagic.Authoring.Texl;
+using Microsoft.PowerFx.Core.Errors;
+using Microsoft.PowerFx.Core.Localization;
 
-namespace Microsoft.PowerFx.Core
+namespace Microsoft.PowerFx.Core.Public
 {
     public class ExpressionError
     {

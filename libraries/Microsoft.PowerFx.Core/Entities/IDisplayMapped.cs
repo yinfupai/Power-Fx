@@ -4,9 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Common;
+using Microsoft.PowerFx.Core.UtilityDataStructures;
 
-namespace PowerApps.Language.Entities
+namespace Microsoft.PowerFx.Core.Entities
 {
     public interface IDisplayMapped<T>
     {

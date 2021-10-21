@@ -4,19 +4,15 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic;
-using Microsoft.AppMagic.Common;
-using Microsoft.PowerFx.Core.Localization;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Common
+namespace Microsoft.PowerFx.Core.Localization
 {
     internal static class StringResources
     {

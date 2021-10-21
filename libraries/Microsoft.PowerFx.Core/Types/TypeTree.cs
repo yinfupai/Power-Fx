@@ -8,8 +8,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Types
 {
     // Implements a red-black tree mapping from string-valued key to DType.
     internal struct TypeTree : IEquatable<TypeTree>, IEnumerable<KeyValuePair<string, DType>>

@@ -7,7 +7,7 @@
 using System;
 using Microsoft.AppMagic.Transport;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Types
 {
     [Flags]
     [TransportType(TransportKind.Enum)]

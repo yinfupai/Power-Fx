@@ -4,7 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.PowerFx.Core.Utils
+namespace Microsoft.PowerFx.Core.Types.Enums
 {
     public class EnumConstants
     {

@@ -4,7 +4,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring.Texl
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
+
+namespace Microsoft.PowerFx.Core.Binding.BindInfo
 {
     /// <summary>
     /// Temporary name information used by the Binder<->Document lookup handshake/mechanism.

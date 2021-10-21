@@ -4,13 +4,12 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring.Texl;
 using Microsoft.PowerFx.Core.IR;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Text;
+using Microsoft.PowerFx.Core.Public.Values;
 
 namespace Microsoft.PowerFx.Functions
 {
@@ -64,7 +63,7 @@ namespace Microsoft.PowerFx.Functions
 
         // https://docs.microsoft.com/en-us/powerapps/maker/canvas-apps/functions/function-value
         // Convert string to number
-        public static FormulaValue Value(IRContext irContext, FormulaValue[] args)
+        public static FormulaValue Value(EvalVisitor runner, SymbolContext symbolContext, IRContext irContext, FormulaValue[] args)
         {
             var arg0 = args[0];
 
@@ -76,6 +75,11 @@ namespace Microsoft.PowerFx.Functions
             if (arg0 is DateValue dv)
             {
                 return DateToNumber(irContext, new DateValue[] { dv });
+            }
+
+            if (arg0 is DateTimeValue dtv)
+            {
+                return DateTimeToNumber(irContext, new DateTimeValue[] { dtv });
             }
 
             var str = ((StringValue)arg0).Value;
@@ -92,9 +96,14 @@ namespace Microsoft.PowerFx.Functions
                 div = 100;
             }
 
-            if (!double.TryParse(str, NumberStyles.Any, new CultureInfo("en-US"), out var val))
+            if (!double.TryParse(str, NumberStyles.Any, runner.CultureInfo, out var val))
             {
-                return new BlankValue(irContext);
+                return CommonErrors.InvalidNumberFormatError(irContext);
+            }
+
+            if(!isFinite(val))
+            {
+                return CommonErrors.ArgumentOutOfRange(irContext);
             }
 
             val /= div;
@@ -107,7 +116,7 @@ namespace Microsoft.PowerFx.Functions
         {
             if (args.Length > 1)
             {
-                throw new NotImplementedException("Text() doesn't support format args");
+                return CommonErrors.NotYetImplementedError(irContext, "Text() doesn't support format args");
             }
 
             // $$$ combine with a ToString()? 
@@ -127,13 +136,18 @@ namespace Microsoft.PowerFx.Functions
                 // $$$ Use real format string
                 str = d.Value.ToString("M/d/yyyy");
             }
+            else if (arg0 is DateTimeValue dt)
+            {
+                // $$$ Use real format string
+                str = dt.Value.ToString("M/d/yyyy");
+            }
 
             if (str != null)
             {
                 return new StringValue(irContext, str);
             }
 
-            throw new NotImplementedException($"Text format for {arg0.GetType().Name}");
+            return CommonErrors.NotYetImplementedError(irContext, $"Text format for {arg0.GetType().Name}");
         }
 
         // https://docs.microsoft.com/en-us/powerapps/maker/canvas-apps/functions/function-isblank-isempty
@@ -219,17 +233,21 @@ namespace Microsoft.PowerFx.Functions
             return new StringValue(irContext, result);
         }
 
-        public static FormulaValue Split(EvalVisitor runner, SymbolContext symbolContext, IRContext irContext, FormulaValue[] args)
+        private static FormulaValue Replace(IRContext irContext, FormulaValue[] args)
         {
-            var text = args[0].ToObject().ToString();
-            var separator = args[1].ToObject().ToString();
+            StringValue source = (StringValue)args[0];
+            NumberValue start = (NumberValue)args[1];
+            NumberValue count = (NumberValue)args[2];
+            StringValue replacement = (StringValue)args[3];
 
-            // The separator can be zero, one, or more characters that are matched as a whole in the text string. Using a zero length or blank
-            // string results in each character being broken out individually.
-            var substrings = string.IsNullOrEmpty(separator) ? text.Select(c => new string(c, 1)) : text.Split(separator.ToCharArray());
-            var rows = substrings.Select(s => new StringValue(IRContext.NotInSource(FormulaType.String), s));
+            var start0Based = (int)(start.Value - 1);
+            var prefix = start0Based < source.Value.Length ? source.Value.Substring(0, start0Based) : source.Value;
 
-            return new InMemoryTableValue(irContext, StandardSingleColumnTableFromValues(irContext, rows.ToArray(), BuiltinFunction.OneColumnTableResultName));
+            var suffixIndex = start0Based + (int)count.Value;
+            var suffix = suffixIndex < source.Value.Length ? source.Value.Substring(suffixIndex) : string.Empty;
+            var result = prefix + replacement.Value + suffix;
+
+            return new StringValue(irContext, result);
         }
     }
 }

@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.AppMagic.Common
+namespace Microsoft.PowerFx.Core.UtilityDataStructures
 {
     public sealed class DedupedQueue<T>
     {

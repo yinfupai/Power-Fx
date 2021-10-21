@@ -9,16 +9,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.AppMagic.Authoring.Texl;
-using Microsoft.AppMagic.Common.Telemetry;
 using Microsoft.PowerFx.Core.App.ErrorContainers;
+using Microsoft.PowerFx.Core.Entities;
+using Microsoft.PowerFx.Core.Errors;
+using Microsoft.PowerFx.Core.Functions.Delegation;
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
 using Microsoft.PowerFx.Core.Utils;
-using Microsoft.PowerFx.Core.Types;
-using PowerApps.Language.Entities;
 using Conditional = System.Diagnostics.ConditionalAttribute;
-using Microsoft.PowerFx.Core.Delegation;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Types
 {
     internal class DType : ICheckable
     {
@@ -1650,9 +1651,9 @@ namespace Microsoft.AppMagic.Authoring
         /// <returns>
         /// True if <see cref="this"/> accepts <see cref="type"/>, false otherwise.
         /// </returns>
-        public bool Accepts(DType type, bool exact = true)
+        public bool Accepts(DType type, bool exact = true, bool useLegacyDateTimeAccepts = false)
         {
-            return Accepts(type, out _, out _, exact);
+            return Accepts(type, out _, out _, exact, useLegacyDateTimeAccepts);
         }
 
         /// <summary>
@@ -1681,7 +1682,7 @@ namespace Microsoft.AppMagic.Authoring
         /// <returns>
         /// True if <see cref="this"/> accepts <see cref="type"/>, false otherwise.
         /// </returns>
-        public virtual bool Accepts(DType type, out KeyValuePair<string, DType> schemaDifference, out DType schemaDifferenceType, bool exact = true)
+        public virtual bool Accepts(DType type, out KeyValuePair<string, DType> schemaDifference, out DType schemaDifferenceType, bool exact = true, bool useLegacyDateTimeAccepts = false)
         {
             AssertValid();
             type.AssertValid();
@@ -1714,14 +1715,14 @@ namespace Microsoft.AppMagic.Authoring
                 case DKind.File:
                 case DKind.LargeImage:
                     if (Kind == type.Kind)
-                        return TreeAccepts(this, TypeTree, type.TypeTree, out schemaDifference, out schemaDifferenceType, exact);
+                        return TreeAccepts(this, TypeTree, type.TypeTree, out schemaDifference, out schemaDifferenceType, exact, useLegacyDateTimeAccepts);
 
                     accepts = type.Kind == DKind.Unknown;
                     break;
 
                 case DKind.Table:
                     if (Kind == type.Kind || type.IsExpandEntity)
-                        return TreeAccepts(this, TypeTree, type.TypeTree, out schemaDifference, out schemaDifferenceType, exact);
+                        return TreeAccepts(this, TypeTree, type.TypeTree, out schemaDifference, out schemaDifferenceType, exact, useLegacyDateTimeAccepts);
 
                     accepts = type.Kind == DKind.Unknown;
                     break;
@@ -1753,6 +1754,11 @@ namespace Microsoft.AppMagic.Authoring
                         type.Kind == Kind ||
                         type.Kind == DKind.Currency ||
                         type.Kind == DKind.Unknown ||
+                        (useLegacyDateTimeAccepts &&
+                            (type.Kind == DKind.DateTime ||
+                            type.Kind == DKind.Date ||
+                            type.Kind == DKind.Time ||
+                            type.Kind == DKind.DateTimeNoTimeZone)) ||
                         (type.Kind == DKind.Enum && Accepts(type.GetEnumSupertype()));
                     break;
 
@@ -1788,15 +1794,15 @@ namespace Microsoft.AppMagic.Authoring
                     accepts = (!exact && type.Kind == DKind.Number) || defaultReturnValue(type);
                     break;
                 case DKind.DateTime:
-                    accepts = (type.Kind == DKind.Date || type.Kind == DKind.Time || type.Kind == DKind.DateTimeNoTimeZone) || defaultReturnValue(type);
+                    accepts = (type.Kind == DKind.Date || type.Kind == DKind.Time || type.Kind == DKind.DateTimeNoTimeZone || (useLegacyDateTimeAccepts && !exact && type.Kind == DKind.Number)) || defaultReturnValue(type);
                     break;
                 case DKind.DateTimeNoTimeZone:
-                    accepts = (type.Kind == DKind.Date || type.Kind == DKind.Time) ||
+                    accepts = (type.Kind == DKind.Date || type.Kind == DKind.Time || (useLegacyDateTimeAccepts && !exact && type.Kind == DKind.Number)) ||
                               defaultReturnValue(type);
                     break;
                 case DKind.Date:
                 case DKind.Time:
-                    accepts = (!exact && (type.Kind == DKind.DateTime || type.Kind == DKind.DateTimeNoTimeZone)) ||
+                    accepts = (!exact && (type.Kind == DKind.DateTime || type.Kind == DKind.DateTimeNoTimeZone || (useLegacyDateTimeAccepts && type.Kind == DKind.Number))) ||
                               defaultReturnValue(type);
                     break;
                 case DKind.Control:
@@ -1845,7 +1851,7 @@ namespace Microsoft.AppMagic.Authoring
         }
 
         // Implements Accepts for Record and Table types.
-        private static bool TreeAccepts(DType parentType, TypeTree treeDst, TypeTree treeSrc, out KeyValuePair<string, DType> schemaDifference, out DType treeSrcSchemaDifferenceType, bool exact = true)
+        private static bool TreeAccepts(DType parentType, TypeTree treeDst, TypeTree treeSrc, out KeyValuePair<string, DType> schemaDifference, out DType treeSrcSchemaDifferenceType, bool exact = true, bool useLegacyDateTimeAccepts = false)
         {
             treeDst.AssertValid();
             treeSrc.AssertValid();
@@ -1882,7 +1888,7 @@ namespace Microsoft.AppMagic.Authoring
 
                 KeyValuePair<string, DType> recursiveSchemaDifference;
                 DType recursiveSchemaDifferenceType;
-                if (!pairDst.Value.Accepts(type, out recursiveSchemaDifference, out recursiveSchemaDifferenceType, exact))
+                if (!pairDst.Value.Accepts(type, out recursiveSchemaDifference, out recursiveSchemaDifferenceType, exact, useLegacyDateTimeAccepts))
                 {
                     string colName;
                     if (!DType.TryGetDisplayNameForColumn(parentType, pairDst.Key, out colName))
@@ -1979,7 +1985,7 @@ namespace Microsoft.AppMagic.Authoring
         }
 
         // Produces the least common supertype of the two specified types.
-        public static DType Supertype(DType type1, DType type2)
+        public static DType Supertype(DType type1, DType type2, bool useLegacyDateTimeAccepts = false)
         {
             type1.AssertValid();
             type2.AssertValid();
@@ -1989,25 +1995,24 @@ namespace Microsoft.AppMagic.Authoring
                 if (type1.Kind != type2.Kind)
                     return DType.Error;
 
-                return SupertypeAggregateCore(type1, type2);
+                return SupertypeAggregateCore(type1, type2, useLegacyDateTimeAccepts);
             }
 
-            return SupertypeCore(type1, type2);
+            return SupertypeCore(type1, type2, useLegacyDateTimeAccepts);
         }
 
-        private static DType SupertypeCore(DType type1, DType type2)
+        private static DType SupertypeCore(DType type1, DType type2, bool useLegacyDateTimeAccepts)
         {
             type1.AssertValid();
             type2.AssertValid();
 
-            if (type1.Accepts(type2))
+            if (type1.Accepts(type2, useLegacyDateTimeAccepts: useLegacyDateTimeAccepts))
                 return CreateDTypeWithConnectedDataSourceInfoMetadata(type1, type2.AssociatedDataSources);
 
-            if (type2.Accepts(type1))
+            if (type2.Accepts(type1, useLegacyDateTimeAccepts: useLegacyDateTimeAccepts))
                 return CreateDTypeWithConnectedDataSourceInfoMetadata(type2, type1.AssociatedDataSources);
 
             DKind type1Superkind;
-
             if (!KindToSuperkindMapping.TryGetValue(type1.Kind, out type1Superkind) || type1Superkind == DKind.Error)
                 return DType.Error;
 
@@ -2027,7 +2032,7 @@ namespace Microsoft.AppMagic.Authoring
             return type;
         }
 
-        private static DType SupertypeAggregateCore(DType type1, DType type2)
+        private static DType SupertypeAggregateCore(DType type1, DType type2, bool useLegacyDateTimeAccepts)
         {
             type1.AssertValid();
             type2.AssertValid();
@@ -2051,7 +2056,7 @@ namespace Microsoft.AppMagic.Authoring
                     int cmp = RedBlackNode<DType>.Compare(ator1.Current.Key, ator2.Current.Key);
                     if (cmp == 0)
                     {
-                        DType innerType = Supertype(ator1.Current.Value, ator2.Current.Value);
+                        DType innerType = Supertype(ator1.Current.Value, ator2.Current.Value, useLegacyDateTimeAccepts);
                         if (innerType.IsError)
                             treeRes = treeRes.RemoveItem(ref fError, ator1.Current.Key);
                         else if (innerType != ator1.Current.Value)
@@ -2082,19 +2087,19 @@ namespace Microsoft.AppMagic.Authoring
         // Produces the union of the two given types.
         // For primitive types, this is the same as the least common supertype.
         // For aggregates, the union is a common subtype that includes fields from both types, assuming no errors.
-        public static DType Union(DType type1, DType type2)
+        public static DType Union(DType type1, DType type2, bool useLegacyDateTimeAccepts = false)
         {
             bool fError = false;
-            return Union(ref fError, type1, type2);
+            return Union(ref fError, type1, type2, useLegacyDateTimeAccepts);
         }
 
-        public bool CanUnionWith(DType type)
+        public bool CanUnionWith(DType type, bool useLegacyDateTimeAccepts = false)
         {
             AssertValid();
             type.AssertValid();
 
             bool fError = false;
-            Union(ref fError, this, type);
+            Union(ref fError, this, type, useLegacyDateTimeAccepts);
 
             return !fError;
         }
@@ -2358,7 +2363,7 @@ namespace Microsoft.AppMagic.Authoring
             return false;
         }
 
-        public static DType Union(ref bool fError, DType type1, DType type2)
+        public static DType Union(ref bool fError, DType type1, DType type2, bool useLegacyDateTimeAccepts = false)
         {
             type1.AssertValid();
             type2.AssertValid();
@@ -2376,27 +2381,27 @@ namespace Microsoft.AppMagic.Authoring
                     return DType.Error;
                 }
 
-                return CreateDTypeWithConnectedDataSourceInfoMetadata(UnionCore(ref fError, type1, type2), type2.AssociatedDataSources);
+                return CreateDTypeWithConnectedDataSourceInfoMetadata(UnionCore(ref fError, type1, type2, useLegacyDateTimeAccepts), type2.AssociatedDataSources);
             }
 
-            if (type1.Accepts(type2))
+            if (type1.Accepts(type2, useLegacyDateTimeAccepts: useLegacyDateTimeAccepts))
             {
                 fError |= type1.IsError;
                 return CreateDTypeWithConnectedDataSourceInfoMetadata(type1, type2.AssociatedDataSources);
             }
 
-            if (type2.Accepts(type1))
+            if (type2.Accepts(type1, useLegacyDateTimeAccepts: useLegacyDateTimeAccepts))
             {
                 fError |= type2.IsError;
                 return CreateDTypeWithConnectedDataSourceInfoMetadata(type2, type1.AssociatedDataSources);
             }
 
-            var result = Supertype(type1, type2);
+            var result = Supertype(type1, type2, useLegacyDateTimeAccepts);
             fError = result == DType.Error;
             return result;
         }
 
-        private static DType UnionCore(ref bool fError, DType type1, DType type2)
+        private static DType UnionCore(ref bool fError, DType type1, DType type2, bool useLegacyDateTimeAccepts = false)
         {
             type1.AssertValid();
             Contracts.Assert(type1.IsAggregate);
@@ -2424,7 +2429,7 @@ namespace Microsoft.AppMagic.Authoring
                 if (field1Type == ObjNull || field2Type == ObjNull)
                     fieldType = field1Type == ObjNull ? field2Type : field1Type;
                 else if (field1Type.IsAggregate && field2Type.IsAggregate)
-                    fieldType = Union(ref fError, field1Type, field2Type);
+                    fieldType = Union(ref fError, field1Type, field2Type, useLegacyDateTimeAccepts);
                 else if (field1Type.IsAggregate || field2Type.IsAggregate)
                 {
                     bool isMatchingExpandType = false;
@@ -2452,7 +2457,7 @@ namespace Microsoft.AppMagic.Authoring
                 }
                 else
                 {
-                    fieldType = Union(ref fError, field1Type, field2Type);
+                    fieldType = Union(ref fError, field1Type, field2Type, useLegacyDateTimeAccepts);
                 }
 
                 result = result.SetType(ref fError, DPath.Root.Append(field2Name), fieldType);
@@ -2948,7 +2953,6 @@ namespace Microsoft.AppMagic.Authoring
                     isSafe = Kind != DKind.String;
                     doesCoerce = Kind == DKind.String ||
                                  DType.Number.Accepts(this) ||
-                                 DType.DateTime.Accepts(this) ||
                                  (Kind == DKind.OptionSetValue && OptionSetInfo != null && OptionSetInfo.IsBooleanValued);
                     break;
                 case DKind.DateTime:

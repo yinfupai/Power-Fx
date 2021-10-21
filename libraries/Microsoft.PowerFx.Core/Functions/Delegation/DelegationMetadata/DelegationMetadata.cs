@@ -4,13 +4,11 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AppMagic.Authoring.Texl;
-using Microsoft.PowerFx.Core.Delegation;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Functions.Delegation.DelegationMetadata
 {
     /// <summary>
     /// This represents a delegatable operation metadata about the imported delegatable CdpDataSourceInfo.

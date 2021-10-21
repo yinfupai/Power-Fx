@@ -5,9 +5,9 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
-using Microsoft.AppMagic.Authoring;
 using Microsoft.PowerFx.Core.App.Controls;
-using PowerApps.Language.Entities;
+using Microsoft.PowerFx.Core.Entities;
+using Microsoft.PowerFx.Core.Errors;
 
 namespace Microsoft.PowerFx.Core.App
 {

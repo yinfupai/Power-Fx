@@ -4,9 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring.DataToControls;
+using Microsoft.PowerFx.Core.App;
 
-namespace Microsoft.PowerFx.Core.App
+namespace Microsoft.PowerFx.Core.Entities
 {
     internal interface IExternalColumnMetadata
     {

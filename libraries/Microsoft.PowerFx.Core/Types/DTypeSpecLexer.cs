@@ -3,9 +3,11 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-using System.Text;
 
-namespace Microsoft.AppMagic.Authoring
+using System.Text;
+using Microsoft.PowerFx.Core.Utils;
+
+namespace Microsoft.PowerFx.Core.Types
 {
     internal sealed class DTypeSpecLexer
     {

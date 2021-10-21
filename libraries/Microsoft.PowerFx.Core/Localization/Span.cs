@@ -3,14 +3,15 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-using Microsoft.AppMagic.Transport;
+
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Microsoft.AppMagic.Transport;
+using Microsoft.PowerFx.Core.Utils;
 
-
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Localization
 {
     using StringBuilderCache = StringBuilderCache<Span>;
 

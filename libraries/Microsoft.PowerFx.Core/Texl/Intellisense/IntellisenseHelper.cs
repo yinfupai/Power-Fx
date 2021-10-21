@@ -7,9 +7,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.PowerFx;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Binding.BindInfo;
+using Microsoft.PowerFx.Core.Functions;
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Syntax;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Types.Enums;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Texl.Intellisense
 {
     internal static class IntellisenseHelper
     {
@@ -154,12 +162,12 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return true;
         }
 
-        internal static bool AddSuggestion(IntellisenseData intellisenseData, string suggestion, SuggestionKind suggestionKind, SuggestionIconKind iconKind, DType type, bool requiresSuggestionEscaping, uint sortPriority = 0)
+        internal static bool AddSuggestion(IntellisenseData.IntellisenseData intellisenseData, string suggestion, SuggestionKind suggestionKind, SuggestionIconKind iconKind, DType type, bool requiresSuggestionEscaping, uint sortPriority = 0)
         {
             return _addSuggestionHelper.AddSuggestion(intellisenseData, suggestion, suggestionKind, iconKind, type, requiresSuggestionEscaping, sortPriority);
         }
 
-        internal static void AddSuggestionsForMatches(IntellisenseData intellisenseData, IEnumerable<string> possibilities, SuggestionKind kind, SuggestionIconKind iconKind, bool requiresSuggestionEscaping, uint sortPriority = 0)
+        internal static void AddSuggestionsForMatches(IntellisenseData.IntellisenseData intellisenseData, IEnumerable<string> possibilities, SuggestionKind kind, SuggestionIconKind iconKind, bool requiresSuggestionEscaping, uint sortPriority = 0)
         {
             Contracts.AssertValue(intellisenseData);
             Contracts.AssertValue(possibilities);
@@ -167,7 +175,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             foreach (var possibility in possibilities) AddSuggestion(intellisenseData, possibility, kind, iconKind, DType.Unknown, requiresSuggestionEscaping, sortPriority);
         }
 
-        internal static void AddSuggestionsForMatches(IntellisenseData intellisenseData, IEnumerable<KeyValuePair<string, SuggestionIconKind>> possibilities, SuggestionKind kind, bool requiresSuggestionEscaping, uint sortPriority = 0)
+        internal static void AddSuggestionsForMatches(IntellisenseData.IntellisenseData intellisenseData, IEnumerable<KeyValuePair<string, SuggestionIconKind>> possibilities, SuggestionKind kind, bool requiresSuggestionEscaping, uint sortPriority = 0)
         {
             Contracts.AssertValue(intellisenseData);
             Contracts.AssertValue(possibilities);
@@ -181,7 +189,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         /// <summary>
         /// Suggest possibilities that can come after a value of a certain type.
         /// </summary>
-        internal static void AddSuggestionsForAfterValue(IntellisenseData intellisenseData, DType type)
+        internal static void AddSuggestionsForAfterValue(IntellisenseData.IntellisenseData intellisenseData, DType type)
         {
             Contracts.AssertValue(intellisenseData);
             Contracts.AssertValid(type);
@@ -198,7 +206,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         /// <param name="intellisenseData"></param>
         /// <param name="enumInfo"></param>
         /// <param name="prefix"></param>
-        internal static void AddSuggestionsForEnum(IntellisenseData intellisenseData, EnumSymbol enumInfo, string prefix = "")
+        internal static void AddSuggestionsForEnum(IntellisenseData.IntellisenseData intellisenseData, EnumSymbol enumInfo, string prefix = "")
         {
             Contracts.AssertValue(intellisenseData);
             Contracts.AssertValue(enumInfo);
@@ -232,7 +240,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             }
         }
 
-        internal static void AddSuggestionsForNamesInType(DType type, IntellisenseData data, bool createTableSuggestion)
+        internal static void AddSuggestionsForNamesInType(DType type, IntellisenseData.IntellisenseData data, bool createTableSuggestion)
         {
             Contracts.AssertValid(type);
             Contracts.AssertValue(data);
@@ -252,7 +260,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             }
         }
 
-        internal static void AddSuggestionsForNamespace(IntellisenseData intellisenseData, IEnumerable<TexlFunction> namespaceFunctions)
+        internal static void AddSuggestionsForNamespace(IntellisenseData.IntellisenseData intellisenseData, IEnumerable<TexlFunction> namespaceFunctions)
         {
             Contracts.AssertValue(intellisenseData);
             Contracts.AssertValue(namespaceFunctions);
@@ -268,7 +276,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         /// <summary>
         /// Adds suggestions that start with the MatchingString from the given type.
         /// </summary>
-        internal static void AddTopLevelSuggestions(IntellisenseData intellisenseData, DType type, string prefix = "")
+        internal static void AddTopLevelSuggestions(IntellisenseData.IntellisenseData intellisenseData, DType type, string prefix = "")
         {
             Contracts.AssertValue(intellisenseData);
             Contracts.Assert(type.IsValid);
@@ -290,7 +298,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         /// <summary>
         /// Adds suggestions for type scoped at current cursor position.
         /// </summary>
-        public static void AddTopLevelSuggestionsForCursorType(IntellisenseData intellisenseData, CallNode callNode, int argPosition)
+        public static void AddTopLevelSuggestionsForCursorType(IntellisenseData.IntellisenseData intellisenseData, CallNode callNode, int argPosition)
         {
             Contracts.AssertValue(intellisenseData);
             Contracts.AssertValue(callNode);
@@ -321,7 +329,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             }
         }
 
-        internal static DType GetEnumType(IntellisenseData intellisenseData, TexlNode node)
+        internal static DType GetEnumType(IntellisenseData.IntellisenseData intellisenseData, TexlNode node)
         {
             Contracts.AssertValue(intellisenseData);
             Contracts.AssertValue(node);
@@ -346,7 +354,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return DType.Unknown;
         }
 
-        internal static DType ClosestParentScopeTypeForSuggestions(CallNode callNode, IntellisenseData intellisenseData)
+        internal static DType ClosestParentScopeTypeForSuggestions(CallNode callNode, IntellisenseData.IntellisenseData intellisenseData)
         {
             Contracts.AssertValue(callNode);
             Contracts.AssertValue(intellisenseData);
@@ -399,7 +407,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             return suggestions;
         }
 
-        public static DType ScopeTypeForArgumentSuggestions(CallNode callNode, IntellisenseData intellisenseData)
+        public static DType ScopeTypeForArgumentSuggestions(CallNode callNode, IntellisenseData.IntellisenseData intellisenseData)
         {
             Contracts.AssertValue(callNode);
             Contracts.AssertValue(intellisenseData);
@@ -423,7 +431,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         /// Returns true if any function specific suggestions are added to the list. Otherwise false.
         /// </summary>
         /// <returns></returns>
-        public static bool TryAddSpecificSuggestionsForGivenArgPosition(IntellisenseData intellisenseData, CallNode callNode, int argumentIndex)
+        public static bool TryAddSpecificSuggestionsForGivenArgPosition(IntellisenseData.IntellisenseData intellisenseData, CallNode callNode, int argumentIndex)
         {
             Contracts.AssertValue(intellisenseData);
             Contracts.AssertValue(callNode);
@@ -476,7 +484,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         /// <param name="node">Node for which suggestions are needed.</param>
         /// <param name="hasSpecificSuggestions">Flag to indicate if inner most function has any specific suggestions.</param>
         /// <param name="currentNode">Current node in the traversal.</param>
-        public static bool AddTopLevelSuggestionsForGivenNode(IntellisenseData intellisenseData, TexlNode node, TexlNode currentNode)
+        public static bool AddTopLevelSuggestionsForGivenNode(IntellisenseData.IntellisenseData intellisenseData, TexlNode node, TexlNode currentNode)
         {
             Contracts.AssertValue(intellisenseData);
             Contracts.AssertValue(node);
@@ -529,7 +537,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         /// <summary>
         /// Adds suggestions that start with the matchingString from the result from the types in scope.
         /// </summary>
-        internal static bool AddSuggestionsForTopLevel(IntellisenseData intellisenseData, TexlNode node)
+        internal static bool AddSuggestionsForTopLevel(IntellisenseData.IntellisenseData intellisenseData, TexlNode node)
         {
             Contracts.AssertValue(intellisenseData);
             Contracts.AssertValue(node);
@@ -558,7 +566,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             }
         }
 
-        internal static void AddSuggestionsForFunctions(IntellisenseData intellisenseData)
+        internal static void AddSuggestionsForFunctions(IntellisenseData.IntellisenseData intellisenseData)
         {
             // TASK: 76039: Intellisense: Update intellisense to filter suggestions based on the expected type of the text being typed in UI
             Contracts.AssertValue(intellisenseData);
@@ -590,7 +598,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         /// <param name="tokenEnd"></param>
         /// <param name="validNames"></param>
         /// <returns></returns>
-        internal static int GetReplacementLength(IntellisenseData intellisenseData, int tokenStart, int tokenEnd, IEnumerable<string> validNames)
+        internal static int GetReplacementLength(IntellisenseData.IntellisenseData intellisenseData, int tokenStart, int tokenEnd, IEnumerable<string> validNames)
         {
             Contracts.AssertValue(intellisenseData);
             Contracts.Assert(tokenStart <= intellisenseData.CursorPos);
@@ -618,7 +626,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         /// <summary>
         /// Adds suggestions that start with the matchingString from the top level scope of the binding.
         /// </summary>
-        internal static void AddSuggestionsForRuleScope(IntellisenseData intellisenseData)
+        internal static void AddSuggestionsForRuleScope(IntellisenseData.IntellisenseData intellisenseData)
         {
             Contracts.AssertValue(intellisenseData);
             Contracts.AssertValue(intellisenseData.Binding);
@@ -630,7 +638,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             IntellisenseHelper.AddTopLevelSuggestions(intellisenseData, scopeType);
         }
 
-        internal static void AddSuggestionsForGlobals(IntellisenseData intellisenseData)
+        internal static void AddSuggestionsForGlobals(IntellisenseData.IntellisenseData intellisenseData)
         {
             Contracts.AssertValue(intellisenseData);
 
@@ -647,7 +655,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             }
         }
 
-        public static void AddSuggestionsForUnaryOperatorKeyWords(IntellisenseData intellisenseData)
+        public static void AddSuggestionsForUnaryOperatorKeyWords(IntellisenseData.IntellisenseData intellisenseData)
         {
             Contracts.AssertValue(intellisenseData);
 
@@ -655,7 +663,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             IntellisenseHelper.AddSuggestionsForMatches(intellisenseData, TexlLexer.LocalizedInstance.GetUnaryOperatorKeywords(), SuggestionKind.KeyWord, SuggestionIconKind.Other, requiresSuggestionEscaping: false);
         }
 
-        public static void AddSuggestionsForEnums(IntellisenseData intellisenseData)
+        public static void AddSuggestionsForEnums(IntellisenseData.IntellisenseData intellisenseData)
         {
             Contracts.AssertValue(intellisenseData);
 
@@ -708,7 +716,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
             }
         }
 
-        internal static bool AddSuggestionsForValuePossibilities(IntellisenseData intellisenseData, TexlNode node)
+        internal static bool AddSuggestionsForValuePossibilities(IntellisenseData.IntellisenseData intellisenseData, TexlNode node)
         {
             Contracts.AssertValue(intellisenseData);
             Contracts.AssertValue(node);

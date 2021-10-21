@@ -6,7 +6,7 @@
 
 using Microsoft.AppMagic.Transport;
 
-namespace Microsoft.AppMagic.Authoring.Actions
+namespace Microsoft.PowerFx.Core.Functions.TransportSchemas
 {
     [TransportType(TransportKind.ByValue)]
     public sealed class ParameterInfo

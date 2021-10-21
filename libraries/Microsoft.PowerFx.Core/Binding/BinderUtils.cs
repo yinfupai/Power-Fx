@@ -1,10 +1,7 @@
-﻿using Microsoft.AppMagic;
-using Microsoft.AppMagic.Authoring;
-using Microsoft.AppMagic.Authoring.Texl;
-using Microsoft.PowerFx.Core.Logging.Trackers;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.PowerFx.Core.Logging.Trackers;
+using Microsoft.PowerFx.Core.Functions;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Utils;
 
 namespace Microsoft.PowerFx.Core.Binding
 {

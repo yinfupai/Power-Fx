@@ -8,7 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Microsoft.AppMagic.Common
+namespace Microsoft.PowerFx.Core.UtilityDataStructures
 {
     public class BidirectionalDictionary<TFirst, TSecond>: IEnumerable<KeyValuePair<TFirst,TSecond>>
     {

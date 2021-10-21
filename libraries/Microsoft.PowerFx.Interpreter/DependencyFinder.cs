@@ -4,15 +4,11 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring;
-using Microsoft.AppMagic.Authoring.Texl;
-using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.IO;
-using System.Text;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Binding.BindInfo;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Syntax.Visitors;
 
 namespace Microsoft.PowerFx
 {

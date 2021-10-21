@@ -4,7 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.PowerFx
+namespace Microsoft.PowerFx.Core.Public.Types
 {
     /// <summary>
     /// Visitor for walking <see cref="FormulaType"/>

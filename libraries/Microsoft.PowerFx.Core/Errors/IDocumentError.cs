@@ -4,13 +4,12 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring.Texl;
-using Microsoft.AppMagic.Common;
-using Microsoft.AppMagic.Transport;
 using System;
 using System.Collections.Generic;
+using Microsoft.AppMagic.Transport;
+using Microsoft.PowerFx.Core.Localization;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Errors
 {
     // TASK: 83259 - Document wide error reporting.
 

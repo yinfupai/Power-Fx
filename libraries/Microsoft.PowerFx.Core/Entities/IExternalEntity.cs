@@ -5,11 +5,11 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
-using Microsoft.AppMagic.Authoring;
-using Microsoft.PowerFx.Core.App;
 using Microsoft.PowerFx.Core.App.Controls;
+using Microsoft.PowerFx.Core.Errors;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace PowerApps.Language.Entities
+namespace Microsoft.PowerFx.Core.Entities
 {
     internal interface IExternalEntity
     {

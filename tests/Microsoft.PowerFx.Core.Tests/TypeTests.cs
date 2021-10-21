@@ -8,7 +8,7 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using Microsoft.PowerPlatform.Language;
+using Microsoft.PowerFx.Core.Public.Types;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.PowerFx.Tests

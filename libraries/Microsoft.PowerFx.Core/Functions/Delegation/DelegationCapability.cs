@@ -7,9 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using Microsoft.AppMagic.Authoring.Texl;
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Functions.Delegation
 {
     // This lightweight wrapper around DelegationCababilityConstants is used to enforce valid values for capabilities.
     internal struct DelegationCapability

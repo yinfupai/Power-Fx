@@ -4,11 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring.Texl;
-using Microsoft.PowerFx.Core.IR;
-using System;
-
-namespace Microsoft.PowerFx
+namespace Microsoft.PowerFx.Core.Public.Values
 {
     /// <summary>
     /// Represents the type (T | Blank | Error), where T is neither Blank nor Error

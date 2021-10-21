@@ -4,10 +4,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring;
 using System.Diagnostics;
+using Microsoft.PowerFx.Core.Types;
 
-namespace Microsoft.PowerFx
+namespace Microsoft.PowerFx.Core.Public.Types
 {
     [DebuggerDisplay("{_type}:tzi")]
     public class DateTimeNoTimeZoneType : FormulaType

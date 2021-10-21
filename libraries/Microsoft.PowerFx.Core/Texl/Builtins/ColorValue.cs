@@ -5,8 +5,11 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.Functions;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Types;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Texl.Builtins
 {
     // ColorValue(colorstring:s)
     // Returns the color value for the given color string

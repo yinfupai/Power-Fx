@@ -4,9 +4,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Common.Telemetry;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Functions.FunctionArgValidators
 {
     internal interface IArgValidator<T>
     {

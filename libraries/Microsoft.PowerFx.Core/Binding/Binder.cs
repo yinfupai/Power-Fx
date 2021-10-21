@@ -4,7 +4,6 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Common;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,15 +13,25 @@ using Microsoft.PowerFx.Core.App;
 using Microsoft.PowerFx.Core.App.Components;
 using Microsoft.PowerFx.Core.App.Controls;
 using Microsoft.PowerFx.Core.App.ErrorContainers;
-using Microsoft.PowerFx.Core.Glue;
-using Microsoft.PowerFx.Core.Types;
-using PowerApps.Language.Entities;
-using Conditional = System.Diagnostics.ConditionalAttribute;
-using Microsoft.PowerFx.Core.Delegation;
+using Microsoft.PowerFx.Core.Binding.BindInfo;
+using Microsoft.PowerFx.Core.Entities;
 using Microsoft.PowerFx.Core.Entities.QueryOptions;
-using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Errors;
+using Microsoft.PowerFx.Core.Functions;
+using Microsoft.PowerFx.Core.Functions.Delegation;
+using Microsoft.PowerFx.Core.Glue;
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Lexer.Tokens;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Syntax;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Syntax.Visitors;
+using Microsoft.PowerFx.Core.Texl;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
+using Conditional = System.Diagnostics.ConditionalAttribute;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Binding
 {
     internal sealed partial class TexlBinding
     {
@@ -154,6 +163,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
         public bool UsesGlobals { get; private set; }
         public bool UsesAliases { get; private set; }
         public bool UsesScopeVariables { get; private set; }
+        public bool UsesScopeCollections { get; private set; }
         public bool UsesThisItem { get; private set; }
         public bool UsesResources { get; private set; }
         public bool UsesOptionSets { get; private set; }
@@ -185,7 +195,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
 
         public bool HasSelectFunc { get; private set; }
         public bool HasReferenceToAttachment { get; private set; }
-        public bool IsGloballyPure => !(UsesGlobals || UsesThisItem || UsesAliases || UsesScopeVariables || UsesResources) && IsPure(Top);
+        public bool IsGloballyPure => !(UsesGlobals || UsesThisItem || UsesAliases || UsesScopeVariables || UsesResources || UsesScopeCollections) && IsPure(Top);
         public bool IsCurrentPropertyPageable => Property != null && Property.SupportsPaging;
         public bool CurrentPropertyRequiresDefaultableReferences => Property != null && Property.RequiresDefaultablePropertyReferences;
         public bool ContainsAnyPageableNode => _isPageable.Cast<bool>().Any(isPageable => isPageable);
@@ -1547,6 +1557,16 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 .Where(info => info.Kind == BindKind.ScopeVariable);
         }
 
+        public IEnumerable<FirstNameInfo> GetScopeCollectionNames()
+        {
+            if (!UsesScopeCollections)
+                return Enumerable.Empty<FirstNameInfo>();
+
+            return _infoMap
+                .OfType<FirstNameInfo>()
+                .Where(info => info.Kind == BindKind.ScopeCollection);
+        }
+
         public IEnumerable<FirstNameInfo> GetThisItemFirstNames()
         {
             if (!HasThisItemReference)
@@ -2030,6 +2050,11 @@ namespace Microsoft.AppMagic.Authoring.Texl
             Contracts.AssertIndex(node.Id, _isUnliftable.Length);
 
             return _isUnliftable[node.Id];
+        }
+
+        public bool IsInfoKindDataSource(NameInfo info)
+        {
+            return info.Kind == BindKind.Data || info.Kind == BindKind.ScopeCollection;
         }
 
         public bool TryCastToFirstName(TexlNode node, out FirstNameInfo firstNameInfo)
@@ -3015,6 +3040,9 @@ namespace Microsoft.AppMagic.Authoring.Texl
                     case BindKind.Alias:
                         _txb.UsesAliases = true;
                         break;
+                    case BindKind.ScopeCollection:
+                        _txb.UsesScopeCollections = true;
+                        break;
                     case BindKind.ScopeVariable:
                         _txb.UsesScopeVariables = true;
                         break;
@@ -3231,7 +3259,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                     // If the reference is to Control.Property and the rule for that Property is a constant,
                     // we need to mark the node as constant, and save the control info so we may look up the
                     // rule later.
-                    if (result.controlInfo?.GetRule(property.InvariantName) is {HasErrors: false} rule && rule.Binding.IsConstant(rule.Binding.Top))
+                    if (result.controlInfo?.GetRule(property.InvariantName) is { HasErrors: false } rule && rule.Binding.IsConstant(rule.Binding.Top))
                     {
                         value = result.controlInfo;
                         isConstant = true;
@@ -4047,7 +4075,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 if (lhsControl.IsComponentControl &&
                    lhsControl.Template.ComponentType == ComponentType.CanvasComponent &&
                    (currentControl.IsComponentControl ||
-                   (currentControl.TopParentOrSelf is IExternalControl{IsComponentControl: false})))
+                   (currentControl.TopParentOrSelf is IExternalControl { IsComponentControl: false })))
                 {
                     // Behavior property is blocked from outside the component.
                     if (isBehaviorOnly)
@@ -5016,6 +5044,29 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 return false;
             }
 
+            /// <summary>
+            /// Returns best overload in case there are no matches based on first argument and order
+            /// </summary>
+            private TexlFunction FindBestErrorOverload(TexlFunction[] overloads, DType[] argTypes, int cArg)
+            {
+                var candidates = overloads.Where(overload => overload.MinArity <= cArg && cArg <= overload.MaxArity);
+                if (cArg == 0)
+                {
+                    return candidates.FirstOrDefault();
+                }
+
+                // Consider overloads that have DType.Error parameter the last
+                candidates = candidates.OrderBy(candidate => candidate.ParamTypes.Length > 0 && candidate.ParamTypes[0] == DType.Error).ToArray();
+                foreach (var candidate in candidates)
+                {
+                    if (candidate.ParamTypes.Length > 0 && candidate.ParamTypes[0].Accepts(argTypes[0]))
+                    {
+                        return candidate;
+                    }
+                }
+                return candidates.FirstOrDefault();
+            }
+
             private void PreVisitWithOverloadResolution(CallNode node, TexlFunction[] overloads)
             {
                 Contracts.AssertValue(node);
@@ -5043,10 +5094,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                     return;
                 }
 
-                // TASK: 75086: use the closest overload (e.g. by arity, types) that we can find, for info/type propagation.
-                // For now we're using the first overload that matches arities. This is still better in terms of error reporting than
-                // completely losing precision and defaulting to DType.Error.
-                var someFunc = overloads.FirstOrDefault(func => func.MinArity <= carg && carg <= func.MaxArity);
+                var someFunc = FindBestErrorOverload(overloads, argTypes, carg);
 
                 // If nothing matches even the arity, we're done.
                 if (someFunc == null)

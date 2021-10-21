@@ -6,9 +6,9 @@
 
 using System.Globalization;
 
-namespace Microsoft.AppMagic.Common
+namespace Microsoft.PowerFx.Core.Localization
 {
-    public sealed class CurrentLocaleInfo
+    public static class CurrentLocaleInfo
     {
         public static string CurrentLocaleName { get; set; } = CultureInfo.CurrentCulture.Name;
 

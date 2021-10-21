@@ -4,7 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring.Texl
+using Microsoft.PowerFx.Core.Localization;
+
+namespace Microsoft.PowerFx.Core.Lexer.Tokens
 {
     internal class EofToken : Token
     {

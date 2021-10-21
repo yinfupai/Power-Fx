@@ -4,12 +4,12 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AppMagic.Authoring.Texl;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Functions.Delegation.DelegationMetadata
 {
     // Container type for all OperationCapabilityMetadata. This represents a metadata for the entire table.
     internal sealed class CompositeCapabilityMetadata : OperationCapabilityMetadata

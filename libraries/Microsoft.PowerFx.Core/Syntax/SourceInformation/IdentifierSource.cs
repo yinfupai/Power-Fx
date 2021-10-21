@@ -5,8 +5,12 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.Lexer.Tokens;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl.SourceInformation
+namespace Microsoft.PowerFx.Core.Syntax.SourceInformation
 {
     internal class IdentifierSource : ITexlSource
     {

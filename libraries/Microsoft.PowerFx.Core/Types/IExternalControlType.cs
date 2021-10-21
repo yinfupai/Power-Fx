@@ -1,5 +1,3 @@
-using Microsoft.AppMagic.Authoring;
-using Microsoft.PowerFx.Core.App;
 using Microsoft.PowerFx.Core.App.Controls;
 
 namespace Microsoft.PowerFx.Core.Types

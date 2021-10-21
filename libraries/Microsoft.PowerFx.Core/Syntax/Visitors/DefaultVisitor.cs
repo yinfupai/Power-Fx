@@ -4,7 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring.Texl
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+
+namespace Microsoft.PowerFx.Core.Syntax.Visitors
 {
     /// <summary>
     /// A base visitor for when you want a default result for most nodes.

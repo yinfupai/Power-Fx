@@ -5,8 +5,9 @@
 //------------------------------------------------------------------------------
 
 using Microsoft.AppMagic.Transport;
+using Microsoft.PowerFx.Core.Types;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Functions
 {
     [TransportType(TransportKind.ByValue)]
     public interface IFunction

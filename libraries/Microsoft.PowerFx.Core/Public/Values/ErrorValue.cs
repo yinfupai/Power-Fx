@@ -4,12 +4,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.PowerFx.Core;
-using Microsoft.PowerFx.Core.IR;
 using System.Collections.Generic;
-using System.Linq;
+using Microsoft.PowerFx.Core.IR;
 
-namespace Microsoft.PowerFx
+namespace Microsoft.PowerFx.Core.Public.Values
 {
     public class ErrorValue : FormulaValue
     {

@@ -6,6 +6,7 @@
 
 using Microsoft.PowerFx.Core;
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.Public;
 
 namespace Microsoft.PowerFx.LanguageServerProtocol.Protocol
 {

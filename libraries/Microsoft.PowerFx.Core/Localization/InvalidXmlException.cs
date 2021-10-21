@@ -4,15 +4,11 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Common
+namespace Microsoft.PowerFx.Core.Localization
 {
     /// <summary>
     /// Represents an exception that occurs while reading and validating an xml document.

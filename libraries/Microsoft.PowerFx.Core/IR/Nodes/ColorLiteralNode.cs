@@ -4,13 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring;
-using Microsoft.AppMagic.Authoring.Texl;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Microsoft.PowerFx.Core.IR
+namespace Microsoft.PowerFx.Core.IR.Nodes
 {
     internal sealed class ColorLiteralNode : IntermediateNode
     {

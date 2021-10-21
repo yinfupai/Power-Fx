@@ -6,9 +6,14 @@
 
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.AppMagic.Authoring;
-using Microsoft.AppMagic.Authoring.Texl;
-using Microsoft.PowerPlatform.Language;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Glue;
+using Microsoft.PowerFx.Core.Parser;
+using Microsoft.PowerFx.Core.Public.Types;
+using Microsoft.PowerFx.Core.Syntax;
+using Microsoft.PowerFx.Core.Texl.Intellisense;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Types.Enums;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.PowerFx.Tests.IntellisenseTests

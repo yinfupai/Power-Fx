@@ -3,10 +3,16 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Lexer.Tokens;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl.SourceInformation
+namespace Microsoft.PowerFx.Core.Syntax.SourceInformation
 {
     /// <summary>
     /// An individual non-whitespace token that is part of the source for its

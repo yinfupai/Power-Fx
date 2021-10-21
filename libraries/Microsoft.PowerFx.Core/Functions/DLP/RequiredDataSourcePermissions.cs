@@ -4,10 +4,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Transport;
 using System;
+using Microsoft.AppMagic.Transport;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Functions.DLP
 {
     [Flags]
     [TransportType(TransportKind.Enum)]

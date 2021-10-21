@@ -15,7 +15,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 
-namespace Microsoft.AppMagic
+namespace Microsoft.PowerFx.Core.Utils
 {
     // Implement this interface to add AssertValid/CheckValid validation capabilities to your class.
     public interface ICheckable

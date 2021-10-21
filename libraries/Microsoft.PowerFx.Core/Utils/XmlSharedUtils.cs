@@ -4,11 +4,11 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring;
 using System;
 using System.Xml.Linq;
+using Microsoft.PowerFx.Core.Localization;
 
-namespace Microsoft.AppMagic.Common
+namespace Microsoft.PowerFx.Core.Utils
 {
     internal static partial class XmlSharedUtils
     {

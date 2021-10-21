@@ -4,19 +4,12 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic;
-using Microsoft.AppMagic.Authoring;
-using Microsoft.AppMagic.Authoring.Texl;
-using Microsoft.PowerFx.Core.App;
-using Microsoft.PowerFx.Core.Entities.QueryOptions;
-using Microsoft.PowerFx.Core.Glue;
-using PowerApps.Language.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.PowerFx.Core.App.Controls;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Functions;
 
-namespace Microsoft.PowerFx
+namespace Microsoft.PowerFx.Core.Glue
 {
     // $$$ Everything in this file should get removed. 
     internal class Glue2DocumentBinderGlue : IBinderGlue

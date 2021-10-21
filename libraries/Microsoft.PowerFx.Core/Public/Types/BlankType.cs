@@ -4,9 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring;
+using Microsoft.PowerFx.Core.Types;
 
-namespace Microsoft.PowerFx
+namespace Microsoft.PowerFx.Core.Public.Types
 {
     /// <summary>
     /// Represents a Blank (similar to Null) value. BlankType is compatible with other types. 

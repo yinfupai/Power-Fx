@@ -4,9 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring.Texl;
-using Microsoft.PowerFx.Core;
 using Microsoft.PowerFx.Core.IR;
+using Microsoft.PowerFx.Core.Public;
+using Microsoft.PowerFx.Core.Public.Values;
 
 namespace Microsoft.PowerFx.Functions
 {
@@ -42,6 +42,26 @@ namespace Microsoft.PowerFx.Functions
             });
         }
 
+        public static FormulaValue InvalidDateTimeError(IRContext irContext)
+        {
+            return new ErrorValue(irContext, new ExpressionError()
+            {
+                Message = "The Date/Time could not be parsed",
+                Span = irContext.SourceContext,
+                Kind = ErrorKind.BadLanguageCode
+            });
+        }
+
+        public static FormulaValue InvalidNumberFormatError(IRContext irContext)
+        {
+            return new ErrorValue(irContext, new ExpressionError()
+            {
+                Message = "The Number could not be parsed",
+                Span = irContext.SourceContext,
+                Kind = ErrorKind.BadLanguageCode
+            });
+        }
+
         public static FormulaValue UnreachableCodeError(IRContext irContext)
         {
             return new ErrorValue(irContext, new ExpressionError()
@@ -49,6 +69,16 @@ namespace Microsoft.PowerFx.Functions
                 Message = "Unknown error",
                 Span = irContext.SourceContext,
                 Kind = ErrorKind.Validation
+            });
+        }
+
+        public static FormulaValue NotYetImplementedError(IRContext irContext, string message)
+        {
+            return new ErrorValue(irContext, new ExpressionError()
+            {
+                Message = $"Not implemented: {message}",
+                Span = irContext.SourceContext,
+                Kind = ErrorKind.NotSupported
             });
         }
     }

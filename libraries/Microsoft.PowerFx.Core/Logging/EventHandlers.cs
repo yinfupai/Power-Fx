@@ -5,8 +5,9 @@
 //------------------------------------------------------------------------------
 
 using System;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Common.Telemetry
+namespace Microsoft.PowerFx.Core.Logging
 {
     public sealed class EventHandlers
     {

@@ -4,11 +4,18 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Common.Telemetry;
-using Microsoft.PowerFx.Core.Delegation;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Binding.BindInfo;
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Logging;
 using Microsoft.PowerFx.Core.Logging.Trackers;
+using Microsoft.PowerFx.Core.Syntax;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Functions.Delegation.DelegationStrategies
 {
     internal sealed class InOpDelegationStrategy : BinaryOpDelegationStrategy
     {
@@ -117,7 +124,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 return false;
             }
 
-            IDelegationMetadata columnMetadata = info.Data as DelegationMetadata;
+            IDelegationMetadata columnMetadata = info.Data as DelegationMetadata.DelegationMetadata;
             // For this to be delegable, rhs needs to be a column that belongs to innermost scoped delegable datasource.
             if (columnMetadata == null || info.UpCount != 0)
             {

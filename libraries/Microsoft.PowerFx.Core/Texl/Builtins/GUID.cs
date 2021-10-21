@@ -5,10 +5,13 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.Functions;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Types;
 
 
 // These have separate defintions as the one with a string is a pure function
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Texl.Builtins
 {
     // GUID()
     internal sealed class GUIDNoArgFunction : BuiltinFunction

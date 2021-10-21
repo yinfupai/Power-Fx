@@ -3,10 +3,11 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Types
 {
     /// <summary>
     /// A comparer that orders based on the Damerau-Levenshtein distance to a given zero-point string.

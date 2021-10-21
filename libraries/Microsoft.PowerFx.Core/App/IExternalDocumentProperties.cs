@@ -4,7 +4,6 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring;
 using System.Collections.Generic;
 
 namespace Microsoft.PowerFx.Core.App

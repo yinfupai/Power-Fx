@@ -4,18 +4,15 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring;
-using Microsoft.AppMagic.Authoring.Texl;
-using System;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.IO;
-using System.Text;
 using Microsoft.PowerFx.Functions;
 using Microsoft.PowerFx.Core.IR;
+using Microsoft.PowerFx.Core.IR.Nodes;
 using Microsoft.PowerFx.Core.IR.Symbols;
+using Microsoft.PowerFx.Core.Public.Values;
+using Microsoft.PowerFx.Core.Localization;
+using System.Globalization;
 
 namespace Microsoft.PowerFx
 {
@@ -34,9 +31,12 @@ namespace Microsoft.PowerFx
 
         private readonly RecalcEngine _parent;
 
-        public RecalcEngineWorker(RecalcEngine parent)
+        private readonly CultureInfo _cultureInfo;
+
+        public RecalcEngineWorker(RecalcEngine parent, CultureInfo cultureInfo = null)
         {
             _parent = parent;
+            _cultureInfo = cultureInfo ?? CultureInfo.CurrentCulture;
         }
 
         // Start
@@ -75,7 +75,7 @@ namespace Microsoft.PowerFx
                 (IntermediateNode irnode, ScopeSymbol ruleScopeSymbol) = IRTranslator.Translate(binding);
 
                 var scope = this;
-                var v = new EvalVisitor();
+                var v = new EvalVisitor(_cultureInfo);
 
                 FormulaValue newValue = irnode.Accept(v, SymbolContext.New());
 

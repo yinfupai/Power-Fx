@@ -5,8 +5,11 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.Lexer.Tokens;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
 
-namespace Microsoft.AppMagic.Authoring.Texl.SourceInformation
+namespace Microsoft.PowerFx.Core.Syntax.SourceInformation
 {
     /// <summary>
     /// An individual piece of the source that should be associated with a given

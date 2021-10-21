@@ -4,8 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring.Texl;
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Public;
 
 namespace Microsoft.PowerFx.Core.Utils
 {

@@ -4,9 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using System;
+using Microsoft.PowerFx.Core.Lexer;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Functions.Delegation.DelegationStrategies
 {
     internal sealed class DefaultBinaryOpDelegationStrategy : BinaryOpDelegationStrategy
     {

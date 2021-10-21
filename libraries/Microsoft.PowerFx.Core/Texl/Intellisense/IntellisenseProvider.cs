@@ -4,9 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring.Texl;
-
-namespace Microsoft.PowerPlatform.Language
+namespace Microsoft.PowerFx.Core.Texl.Intellisense
 {
     internal static class IntellisenseProvider
     {

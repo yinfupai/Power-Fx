@@ -4,27 +4,27 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using System.Diagnostics.Contracts;
 using Microsoft.PowerFx.Core.IR;
 using Microsoft.PowerFx.Core.Public.Types;
+using System;
+using System.Diagnostics.Contracts;
 
 namespace Microsoft.PowerFx.Core.Public.Values
 {
-    public class StringValue : PrimitiveValue<string>
+    /// <summary>
+    /// Represents a Date and Time together, in the local time zone
+    /// </summary>
+    public class DateTimeValue : PrimitiveValue<DateTime>
     {
-        internal StringValue(IRContext irContext, string value) : base(irContext, value)
+        internal DateTimeValue(IRContext irContext, DateTime value) : base(irContext, value)
         {
-            Contract.Assert(IRContext.ResultType == FormulaType.String);
+            Contract.Assert(IRContext.ResultType == FormulaType.DateTime);
+            Contract.Assert(value.Kind != DateTimeKind.Utc);
         }
 
         public override void Visit(IValueVisitor visitor)
         {
             visitor.Visit(this);
-        }
-
-        internal StringValue ToLower()
-        {
-            return new StringValue(IRContext.NotInSource(FormulaType.String), Value.ToLowerInvariant());
         }
     }
 }

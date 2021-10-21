@@ -4,12 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Common
+namespace Microsoft.PowerFx.Core.Localization
 {
 
     // Key Type of string resources related to errors. Used by BaseError in DocError.cs to ensure

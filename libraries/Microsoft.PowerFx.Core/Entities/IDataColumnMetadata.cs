@@ -4,7 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring
+using Microsoft.PowerFx.Core.Types;
+
+namespace Microsoft.PowerFx.Core.Entities
 {
     /// <summary>
     /// Information about column metadata used to define type for multi-choice columns.

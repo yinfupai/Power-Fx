@@ -4,11 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic;
-using Microsoft.AppMagic.Authoring.Texl;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.PowerFx.Core.Binding;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Utils;
 
 namespace Microsoft.PowerFx.Core.Logging.Trackers
 {

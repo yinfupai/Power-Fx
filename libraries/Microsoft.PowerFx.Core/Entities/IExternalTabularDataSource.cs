@@ -5,11 +5,10 @@
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
-using Microsoft.PowerFx.Core.App;
 using Microsoft.PowerFx.Core.Entities.QueryOptions;
-using PowerApps.Language.Entities;
+using Microsoft.PowerFx.Core.Types;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Entities
 {
     internal interface IExternalTabularDataSource : IExternalDataSource, IDisplayMapped<string>
     {

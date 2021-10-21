@@ -4,8 +4,11 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.AppMagic.Authoring.Texl
-{
+using Microsoft.PowerFx.Core.Syntax;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Utils;
+
+namespace Microsoft.PowerFx.Core.Texl.Intellisense{
     internal partial class Intellisense
     {
         internal abstract class ErrorNodeSuggestionHandlerBase : NodeKindSuggestionHandler
@@ -14,7 +17,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 : base(kind)
             { }
 
-            internal override bool TryAddSuggestionsForNodeKind(IntellisenseData intellisenseData)
+            internal override bool TryAddSuggestionsForNodeKind(IntellisenseData.IntellisenseData intellisenseData)
             {
                 Contracts.AssertValue(intellisenseData);
 

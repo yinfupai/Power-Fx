@@ -6,6 +6,7 @@
 
 using Microsoft.PowerFx.Core.IR.Symbols;
 using System.Collections.Generic;
+using Microsoft.PowerFx.Core.Public.Values;
 
 namespace Microsoft.PowerFx
 {

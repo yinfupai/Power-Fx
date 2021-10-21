@@ -4,15 +4,13 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic;
-using Microsoft.AppMagic.Authoring;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
+using Microsoft.PowerFx.Core.Errors;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Common
+namespace Microsoft.PowerFx.Core.Localization
 {
     public class ErrorResource
     {

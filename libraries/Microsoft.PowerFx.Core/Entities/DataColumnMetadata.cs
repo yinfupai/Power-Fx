@@ -4,10 +4,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using System;
-using Microsoft.AppMagic.Authoring.DataToControls;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Entities
 {
     internal sealed class DataColumnMetadata : IDataColumnMetadata
     {

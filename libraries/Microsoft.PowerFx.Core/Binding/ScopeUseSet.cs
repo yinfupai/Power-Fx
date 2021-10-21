@@ -5,8 +5,9 @@
 //------------------------------------------------------------------------------
 
 using System.Text;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Binding
 {
     // A ScopeUseSet is intrinsically associated with a scope S, and
     // encodes that scope's "use set", i.e. the set of up-counts relative

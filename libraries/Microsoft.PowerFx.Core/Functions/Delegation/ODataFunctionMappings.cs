@@ -4,12 +4,11 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic.Authoring.Texl;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using Microsoft.PowerFx.Core.Lexer;
 
-namespace Microsoft.PowerFx.Core.Delegation
+namespace Microsoft.PowerFx.Core.Functions.Delegation
 {
     internal class ODataFunctionMappings
     {

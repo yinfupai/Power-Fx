@@ -5,8 +5,12 @@
 //------------------------------------------------------------------------------
 
 using System.Linq;
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Syntax;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Texl.Intellisense
 {
     internal partial class Intellisense
     {
@@ -16,7 +20,7 @@ namespace Microsoft.AppMagic.Authoring.Texl
                 : base(NodeKind.Call)
             { }
 
-            internal override bool TryAddSuggestionsForNodeKind(IntellisenseData intellisenseData)
+            internal override bool TryAddSuggestionsForNodeKind(IntellisenseData.IntellisenseData intellisenseData)
             {
                 Contracts.AssertValue(intellisenseData);
 

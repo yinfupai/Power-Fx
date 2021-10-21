@@ -1,9 +1,10 @@
-﻿using Microsoft.AppMagic.Authoring.Texl;
-using Microsoft.PowerFx.Core;
-using Microsoft.PowerFx.Core.IR;
+﻿using Microsoft.PowerFx.Core.IR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.PowerFx.Core.Public.Types;
+using Microsoft.PowerFx.Core.Public.Values;
+using Microsoft.PowerFx.Core.Public;
 
 namespace Microsoft.PowerFx.Functions
 {
@@ -210,28 +211,11 @@ namespace Microsoft.PowerFx.Functions
             }
         }
 
-        private static Func<IRContext, int, FormulaValue, FormulaValue> ExactValueTypeSequenceAllowBlanks(params Type[] types)
-        {
-            return ExactValueTypeSequence((index, arg) => types[index].IsAssignableFrom(arg.GetType()) || arg is ErrorValue || arg is BlankValue);
-        }
-
-        private static Func<IRContext, int, FormulaValue, FormulaValue> ExactValueTypeSequence(params Type[] types)
-        {
-            return ExactValueTypeSequence((index, arg) => types[index].IsAssignableFrom(arg.GetType()) || arg is ErrorValue);
-        }
-
-        private static Func<IRContext, int, FormulaValue, FormulaValue> ExactValueTypeSequence(Func<int, FormulaValue, bool> comparison)
+        private static Func<IRContext, int, FormulaValue, FormulaValue> ExactValueTypeSequence(params Func<IRContext, int, FormulaValue, FormulaValue>[] runtimeTypeChecks)
         {
             return (irContext, index, arg) =>
             {
-                if (comparison(index, arg))
-                {
-                    return arg;
-                }
-                else
-                {
-                    return CommonErrors.RuntimeTypeMismatch(irContext);
-                }
+                return runtimeTypeChecks[index](irContext, index, arg);
             };
         }
 
@@ -249,6 +233,24 @@ namespace Microsoft.PowerFx.Functions
             {
                 return ExactValueTypeOrBlank<LambdaFormulaValue>(irContext, index, arg);
             }
+        }
+
+        private static FormulaValue DateOrDateTime(IRContext irContext, int index, FormulaValue arg)
+        {
+            if (arg is DateValue || arg is DateTimeValue || arg is BlankValue || arg is ErrorValue)
+            {
+                return arg;
+            }
+            return CommonErrors.RuntimeTypeMismatch(irContext);
+        }
+
+        private static FormulaValue TimeOrDateTime(IRContext irContext, int index, FormulaValue arg)
+        {
+            if (arg is TimeValue || arg is DateTimeValue || arg is BlankValue || arg is ErrorValue)
+            {
+                return arg;
+            }
+            return CommonErrors.RuntimeTypeMismatch(irContext);
         }
         #endregion
 
@@ -290,6 +292,37 @@ namespace Microsoft.PowerFx.Functions
                 {
                     return CommonErrors.DivByZeroError(irContext);
                 }
+            }
+            return arg;
+        }
+
+        private static FormulaValue ReplaceChecker(IRContext irContext, int index, FormulaValue arg)
+        {
+            if (index == 1)
+            {
+                if (arg is BlankValue)
+                {
+                    return new ErrorValue(irContext, new ExpressionError()
+                    {
+                        Message = "The second parameter to the Replace function cannot be Blank()",
+                        Span = irContext.SourceContext,
+                        Kind = ErrorKind.InvalidFunctionUsage
+                    });
+                }
+                var finiteCheckResult = FiniteChecker(irContext, index, arg);
+                if (finiteCheckResult is NumberValue numberArg)
+                {
+                    var number = numberArg.Value;
+                    if (number <= 0)
+                    {
+                        return CommonErrors.ArgumentOutOfRange(irContext);
+                    }
+                }
+                return finiteCheckResult;
+            }
+            if (index == 2)
+            {
+                return PositiveNumberChecker(irContext, index, arg);
             }
             return arg;
         }

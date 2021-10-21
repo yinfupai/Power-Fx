@@ -4,11 +4,8 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.AppMagic;
-using Microsoft.AppMagic.Authoring;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
 
 namespace Microsoft.PowerFx.Core.IR
 {
@@ -113,13 +110,10 @@ namespace Microsoft.PowerFx.Core.IR
                     return GetToEnumCoercion(fromType, toType);
 
                 case DKind.Boolean:
-                    Contracts.Assert(DType.Number.Accepts(fromType) || DType.DateTime.Accepts(fromType) || DType.String.Accepts(fromType) || (DType.OptionSetValue.Accepts(fromType) && (fromType.OptionSetInfo?.IsBooleanValued ?? false)), "Unsupported type coercion");
+                    Contracts.Assert(DType.Number.Accepts(fromType) || DType.String.Accepts(fromType) || (DType.OptionSetValue.Accepts(fromType) && (fromType.OptionSetInfo?.IsBooleanValued ?? false)), "Unsupported type coercion");
                     if (DType.Number.Accepts(fromType))
                         return CoercionKind.NumberToBoolean; 
                     
-                    if (DType.DateTime.Accepts(fromType))
-                        return CoercionKind.DateTimeToBoolean;
-
                     if (DType.String.Accepts(fromType))
                         return CoercionKind.TextToBoolean;
 

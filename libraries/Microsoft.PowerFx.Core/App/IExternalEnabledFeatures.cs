@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Microsoft.PowerFx.Core.App
+﻿namespace Microsoft.PowerFx.Core.App
 {
     /// <summary>
     /// All hosts should use <see cref="DefaultEnabledFeatures"/> except for Canvas Apps (legacy flag support)

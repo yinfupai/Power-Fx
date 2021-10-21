@@ -5,8 +5,10 @@
 //------------------------------------------------------------------------------
 
 using System.Text;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Lexer.Tokens
 {
     internal class IdentToken : Token
     {

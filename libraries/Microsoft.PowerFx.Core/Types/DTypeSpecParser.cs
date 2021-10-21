@@ -3,11 +3,13 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
+
 using System.Globalization;
 using System.Linq;
-using Microsoft.AppMagic.Authoring.Texl;
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Types
 {
     internal static class DTypeSpecParser
     {

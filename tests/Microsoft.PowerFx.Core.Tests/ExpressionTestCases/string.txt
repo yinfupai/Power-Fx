@@ -194,6 +194,15 @@ true
 >> Replace("abcabcabc", 4, 2, "xx")
 "abcxxcabc"
 
+>> Replace("abcabcabc", 200, 240, "xx")
+"abcabcabcxx"
+
+>> Replace("abcabcabc", 200, 2, "xx")
+"abcabcabcxx"
+
+>> Replace("abcabcabc", 4, 240, "xx")
+"abcxx"
+
 >> Replace("abcabcabc", 0, 0, "xx")
 #Error
 

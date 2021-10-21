@@ -3,13 +3,14 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-using Microsoft.AppMagic.Authoring.Texl;
-using Microsoft.AppMagic.Common;
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Types;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Texl.Intellisense
 {
     public sealed class FunctionCategoryProvider
     {

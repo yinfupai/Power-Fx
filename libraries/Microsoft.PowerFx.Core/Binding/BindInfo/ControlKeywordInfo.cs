@@ -4,10 +4,11 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Microsoft.PowerFx.Core.App;
 using Microsoft.PowerFx.Core.App.Controls;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Binding.BindInfo
 {
     internal abstract class ControlKeywordInfo : NameInfo
     {

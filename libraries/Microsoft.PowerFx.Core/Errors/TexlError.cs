@@ -7,10 +7,12 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using Microsoft.AppMagic.Common;
-using Microsoft.AppMagic.Transport;
+using Microsoft.PowerFx.Core.Lexer.Tokens;
+using Microsoft.PowerFx.Core.Localization;
+using Microsoft.PowerFx.Core.Syntax.Nodes;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring.Texl
+namespace Microsoft.PowerFx.Core.Errors
 {
     // TASK: 67034: Cleanup: Eliminate StringIds.
     internal sealed class TexlError : BaseError, IRuleError

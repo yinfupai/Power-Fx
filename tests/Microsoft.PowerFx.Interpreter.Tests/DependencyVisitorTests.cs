@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using Microsoft.PowerFx.Core.Public.Types;
 
 namespace Microsoft.PowerFx.Tests
 {

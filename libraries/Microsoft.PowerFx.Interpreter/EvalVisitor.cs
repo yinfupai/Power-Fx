@@ -4,20 +4,30 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using Span = Microsoft.AppMagic.Authoring.Texl.Span;
-using Microsoft.PowerFx.Core;
 using Microsoft.PowerFx.Core.IR;
 using Microsoft.PowerFx.Core.IR.Symbols;
 using Microsoft.PowerFx.Functions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Diagnostics.Contracts;
+using Microsoft.PowerFx.Core.IR.Nodes;
+using Microsoft.PowerFx.Core.Public;
+using Microsoft.PowerFx.Core.Public.Types;
+using Microsoft.PowerFx.Core.Public.Values;
+using System.Globalization;
+using static Microsoft.PowerFx.Functions.Library;
 
 namespace Microsoft.PowerFx
 {
     internal class EvalVisitor : IRNodeVisitor<FormulaValue, SymbolContext>
     {
+        public CultureInfo CultureInfo { get; }
+
+        public EvalVisitor(CultureInfo cultureInfo)
+        {
+            CultureInfo = cultureInfo;
+        }
+
         // Helper to eval an arg that might be a lambda. 
         internal DValue<T> EvalArg<T>(FormulaValue arg, SymbolContext context, IRContext irContext) where T : ValidFormulaValue
         {
@@ -134,13 +144,16 @@ namespace Microsoft.PowerFx
             }
             else
             {
-                var ptr = Library.Lookup(func);
+                FunctionPtr ptr;
+                if (FuncsByName.TryGetValue(func, out ptr))
+                {
+                    FormulaValue result = ptr(this, childContext, node.IRContext, args);
 
-                FormulaValue result = ptr(this, childContext, node.IRContext, args);
+                    Contract.Assert(result.IRContext.ResultType == node.IRContext.ResultType || result is ErrorValue || result.IRContext.ResultType is BlankType);
 
-                Contract.Assert(result.IRContext.ResultType == node.IRContext.ResultType || result is ErrorValue || result.IRContext.ResultType is BlankType);
-
-                return result;
+                    return result;
+                }
+                return CommonErrors.NotYetImplementedError(node.IRContext, $"Missing func: {func.Name}");
             }
         }
 
@@ -208,35 +221,12 @@ namespace Microsoft.PowerFx
             var arg1 = node.Child.Accept(this, context);
             var args = new FormulaValue[] { arg1 };
 
-            switch (node.Op)
+            if (Library.UnaryOps.TryGetValue(node.Op, out Library.FunctionPtr unaryOp))
             {
-                case UnaryOpKind.Negate:
-                    return Library.OperatorUnaryNegate(this, context, node.IRContext, args);
-                case UnaryOpKind.Percent:
-                    return Library.OperatorUnaryPercent(this, context, node.IRContext, args);
-                case UnaryOpKind.NumberToText:
-                    return Library.OperatorUnaryNumberToText(this, context, node.IRContext, args);
-                case UnaryOpKind.NumberToBoolean:
-                    return Library.OperatorUnaryNumberToBoolean(this, context, node.IRContext, args);
-                case UnaryOpKind.BooleanToText:
-                    return Library.OperatorUnaryBooleanToText(this, context, node.IRContext, args);
-                case UnaryOpKind.BooleanToNumber:
-                    return Library.OperatorUnaryBooleanToNumber(this, context, node.IRContext, args);
-                case UnaryOpKind.TextToBoolean:
-                    return Library.OperatorUnaryTextToBoolean(this, context, node.IRContext, args);
-                case UnaryOpKind.NumberToDate:
-                case UnaryOpKind.NumberToDateTime:
-                    return Library.OperatorUnaryNumberToDate(this, context, node.IRContext, args);
-                case UnaryOpKind.DateToNumber:
-                case UnaryOpKind.DateTimeToNumber:
-                    return Library.OperatorUnaryDateToNumber(this, context, node.IRContext, args);
-                case UnaryOpKind.DateToDateTime:
-                    return Library.OperatorUnaryDateToDateTime(this, context, node.IRContext, args);
-                case UnaryOpKind.DateTimeToDate:
-                    return Library.OperatorUnaryDateTimeToDate(this, context, node.IRContext, args);
-                default:
-                    return CommonErrors.UnreachableCodeError(node.IRContext);
+                return unaryOp(this, context, node.IRContext, args);
             }
+
+            return CommonErrors.UnreachableCodeError(node.IRContext);
         }
 
         public override FormulaValue Visit(ScopeAccessNode node, SymbolContext context)
@@ -279,22 +269,27 @@ namespace Microsoft.PowerFx
 
         public override FormulaValue Visit(SingleColumnTableAccessNode node, SymbolContext context)
         {
-            throw new NotImplementedException();
+            return CommonErrors.NotYetImplementedError(node.IRContext, "Single column table access");
         }
 
         public override FormulaValue Visit(ErrorNode node, SymbolContext context)
         {
-            throw new NotImplementedException();
+            return new ErrorValue(node.IRContext, new ExpressionError()
+            {
+                Message = node.ErrorHint,
+                Span = node.IRContext.SourceContext,
+                Kind = ErrorKind.AnalysisError
+            });
         }
 
         public override FormulaValue Visit(ColorLiteralNode node, SymbolContext context)
         {
-            throw new NotImplementedException();
+            return CommonErrors.NotYetImplementedError(node.IRContext, "Color literal");
         }
 
         public override FormulaValue Visit(ChainingNode node, SymbolContext context)
         {
-            throw new NotImplementedException();
+            return CommonErrors.NotYetImplementedError(node.IRContext, "Expression chaining");
         }
 
         public override FormulaValue Visit(ResolvedObjectNode node, SymbolContext context)

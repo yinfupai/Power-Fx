@@ -6,7 +6,7 @@
 
 using System;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Types.Enums
 {
     internal class InvalidEnumException : Exception
     {

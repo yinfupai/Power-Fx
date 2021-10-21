@@ -4,11 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Microsoft.PowerFx.Core.IR
+namespace Microsoft.PowerFx.Core.IR.Nodes
 {
     public enum UnaryOpKind
     {
@@ -44,7 +40,6 @@ namespace Microsoft.PowerFx.Core.IR
 
         NumberToBoolean,
         TextToBoolean,
-        DateTimeToBoolean,
         BooleanOptionSetToBoolean,
 
         RecordToRecord, // See field mappings

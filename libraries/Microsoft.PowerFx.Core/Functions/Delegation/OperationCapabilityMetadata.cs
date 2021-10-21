@@ -4,12 +4,12 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AppMagic.Authoring.Texl;
+using Microsoft.PowerFx.Core.Lexer;
+using Microsoft.PowerFx.Core.Types;
+using Microsoft.PowerFx.Core.Utils;
 
-namespace Microsoft.AppMagic.Authoring
+namespace Microsoft.PowerFx.Core.Functions.Delegation
 {
     // Operator strings which are part of delegation metadata Json.
     // These are used when parsing the metadata Json.
