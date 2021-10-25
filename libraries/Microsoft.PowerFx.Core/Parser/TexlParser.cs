@@ -85,40 +85,31 @@ namespace Microsoft.PowerFx.Core.Parser
             Contracts.AssertValue(script);
             Contracts.AssertValueOrNull(loc);
 
-            Token[] tokens = TokenizeScript(script, loc, flags);
             List<TexlError> errors = null;
-            TexlParser formulasParser = new TexlParser(tokens, flags);
+            Dictionary<DName, ParseResult> namedFormulas = new Dictionary<DName, ParseResult>();
 
-            var namedFormulas = new Dictionary<DName, ParseResult>();
+            // Split formulas based on the semicolon
+            string[] formulas = script.Split(new char[] { ';' },StringSplitOptions.RemoveEmptyEntries);
 
-            Token thisIdentifier;
-
-            while (formulasParser._curs.TidCur != TokKind.Eof)
+            foreach (string formula in formulas)
             {
-                thisIdentifier = formulasParser.TokEat(TokKind.Ident);
+                // Split named formula based on the first '='.
+                var thisFormula = formula.Split(new char[] { '=' }, 2); 
+
+                Token[] formulaTokens = TokenizeScript(thisFormula[0]);
+                TexlParser formulasParser = new TexlParser(formulaTokens, flags);
+
+                // Verify identifier, then evaluate expression
+                Token thisIdentifier = formulasParser.TokEat(TokKind.Ident);
                 if (thisIdentifier != null)
                 {
-                    if(formulasParser.TokEat(TokKind.Equ) != null)
-                    {
-                        List<Token> expressionTokens = new List<Token>();
-                        while (formulasParser._curs.TidCur != TokKind.Semicolon)
-                        {
-                            expressionTokens.Add(formulasParser._curs.TokCur);
-                            formulasParser._curs.TokMove();
-                        }
-
-                        // Create new parser for the expression
-                        expressionTokens.Add(tokens[tokens.Length - 1]); // add the EOF here because creating the parser object on the next line requires it have an EOF
-                        TexlParser expressionParser = new TexlParser(expressionTokens.ToArray(), flags);
-                        TexlNode parseTree = expressionParser.ParseExpr(Precedence.None);
-
-                        // Add the identifier and expression's parse result
-                        namedFormulas.Add(thisIdentifier.As<IdentToken>().Name, new ParseResult(parseTree, errors, errors?.Any() ?? false, expressionParser._comments, expressionParser._before, expressionParser._after));
-                        
-                        formulasParser._curs.TokMove();
-                    }
+                    Token[] expressionTokens = TokenizeScript(thisFormula[1], loc, flags);
+                    TexlParser expressionParser = new TexlParser(expressionTokens, flags);
+                    TexlNode parseTree = expressionParser.ParseExpr(Precedence.None);
+                    namedFormulas.Add(thisIdentifier.As<IdentToken>().Name, new ParseResult(parseTree, errors, errors?.Any() ?? false, expressionParser._comments, expressionParser._before, expressionParser._after));
                 }
             }
+
             return new ParseFormulasResult(namedFormulas);
         }
 
