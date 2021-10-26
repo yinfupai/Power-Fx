@@ -629,12 +629,13 @@ namespace DocumentServer.Core.Tests.Formulas
             TestFormulasParseRoundtrip("a=10;c=20;");
         }
 
+        [TestMethod, Owner("emhommer")]
         public void TestFormulasParse_Negative()
         {
-            TestFormulasParseRoundtrip("a;");
-            TestFormulasParseRoundtrip("a=10");
-            TestFormulasParseRoundtrip(";");
-            TestFormulasParseRoundtrip("a=a=10");
+            TestFormulasParseError("a=10"); // missing ;
+            TestFormulasParseError("a;"); // missing = and expression
+            TestFormulasParseError(";"); // missing identifier and expression
+            TestFormulasParseError("a=a=10;"); // circular reference
         }
 
         internal void TestRoundtrip(string script, string expected = null, NodeKind expectedNodeKind = NodeKind.Error, Action<TexlNode> customTest = null)
@@ -673,7 +674,17 @@ namespace DocumentServer.Core.Tests.Formulas
 
         internal void TestFormulasParseRoundtrip(string script, string expected = null, NodeKind expectedNodeKind = NodeKind.Error, Action<TexlNode> customTest = null)
         {
-            TexlParser.ParseFormulasScript(script);
+            var result = TexlParser.ParseFormulasScript(script);
+
+            Assert.IsTrue(result.NamedFormulas.Count>0);
+            Assert.IsFalse(result.HasError);
+        }
+
+        internal void TestFormulasParseError(string script, string expected = null, NodeKind expectedNodeKind = NodeKind.Error, Action<TexlNode> customTest = null)
+        {
+            var result = TexlParser.ParseFormulasScript(script);
+
+            Assert.IsTrue(result.NamedFormulas.Count == 0 || result.HasError);
         }
     }
 }

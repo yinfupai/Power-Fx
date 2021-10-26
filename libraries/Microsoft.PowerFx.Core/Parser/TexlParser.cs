@@ -85,32 +85,55 @@ namespace Microsoft.PowerFx.Core.Parser
             Contracts.AssertValue(script);
             Contracts.AssertValueOrNull(loc);
 
-            List<TexlError> errors = null;
             Dictionary<DName, ParseResult> namedFormulas = new Dictionary<DName, ParseResult>();
+            List<TexlError> errors = new List<TexlError>();
 
             // Split formulas based on the semicolon
-            string[] formulas = script.Split(new char[] { ';' },StringSplitOptions.RemoveEmptyEntries);
+            string[] formulas = script.Split(new char[] { ';' });
 
-            foreach (string formula in formulas)
+            for(int i = 0; i < formulas.Length-1; i++)
             {
-                // Split named formula based on the first '='.
-                var thisFormula = formula.Split(new char[] { '=' }, 2); 
-
-                Token[] formulaTokens = TokenizeScript(thisFormula[0]);
+                Token[] formulaTokens = TokenizeScript(formulas[i]);
                 TexlParser formulasParser = new TexlParser(formulaTokens, flags);
 
-                // Verify identifier, then evaluate expression
+                // Verify identifier
                 Token thisIdentifier = formulasParser.TokEat(TokKind.Ident);
                 if (thisIdentifier != null)
                 {
-                    Token[] expressionTokens = TokenizeScript(thisFormula[1], loc, flags);
-                    TexlParser expressionParser = new TexlParser(expressionTokens, flags);
-                    TexlNode parseTree = expressionParser.ParseExpr(Precedence.None);
-                    namedFormulas.Add(thisIdentifier.As<IdentToken>().Name, new ParseResult(parseTree, errors, errors?.Any() ?? false, expressionParser._comments, expressionParser._before, expressionParser._after));
+                    Token thisEq = formulasParser.TokEat(TokKind.Equ);
+                    if (thisEq != null)
+                    {
+                        // Extract expression
+                        var eqPosition = formulas[i].IndexOf('=');
+                        var thisExpression = formulas[i].Substring(eqPosition + 1);
+
+                        Token[] expressionTokens = TokenizeScript(thisExpression, loc, flags);
+                        TexlParser expressionParser = new TexlParser(expressionTokens, flags);
+                        TexlNode parseTree = expressionParser.ParseExpr(Precedence.None);
+
+                        if (expressionTokens.Contains(thisIdentifier))
+                        {
+                            // error - circular reference
+                            expressionParser.CreateError(expressionParser._curs.TokCur, TexlStrings.ErrNamedFormula_CircularReference);
+                            errors.AddRange(expressionParser._errors);
+                        }
+                        namedFormulas.Add(thisIdentifier.As<IdentToken>().Name, new ParseResult(parseTree, expressionParser._errors, expressionParser._errors?.Any() ?? false, expressionParser._comments, expressionParser._before, expressionParser._after));
+                    }
+                    else
+                    {
+                        // error - missing '=' and expression
+                        formulasParser.CreateError(formulasParser._curs.TokCur, TexlStrings.ErrNamedFormula_MissingExpression);
+                        errors.AddRange(formulasParser._errors);
+                    }
+                }
+                else
+                {
+                    // error - not an identifier
+                    formulasParser.CreateError(formulasParser._curs.TokCur, TexlStrings.ErrNamedFormula_MissingIdentifier);
+                    errors.AddRange(formulasParser._errors);
                 }
             }
-
-            return new ParseFormulasResult(namedFormulas);
+            return new ParseFormulasResult(namedFormulas, errors, errors?.Any() ?? false);
         }
 
         private static Token[] TokenizeScript(string script, ILanguageSettings loc = null, Flags flags = Flags.None)
