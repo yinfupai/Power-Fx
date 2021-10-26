@@ -546,7 +546,6 @@ namespace Microsoft.PowerFx.Core.Localization
         public static ErrorResourceKey ErrNamedFormula_MissingExpression = new ErrorResourceKey("ErrNamedFormula_MissingExpression");
         public static ErrorResourceKey ErrNamedFormula_MissingIdentifier = new ErrorResourceKey("ErrNamedFormula_MissingIdentifier");
 
-
         // ErrorResourceKey for creating an error from an arbitrary string message. The key resolves to "{0}", meaning
         // that a single string arg can be supplied representing the entire text of the error.
         public static ErrorResourceKey ErrGeneralError = new ErrorResourceKey("ErrGeneralError");
