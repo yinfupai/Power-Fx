@@ -344,6 +344,34 @@ namespace Microsoft.PowerFx.Functions
                     )
             },
             {
+                BuiltinFunctionsCore.GetAt,
+                StandardErrorHandling<FormulaValue>(
+                    expandArguments: NoArgExpansion,
+                    replaceBlankValues: DoNotReplaceBlank,
+                    checkRuntimeTypes: ExactSequence(
+                        ExactValueTypeOrBlank<CustomObjectValue>,
+                        ExactValueTypeOrBlank<NumberValue>
+                        ),
+                    checkRuntimeValues: FiniteChecker,
+                    returnBehavior: ReturnBehavior.ReturnBlankIfAnyArgIsBlank,
+                    targetFunction: GetAt
+                    )
+            },
+            {
+                BuiltinFunctionsCore.GetField,
+                StandardErrorHandling<FormulaValue>(
+                    expandArguments: NoArgExpansion,
+                    replaceBlankValues: DoNotReplaceBlank,
+                    checkRuntimeTypes: ExactSequence(
+                        ExactValueTypeOrBlank<CustomObjectValue>,
+                        ExactValueTypeOrBlank<StringValue>
+                        ),
+                    checkRuntimeValues: DeferRuntimeValueChecking,
+                    returnBehavior: ReturnBehavior.ReturnBlankIfAnyArgIsBlank,
+                    targetFunction: GetField
+                    )
+            },
+            {
                 BuiltinFunctionsCore.Hour,
                 StandardErrorHandling<FormulaValue>(
                     expandArguments: NoArgExpansion,
@@ -555,6 +583,17 @@ namespace Microsoft.PowerFx.Functions
                 Now
             },
             { BuiltinFunctionsCore.Or, Or },
+            {
+                BuiltinFunctionsCore.ParseJson,
+                StandardErrorHandling<StringValue>(
+                    expandArguments: NoArgExpansion,
+                    replaceBlankValues: DoNotReplaceBlank,
+                    checkRuntimeTypes: ExactValueTypeOrBlank<StringValue>,
+                    checkRuntimeValues: DeferRuntimeValueChecking,
+                    returnBehavior: ReturnBehavior.ReturnBlankIfAnyArgIsBlank,
+                    targetFunction: ParseJson
+                    )
+            },
             {
                 BuiltinFunctionsCore.Power,
                 StandardErrorHandling<NumberValue>(
