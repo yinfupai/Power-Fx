@@ -625,6 +625,7 @@ namespace DocumentServer.Core.Tests.Formulas
         [TestMethod, Owner("emhommer")]
         public void TestFormulasParse()
         {
+            TestFormulasParseRoundtrip("a=10;");
             TestFormulasParseRoundtrip("a=b=10;");
             TestFormulasParseRoundtrip("a=10;c=20;");
         }
